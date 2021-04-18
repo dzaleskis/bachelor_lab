@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include "elements.hpp"
 
 namespace algorithms {
 
@@ -15,13 +16,16 @@ namespace algorithms {
                 {
                     arr[j] = arr[j - gap];
                 }
+
                 arr[j] = temp;
             }
         }
     }
 
     template <typename T, std::size_t A_SIZE, std::size_t G_SIZE>
-    void shellsort_improved(std::array<T, A_SIZE>& arr, const std::array<int, G_SIZE>& gaps) {
+    stats shellsort_improved(std::array<T, A_SIZE>& arr, const std::array<int, G_SIZE>& gaps) {
+        std::string measure_key = global_measure.init_report();
+
         for (int gap: gaps) {
             for (int i = gap; i < A_SIZE; i++)
             {
@@ -39,6 +43,7 @@ namespace algorithms {
                 }
             }
         }
-    }
 
+        return global_measure.get_report(measure_key);
+    }
 }
