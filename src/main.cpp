@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
 	ga_obj.mutate= ga_shellsort::mutate;
 	ga_obj.crossover= ga_shellsort::crossover;
 	ga_obj.MO_report_generation=ga_shellsort::MO_report_generation;
-	ga_obj.crossover_fraction=0.7;
-	ga_obj.mutation_rate=0.4;
+	ga_obj.crossover_fraction=0.5;
+	ga_obj.mutation_rate=0.5;
 	ga_obj.solve();
 
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;

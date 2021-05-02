@@ -5,16 +5,18 @@
 #include "openGA.hpp"
 #include "json.hpp"
 #include "array_utils.hpp"
+#include "iterator_utils.hpp"
 #include "algorithms.hpp"
+#include "elements.hpp"
 
 namespace ga_shellsort {
 
 	using json = nlohmann::json;
 	
-	const int GAP_COUNT = 8;
-	const int EVAL_ARRAY_SIZE = 500;
+	const int GAP_COUNT = 7;
+	const int EVAL_ARRAY_SIZE = 1000;
 	const int MIN_GAP_VALUE = 1;
-	const int MAX_GAP_VALUE = 1000;
+	const int MAX_GAP_VALUE = EVAL_ARRAY_SIZE;
 
 	bool is_gap_valid(int gap) {
 		return gap >= MIN_GAP_VALUE && gap <= MAX_GAP_VALUE;
@@ -24,8 +26,9 @@ namespace ga_shellsort {
 		std::array<int, GAP_COUNT> gaps; 
 
 		std::string to_string() const {
-			json j;
-			j["gaps"] = gaps;
+			json j = {
+				{"gaps", gaps},
+			};
 
 			return j.dump();
 		}
@@ -38,10 +41,15 @@ namespace ga_shellsort {
 
 	struct middle_cost {
 		int inversion_count;
+		int comparison_count;
+		int assignment_count;
 
 		std::string to_string() const {
-			json j;
-			j["inversion_count"] = inversion_count;
+			json j = {
+				{"inversion_count", inversion_count},
+				{"comparison_count", comparison_count},
+				{"assignment_count", assignment_count},
+			};
 
 			return j.dump();
 		}
@@ -58,10 +66,12 @@ namespace ga_shellsort {
 		std::array<int, EVAL_ARRAY_SIZE> eval_array;
 		array_utils::fill_random(eval_array);
 		// sort the array using the gaps from solution
-		algorithms::shellsort_improved(eval_array, p.gaps);
-		// number of inversions is the fitness of gap sequence
-		// 0 being a sorted array
+		stats stat = algorithms::shellsort_improved_reported(eval_array, p.gaps);
+
 		c.inversion_count = array_utils::count_inversions(eval_array);
+		c.assignment_count = stat.assignments;
+		c.comparison_count = stat.comparisons;
+
 		return true; // genes are accepted
 	}
 
@@ -70,18 +80,12 @@ namespace ga_shellsort {
 	const std::function<double(void)> &rnd01,
 	double shrink_scale)
 	{
+		// TODO: determine need of mutating all of the gaps
 		solution X_new = X_base;
-		const double mut = 0.2 * shrink_scale; // mutation radius
-
-		for (int i = 0; i < X_new.gaps.size(); i++) {
-			const int prev_gap = X_new.gaps[i];
-			int mutated_gap;
-			do {
-				mutated_gap = prev_gap + (int)std::round(mut * (rnd01() - rnd01()));
-			} while(!is_gap_valid(mutated_gap));
-
-			X_new.gaps[i] = mutated_gap;
-		}
+		// select a random gap and mutate it
+		const int selected_index = random_utils::get_random(0, X_base.gaps.size());
+		const int new_gap = random_utils::get_random(MIN_GAP_VALUE, MAX_GAP_VALUE);
+		X_new.gaps[selected_index] = new_gap;
 
 		X_new.normalize();
 		return X_new;
@@ -93,14 +97,11 @@ namespace ga_shellsort {
 		const std::function<double(void)> &rnd01)
 	{
 		solution X_new;
-		// copy second solutions gaps to new solution
-		X_new.gaps = X2.gaps;
-		// copy the first arrays first half
-		auto distance = std::distance(X1.gaps.begin(), X1.gaps.end());
-		auto iterator = X1.gaps.begin();
-		std::advance(iterator, distance / 2);
+		// copy first solutions gaps to new solution
+		std::copy(X1.gaps.begin(), X1.gaps.end(), X_new.gaps.begin());
+		// copy every other gap from second solution
+		iterator_utils::copy_every_other_n(X2.gaps.begin(), X2.gaps.end(), X_new.gaps.begin(), 2);
 
-		std::copy(X1.gaps.begin(), iterator, X_new.gaps.begin());
 		X_new.normalize();
 
 		return X_new;
@@ -108,9 +109,12 @@ namespace ga_shellsort {
 
 	std::vector<double> calculate_MO_objectives(const GA_Type::thisChromosomeType &X)
 	{
+		const int inversions = X.middle_costs.inversion_count;
+		const int assignments = X.middle_costs.assignment_count;
+		const int comparisons = X.middle_costs.comparison_count;
 		return {
-			(double)X.middle_costs.inversion_count,
-			0
+			(double)((assignments * inversions) + assignments), // prefers sequences that sort correctly at first, then optimizes
+			(double)((comparisons * inversions) + comparisons), // assignments and comparisons (when inversions is 0)
 		};
 	}
 
@@ -121,9 +125,11 @@ namespace ga_shellsort {
 		const std::vector<unsigned int>& pareto_front)
 	{
 		(void) last_generation;
-		json j;
-		j["generation_number"] = generation_number;
-		j["pareto_front"] = pareto_front;
+		json j = {
+			{"generation_number", generation_number},
+			{"pareto_front", pareto_front},
+		};
+
 		std::cout << j.dump() << std::endl;
 	}
 
@@ -140,6 +146,7 @@ namespace ga_shellsort {
 				<<X.genes.to_string()<<"\t"
 				<<X.middle_costs.to_string()<< std::endl;
 		}
+
 		output_file.close();
 	}
 }
