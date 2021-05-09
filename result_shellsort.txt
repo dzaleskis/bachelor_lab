@@ -1,1 +1,0 @@
-0	{"gaps":[557,123,61,24,13,5,1]}	{"assignment_count":10900,"comparison_count":10180,"inversion_count":0}

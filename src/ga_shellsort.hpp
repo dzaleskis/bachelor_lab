@@ -21,39 +21,58 @@ namespace ga_shellsort {
 	bool is_gap_valid(int gap) {
 		return gap >= MIN_GAP_VALUE && gap <= MAX_GAP_VALUE;
 	}
-
+	
 	struct solution {
 		std::array<int, GAP_COUNT> gaps; 
-
-		std::string to_string() const {
-			json j = {
-				{"gaps", gaps},
-			};
-
-			return j.dump();
-		}
 
 		void normalize() {
 			std::sort(gaps.begin(), gaps.end(), std::greater<int>());
 		}
-
 	};
 
 	struct middle_cost {
 		int inversion_count;
 		int comparison_count;
 		int assignment_count;
-
-		std::string to_string() const {
-			json j = {
-				{"inversion_count", inversion_count},
-				{"comparison_count", comparison_count},
-				{"assignment_count", assignment_count},
-			};
-
-			return j.dump();
-		}
 	};
+
+	struct optimization_result {
+		middle_cost middle_cost;
+		solution solution;
+	};
+
+	void to_json(json& j, const solution& sol) {
+		j = json{
+			{"gaps", sol.gaps},
+		};
+	}
+
+	void from_json(const json& j, solution& sol) {
+        j.at("gaps").get_to(sol.gaps);
+    }
+
+	void to_json(json& j, const middle_cost& m_cost) {
+		j = json{
+			{"inversion_count", m_cost.inversion_count},
+			{"comparison_count", m_cost.comparison_count},
+			{"assignment_count", m_cost.assignment_count},
+		};
+	}
+
+	void from_json(const json& j, middle_cost& m_cost) {
+        j.at("inversion_count").get_to(m_cost.inversion_count);
+		j.at("comparison_count").get_to(m_cost.comparison_count);
+		j.at("assignment_count").get_to(m_cost.assignment_count);
+    }
+
+	void to_json(json& j, const optimization_result& res) {
+        j = json{{"middle_cost", res.middle_cost}, {"solution", res.solution}};
+    }
+
+    void from_json(const json& j, optimization_result& res) {
+        j.at("middle_cost").get_to(res.middle_cost);
+        j.at("solution").get_to(res.solution);
+    }
 
 	typedef EA::Genetic<solution, middle_cost> GA_Type;
 	typedef EA::GenerationType<solution, middle_cost> Generation_Type;
@@ -136,17 +155,22 @@ namespace ga_shellsort {
 	void save_results(const GA_Type &ga_obj)
 	{
 		std::ofstream output_file;
-		output_file.open("result_shellsort.txt");
+		output_file.open("result_shellsort.json");
 		std::vector<unsigned int> paretofront_indices=ga_obj.last_generation.fronts[0];
-		for(unsigned int i:paretofront_indices)
+		std::vector<optimization_result> results;
+		results.resize(paretofront_indices.size());
+		
+		for(unsigned int i: paretofront_indices)
 		{
 			const auto &X = ga_obj.last_generation.chromosomes[i];
-			output_file
-				<<i<<"\t"
-				<<X.genes.to_string()<<"\t"
-				<<X.middle_costs.to_string()<< std::endl;
+			results.push_back({X.middle_costs, X.genes});
 		}
 
+		json j = {
+			{"results", results}
+		};
+
+		output_file << j << std::endl;
 		output_file.close();
 	}
 }
