@@ -8,27 +8,22 @@
 #include "iterator_utils.hpp"
 #include "algorithms.hpp"
 #include "elements.hpp"
+#include "solution.hpp"
 
-namespace ga_shellsort {
-
-	using json = nlohmann::json;
+namespace mobj_ga_shellsort {
 	
 	const int GAP_COUNT = 7;
 	const int EVAL_ARRAY_SIZE = 1000;
 	const int MIN_GAP_VALUE = 1;
 	const int MAX_GAP_VALUE = EVAL_ARRAY_SIZE;
+	const char* result_filename = "mobj_ga_shellsort.json";
+
+	using json = nlohmann::json;
+	using solution = ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
 
 	bool is_gap_valid(int gap) {
 		return gap >= MIN_GAP_VALUE && gap <= MAX_GAP_VALUE;
 	}
-	
-	struct solution {
-		std::array<int, GAP_COUNT> gaps; 
-
-		void normalize() {
-			std::sort(gaps.begin(), gaps.end(), std::greater<int>());
-		}
-	};
 
 	struct middle_cost {
 		int inversion_count;
@@ -40,16 +35,6 @@ namespace ga_shellsort {
 		middle_cost middle_cost;
 		solution solution;
 	};
-
-	void to_json(json& j, const solution& sol) {
-		j = json{
-			{"gaps", sol.gaps},
-		};
-	}
-
-	void from_json(const json& j, solution& sol) {
-        j.at("gaps").get_to(sol.gaps);
-    }
 
 	void to_json(json& j, const middle_cost& m_cost) {
 		j = json{
@@ -78,7 +63,7 @@ namespace ga_shellsort {
 	typedef EA::GenerationType<solution, middle_cost> Generation_Type;
 
 	void init_genes(solution& p, const std::function<double(void)> &rnd01) {
-		array_utils::fill_sorted_descending(p.gaps, MIN_GAP_VALUE, MAX_GAP_VALUE);
+		p.init();
 	}
 
 	bool eval_solution(const solution& p, middle_cost &c) {
@@ -99,15 +84,7 @@ namespace ga_shellsort {
 	const std::function<double(void)> &rnd01,
 	double shrink_scale)
 	{
-		// TODO: determine need of mutating all of the gaps
-		solution X_new = X_base;
-		// select a random gap and mutate it
-		const int selected_index = random_utils::get_random(0, X_base.gaps.size());
-		const int new_gap = random_utils::get_random(MIN_GAP_VALUE, MAX_GAP_VALUE);
-		X_new.gaps[selected_index] = new_gap;
-
-		X_new.normalize();
-		return X_new;
+		return X_base.mutate(rnd01, shrink_scale);
 	}
 
 	solution crossover(
@@ -115,25 +92,17 @@ namespace ga_shellsort {
 		const solution& X2,
 		const std::function<double(void)> &rnd01)
 	{
-		solution X_new;
-		// copy first solutions gaps to new solution
-		std::copy(X1.gaps.begin(), X1.gaps.end(), X_new.gaps.begin());
-		// copy every other gap from second solution
-		iterator_utils::copy_every_other_n(X2.gaps.begin(), X2.gaps.end(), X_new.gaps.begin(), 2);
-
-		X_new.normalize();
-
-		return X_new;
+		return X1.crossover(X2, rnd01);
 	}
 
 	std::vector<double> calculate_MO_objectives(const GA_Type::thisChromosomeType &X)
 	{
-		const int inversions = X.middle_costs.inversion_count;
 		const int assignments = X.middle_costs.assignment_count;
 		const int comparisons = X.middle_costs.comparison_count;
+
 		return {
-			(double)((assignments * inversions) + assignments), // prefers sequences that sort correctly at first, then optimizes
-			(double)((comparisons * inversions) + comparisons), // assignments and comparisons (when inversions is 0)
+			(double)(assignments),
+			(double)(comparisons),
 		};
 	}
 
@@ -155,7 +124,7 @@ namespace ga_shellsort {
 	void save_results(const GA_Type &ga_obj)
 	{
 		std::ofstream output_file;
-		output_file.open("result_shellsort.json");
+		output_file.open(result_filename);
 		std::vector<unsigned int> paretofront_indices=ga_obj.last_generation.fronts[0];
 		std::vector<optimization_result> results;
 		results.resize(paretofront_indices.size());
@@ -163,7 +132,7 @@ namespace ga_shellsort {
 		for(unsigned int i: paretofront_indices)
 		{
 			const auto &X = ga_obj.last_generation.chromosomes[i];
-			results.push_back({X.middle_costs, X.genes});
+			results[i] = {X.middle_costs, X.genes};
 		}
 
 		json j = {

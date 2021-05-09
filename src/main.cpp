@@ -1,35 +1,83 @@
 #include <iostream>
 #include <array>
 #include <algorithm>
-
+#include "json.hpp"
 #include "array_utils.hpp"
 #include "algorithms.hpp"
 #include "openGA.hpp"
-#include "ga_shellsort.hpp"
+#include "mobj_ga_shellsort.hpp"
+#include "CLI11.hpp"
+#include "solution.hpp"
 
-int main(int argc, char* argv[]) {
-    EA::Chronometer timer;
+using json = nlohmann::json;
+
+void run_mobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
+
+	const int GAP_COUNT = mobj_ga_shellsort::GAP_COUNT;
+	const int MIN_GAP_VALUE = mobj_ga_shellsort::MIN_GAP_VALUE;
+	const int MAX_GAP_VALUE = mobj_ga_shellsort::MAX_GAP_VALUE;
+
+	std::vector<ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
+
+	for (auto gaps: initial_gaps) {
+		initial_solutions.push_back(ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
+	}
+
+	EA::Chronometer timer;
 	timer.tic();
 
-	ga_shellsort::GA_Type ga_obj;
+	mobj_ga_shellsort::GA_Type ga_obj;
 	ga_obj.problem_mode= EA::GA_MODE::NSGA_III;
 	ga_obj.multi_threading=true;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
 	ga_obj.population=500;
+	ga_obj.user_initial_solutions=initial_solutions;
 	ga_obj.generation_max=20;
-	ga_obj.calculate_MO_objectives=ga_shellsort::calculate_MO_objectives;
-	ga_obj.init_genes=ga_shellsort::init_genes;
-	ga_obj.eval_solution=ga_shellsort::eval_solution;
-	ga_obj.mutate= ga_shellsort::mutate;
-	ga_obj.crossover= ga_shellsort::crossover;
-	ga_obj.MO_report_generation=ga_shellsort::MO_report_generation;
+	ga_obj.calculate_MO_objectives=mobj_ga_shellsort::calculate_MO_objectives;
+	ga_obj.init_genes=mobj_ga_shellsort::init_genes;
+	ga_obj.eval_solution=mobj_ga_shellsort::eval_solution;
+	ga_obj.mutate= mobj_ga_shellsort::mutate;
+	ga_obj.crossover= mobj_ga_shellsort::crossover;
+	ga_obj.MO_report_generation=mobj_ga_shellsort::MO_report_generation;
 	ga_obj.crossover_fraction=0.5;
 	ga_obj.mutation_rate=0.5;
 	ga_obj.solve();
 
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
-	ga_shellsort::save_results(ga_obj);
+	mobj_ga_shellsort::save_results(ga_obj);
+}
+
+int main(int argc, char* argv[]) {
+	CLI::App app{"Running GA on shellsort"};
+
+    std::string filename = "";
+	std::string mode = "mobj";
+    app.add_option("-f,--file", filename, "Specify input file for gap initialization");
+	app.add_option("-m,--mode", filename, "Specify run mode");
+
+    CLI11_PARSE(app, argc, argv);
+
+	std::vector<std::vector<int>> initial_gaps;
+
+	if (!filename.empty()) {
+		std::ifstream input_file;
+		input_file.open(filename);
+		json j;
+		input_file >> j;
+		initial_gaps = j.get<std::vector<std::vector<int>>>();
+		std::cout << initial_gaps.size() << " gap sequences parsed from file" << std::endl;
+	}
+
+	if (mode == "mobj") {
+		run_mobj_ga_shellsort(initial_gaps);
+	} else if (mode == "sobj") {
+		std::cout << "not yet implemented" << std::endl;
+		exit(0);
+	} else {
+		std::cerr << "invalid mode" << std::endl;
+		exit(-1);
+	}
 
 	return 0;
 }

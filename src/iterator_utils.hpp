@@ -1,3 +1,4 @@
+#pragma once
 
 namespace iterator_utils {
     template<class in_it, class out_it>
