@@ -10,20 +10,19 @@
 #include "benchmarks.hpp"
 #include "solution.hpp"
 
-namespace mobj_ga_shellsort {
+namespace sobj_ga_shellsort {
 	
 	const int GAP_COUNT = 7;
 	const int EVAL_ARRAY_SIZE = 1000;
 	const int MIN_GAP_VALUE = 1;
 	const int MAX_GAP_VALUE = EVAL_ARRAY_SIZE;
-	const char* result_filename = "mobj_ga_shellsort.json";
+	const char* result_filename = "sobj_ga_shellsort.json";
 
 	using json = nlohmann::json;
 	using solution = ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
 
 	struct middle_cost {
 		int comparison_count;
-		int assignment_count;
 	};
 
 	struct optimization_result {
@@ -33,14 +32,12 @@ namespace mobj_ga_shellsort {
 
 	void to_json(json& j, const middle_cost& m_cost) {
 		j = json{
-			{"comparison_count", m_cost.comparison_count},
-			{"assignment_count", m_cost.assignment_count},
+			{"comparison_count", m_cost.comparison_count}
 		};
 	}
 
 	void from_json(const json& j, middle_cost& m_cost) {
 		j.at("comparison_count").get_to(m_cost.comparison_count);
-		j.at("assignment_count").get_to(m_cost.assignment_count);
     }
 
 	void to_json(json& j, const optimization_result& res) {
@@ -62,7 +59,6 @@ namespace mobj_ga_shellsort {
 	bool eval_solution(const solution& p, middle_cost &c) {
 		auto ops = benchmarks::measure_ops_int<EVAL_ARRAY_SIZE>(p.gaps);
 
-		c.assignment_count = ops.classic_assignments;
 		c.comparison_count = ops.classic_comparisons;
 
 		return true; // genes are accepted
@@ -84,45 +80,35 @@ namespace mobj_ga_shellsort {
 		return X1.crossover(X2, rnd01);
 	}
 
-	std::vector<double> calculate_MO_objectives(const GA_Type::thisChromosomeType &X)
-	{
-		const int assignments = X.middle_costs.assignment_count;
-		const int comparisons = X.middle_costs.comparison_count;
+    double calculate_SO_total_fitness(const GA_Type::thisChromosomeType &X)
+    {
+        // finalize the cost
+        return X.middle_costs.comparison_count;
+    }
 
-		return {
-			(double)(assignments),
-			(double)(comparisons),
-		};
-	}
-
-		
-	void MO_report_generation(
-		int generation_number,
-		const EA::GenerationType<solution, middle_cost> &last_generation,
-		const std::vector<unsigned int>& pareto_front)
-	{
-		(void) last_generation;
-		json j = {
+    void SO_report_generation(
+	int generation_number,
+	const EA::GenerationType<solution, middle_cost> &last_generation,
+	const solution& best_genes)
+    {
+        json j = {
 			{"generation_number", generation_number},
-			{"pareto_front", pareto_front},
+			{"best_genes", best_genes},
+            {"best_total_cost", last_generation.best_total_cost},
+            {"best_average_cost", last_generation.average_cost},
 		};
 
 		std::cout << j << std::endl;
-	}
+    }
 
 	void save_results(const GA_Type &ga_obj)
 	{
 		std::ofstream output_file;
 		output_file.open(result_filename);
-		std::vector<unsigned int> paretofront_indices=ga_obj.last_generation.fronts[0];
+        int best_index = ga_obj.last_generation.best_chromosome_index;
+        auto best_solution = ga_obj.last_generation.chromosomes[best_index];
 		std::vector<optimization_result> results;
-		results.resize(paretofront_indices.size());
-		
-		for(unsigned int i: paretofront_indices)
-		{
-			const auto &X = ga_obj.last_generation.chromosomes[i];
-			results[i] = {X.middle_costs, X.genes};
-		}
+		results.push_back({best_solution.middle_costs, best_solution.genes});
 
 		json j = {
 			{"results", results}

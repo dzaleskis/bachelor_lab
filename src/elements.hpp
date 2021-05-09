@@ -7,11 +7,6 @@
 // #include <mutex>
 // #include <shared_mutex>
 
-struct stats {
-    unsigned int assignments = 0;
-    unsigned int comparisons = 0;
-};
-
 // typedef std::shared_mutex measure_lock;
 // typedef std::unique_lock<measure_lock> measure_write_lock;
 // typedef std::shared_lock<measure_lock> measure_read_lock;

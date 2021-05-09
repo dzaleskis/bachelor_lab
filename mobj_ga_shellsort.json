@@ -1,1 +1,1 @@
-{"results":[{"middle_cost":{"assignment_count":10827,"comparison_count":10176,"inversion_count":0},"solution":{"gaps":[550,133,82,29,16,6,1]}},{"middle_cost":{"assignment_count":10933,"comparison_count":10075,"inversion_count":0},"solution":{"gaps":[849,238,129,41,16,6,1]}}]}
+{"results":[{"middle_cost":{"assignment_count":32087,"comparison_count":31692},"solution":{"gaps":[976,670,273,48,22,5,1]}}]}
