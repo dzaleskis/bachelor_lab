@@ -7,13 +7,14 @@
 #include "array_utils.hpp"
 #include "iterator_utils.hpp"
 #include "algorithms.hpp"
-#include "benchmarks.hpp"
+#include "fitness.hpp"
 #include "solution.hpp"
 
 namespace sobj_ga_shellsort {
 	
 	const int GAP_COUNT = 7;
 	const int EVAL_ARRAY_SIZE = 1000;
+	const int EVAL_RUNS = 10;
 	const int MIN_GAP_VALUE = 1;
 	const int MAX_GAP_VALUE = EVAL_ARRAY_SIZE;
 	const char* result_filename = "sobj_ga_shellsort.json";
@@ -22,7 +23,7 @@ namespace sobj_ga_shellsort {
 	using solution = ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
 
 	struct middle_cost {
-		int comparison_count;
+		double avg_comparison_count;
 	};
 
 	struct optimization_result {
@@ -32,12 +33,12 @@ namespace sobj_ga_shellsort {
 
 	void to_json(json& j, const middle_cost& m_cost) {
 		j = json{
-			{"comparison_count", m_cost.comparison_count}
+			{"avg_comparison_count", m_cost.avg_comparison_count}
 		};
 	}
 
 	void from_json(const json& j, middle_cost& m_cost) {
-		j.at("comparison_count").get_to(m_cost.comparison_count);
+		j.at("avg_comparison_count").get_to(m_cost.avg_comparison_count);
     }
 
 	void to_json(json& j, const optimization_result& res) {
@@ -53,13 +54,13 @@ namespace sobj_ga_shellsort {
 	typedef EA::GenerationType<solution, middle_cost> Generation_Type;
 
 	void init_genes(solution& p, const std::function<double(void)> &rnd01) {
-		p.init();
+		p.init_genes(rnd01);
 	}
 
 	bool eval_solution(const solution& p, middle_cost &c) {
-		auto ops = benchmarks::measure_ops_int<EVAL_ARRAY_SIZE>(p.gaps);
+		auto fitness = fitness::eval_classic_fitness<EVAL_ARRAY_SIZE>(p.gaps, EVAL_RUNS);
 
-		c.comparison_count = ops.classic_comparisons;
+		c.avg_comparison_count = fitness.avg_comparisons;
 
 		return true; // genes are accepted
 	}
@@ -83,7 +84,7 @@ namespace sobj_ga_shellsort {
     double calculate_SO_total_fitness(const GA_Type::thisChromosomeType &X)
     {
         // finalize the cost
-        return X.middle_costs.comparison_count;
+        return X.middle_costs.avg_comparison_count;
     }
 
     void SO_report_generation(

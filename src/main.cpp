@@ -32,17 +32,17 @@ void run_mobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.multi_threading=true;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
-	ga_obj.population=500;
+	ga_obj.population=10000;
 	ga_obj.user_initial_solutions=initial_solutions;
-	ga_obj.generation_max=20;
+	ga_obj.generation_max=100;
 	ga_obj.calculate_MO_objectives=mobj_ga_shellsort::calculate_MO_objectives;
 	ga_obj.init_genes=mobj_ga_shellsort::init_genes;
 	ga_obj.eval_solution=mobj_ga_shellsort::eval_solution;
 	ga_obj.mutate= mobj_ga_shellsort::mutate;
 	ga_obj.crossover= mobj_ga_shellsort::crossover;
 	ga_obj.MO_report_generation=mobj_ga_shellsort::MO_report_generation;
-	ga_obj.crossover_fraction=0.5;
-	ga_obj.mutation_rate=0.5;
+	ga_obj.crossover_fraction=0.1;
+	ga_obj.mutation_rate=0.8;
 	ga_obj.solve();
 
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
@@ -89,13 +89,13 @@ void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	sobj_ga_shellsort::save_results(ga_obj);
 
 	auto ciura_gaps = std::array<int, 8> {701, 301, 132, 57, 23, 10, 4, 1};
-	auto ciura_stats = benchmarks::measure_ops_int<1000>(ciura_gaps);
+	auto ciura_stats = fitness::eval_classic_fitness<1000>(ciura_gaps, 20);
 
 	auto my_gaps = ga_obj.last_generation.chromosomes[ga_obj.last_generation.best_chromosome_index].genes.gaps;
-	auto my_stats = benchmarks::measure_ops_int<1000>(my_gaps);
+	auto my_stats = fitness::eval_classic_fitness<1000>(my_gaps, 20);
 
-	std::cout << "ciura" << ciura_stats.classic_assignments << std::endl;
-	std::cout << "mine" << my_stats.classic_assignments << std::endl;
+	std::cout << "ciura assignments:" << ciura_stats.avg_assignments << " comparisons: " << ciura_stats.avg_comparisons << std::endl;
+	std::cout << "my assignments:" << my_stats.avg_assignments << " comparisons: " << my_stats.avg_comparisons << std::endl;
 
 }
 
