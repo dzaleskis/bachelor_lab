@@ -79,7 +79,7 @@ void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.mutate= sobj_ga_shellsort::mutate;
 	ga_obj.crossover=sobj_ga_shellsort::crossover;
 	ga_obj.SO_report_generation=sobj_ga_shellsort::SO_report_generation;
-	ga_obj.crossover_fraction=0.7;
+	ga_obj.crossover_fraction=0.5;
 	ga_obj.mutation_rate=0.8;
 	ga_obj.best_stall_max=20;
 	ga_obj.average_stall_max=20;

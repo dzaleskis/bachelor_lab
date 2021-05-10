@@ -2,29 +2,27 @@
 #include <array>
 #include <random>
 #include <functional>
-#include <ctime>
+#include <chrono>
 
 namespace random_utils {
     // NOTE: random device does NOT work correctly on win with MinGW
 
-    int get_random(int min = INT_MIN, int max = INT_MAX) {
-        static std::mt19937 mte(std::time(0));
+    static uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    static std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed>>32)};
+    static std::mt19937 mte(ss);
 
+    int get_random_int(int min = INT_MIN, int max = INT_MAX) {
         std::uniform_int_distribution<int> dist(min, max);
         return dist(mte);
     }
 
-    int get_random(unsigned int min = 0, unsigned int max = UINT_MAX) {
-        static std::mt19937 mte(std::time(0));
-
+    unsigned int get_random_uint(unsigned int min = 0, unsigned int max = UINT_MAX) {
         std::uniform_int_distribution<unsigned int> dist(min, max);
         return dist(mte);
     }
 
-    double get_random(double min, double max) {
-        static std::mt19937 mte(std::time(0));
-
-        std::uniform_real_distribution<double> dist(min, max);
-        return dist(mte);
+    bool get_random_bool() {
+        std::uniform_int_distribution<int> dist(0, 1);
+        return dist(mte) == 1;
     }
 }

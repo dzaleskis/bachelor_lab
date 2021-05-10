@@ -9,7 +9,7 @@ namespace array_utils {
     template <std::size_t SIZE>
     void fill_random(std::array<int, SIZE>& arr, int min = INT_MIN, int max = INT_MAX) {
         std::generate(arr.begin(), arr.end(), [&] () {
-            return random_utils::get_random(min, max);
+            return random_utils::get_random_int(min, max);
         });
     }
 

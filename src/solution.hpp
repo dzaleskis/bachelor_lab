@@ -50,10 +50,13 @@ namespace ga_solution {
 		double shrink_scale) const {
 			// TODO: determine need of mutating all of the gaps
 			solution_base X_new = *this;
-			// select a random gap and mutate it
-			const int selected_index = random_utils::get_random(0, gaps.size() - 1);
-			const int new_gap = random_utils::get_random((int)MIN_GAP_VALUE, (int)MAX_GAP_VALUE);
-			X_new.gaps[selected_index] = new_gap;
+			for (int i = 0; i < gaps.size(); i++) {
+				bool do_mutate = random_utils::get_random_bool();
+				if (do_mutate) {
+					int new_gap = random_utils::get_random_int((int)MIN_GAP_VALUE, (int)MAX_GAP_VALUE);
+					X_new.gaps[i] = new_gap;
+				}
+			}
 			X_new.normalize();
 
 			return X_new;
