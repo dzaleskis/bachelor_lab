@@ -70,17 +70,17 @@ void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.multi_threading=true;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
-	ga_obj.population=10000;
+	ga_obj.population=15000;
 	ga_obj.user_initial_solutions=initial_solutions;
-	ga_obj.generation_max=100;
+	ga_obj.generation_max=500;
 	ga_obj.calculate_SO_total_fitness=sobj_ga_shellsort::calculate_SO_total_fitness;
 	ga_obj.init_genes=sobj_ga_shellsort::init_genes;
 	ga_obj.eval_solution=sobj_ga_shellsort::eval_solution;
 	ga_obj.mutate= sobj_ga_shellsort::mutate;
 	ga_obj.crossover=sobj_ga_shellsort::crossover;
 	ga_obj.SO_report_generation=sobj_ga_shellsort::SO_report_generation;
-	ga_obj.crossover_fraction=0.5;
-	ga_obj.mutation_rate=0.8;
+	ga_obj.crossover_fraction=0.01;
+	ga_obj.mutation_rate=0.9;
 	ga_obj.best_stall_max=20;
 	ga_obj.average_stall_max=20;
 	ga_obj.solve();
@@ -88,13 +88,17 @@ void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
 	sobj_ga_shellsort::save_results(ga_obj);
 
-	auto ciura_gaps = std::array<int, 8> {701, 301, 132, 57, 23, 10, 4, 1};
+	auto ciura_gaps = std::array<int, 7> {301, 132, 57, 23, 10, 4, 1};
 	auto ciura_stats = fitness::eval_classic_fitness<1000>(ciura_gaps, 20);
+
+	auto simpson_gaps = std::array<int, 7> {893, 219, 83, 36, 13, 4, 1};
+	auto simpson_stats = fitness::eval_classic_fitness<1000>(simpson_gaps, 20);
 
 	auto my_gaps = ga_obj.last_generation.chromosomes[ga_obj.last_generation.best_chromosome_index].genes.gaps;
 	auto my_stats = fitness::eval_classic_fitness<1000>(my_gaps, 20);
 
 	std::cout << "ciura assignments:" << ciura_stats.avg_assignments << " comparisons: " << ciura_stats.avg_comparisons << std::endl;
+	std::cout << "simpson assignments:" << simpson_stats.avg_assignments << " comparisons: " << simpson_stats.avg_comparisons << std::endl;
 	std::cout << "my assignments:" << my_stats.avg_assignments << " comparisons: " << my_stats.avg_comparisons << std::endl;
 
 }

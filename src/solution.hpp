@@ -13,7 +13,7 @@ namespace ga_solution {
 	const double EQUAL_PROBABILITY = 0.5;
 	const double MUT_SCALE = 0.2;
 	const double MUTATION_PROBABILITY = 0.5;
-	const int MUT_CEILING = 50;
+	const int MUT_CEILING = 100;
 
     template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
 	struct solution_base {
