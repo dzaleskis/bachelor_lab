@@ -8,40 +8,40 @@ namespace algorithms {
         unsigned int comparisons = 0;
     };
 
-    template <typename T, std::size_t A_SIZE, std::size_t G_SIZE>
-    void shellsort_classic(std::array<T, A_SIZE>& arr, const std::array<int, G_SIZE>& gaps) {
+    template <typename T>
+    void shellsort_classic(std::vector<T>& vector, const std::vector<int>& gaps) {
         for (int gap: gaps) {
-            for (int i = gap; i < A_SIZE; i++)
+            for (int i = gap; i < vector.size(); i++)
             {
-                T temp = arr[i];
+                T temp = vector[i];
                 int j = i;
                 
-                for (j; j >= gap && arr[j - gap] > temp; j -= gap)
+                for (j; j >= gap && vector[j - gap] > temp; j -= gap)
                 {
-                    arr[j] = arr[j - gap];
+                    vector[j] = vector[j - gap];
                 }
 
-                arr[j] = temp;
+                vector[j] = temp;
             }
         }
     }
 
-    template <typename T, std::size_t A_SIZE, std::size_t G_SIZE>
-    ops_stats shellsort_classic_reported(std::array<T, A_SIZE>& arr, const std::array<int, G_SIZE>& gaps) {
+    template <typename T>
+    ops_stats shellsort_classic_reported(std::vector<T>& vector, const std::vector<int>& gaps) {
         ops_stats stats;
 
         for (int gap: gaps) {
-            for (int i = gap; i < A_SIZE; i++)
+            for (int i = gap; i < vector.size(); i++)
             {
                 stats.comparisons += 1;
 
-                T temp = arr[i];
+                T temp = vector[i];
                 int j = i;
                 stats.assignments += 2;
                 
-                for (j; j >= gap && arr[j - gap] > temp; j -= gap)
+                for (j; j >= gap && vector[j - gap] > temp; j -= gap)
                 {
-                    arr[j] = arr[j - gap];
+                    vector[j] = vector[j - gap];
                     stats.comparisons += 2;
                     stats.assignments += 2;
                 }
@@ -52,7 +52,7 @@ namespace algorithms {
                     stats.comparisons += 2;
                 }
 
-                arr[j] = temp;
+                vector[j] = temp;
                 stats.assignments += 1;
             }
         }
@@ -60,38 +60,38 @@ namespace algorithms {
         return stats;
     }
 
-    template <typename T, std::size_t A_SIZE, std::size_t G_SIZE>
-    void shellsort_improved(std::array<T, A_SIZE>& arr, const std::array<int, G_SIZE>& gaps) {
+    template <typename T>
+    void shellsort_improved(std::vector<T>& vector, const std::vector<int>& gaps) {
         for (int gap: gaps) {
-            for (int i = gap; i < A_SIZE; i++)
+            for (int i = gap; i < vector.size(); i++)
             {
-                if (arr[i - gap] > arr[i]) {
-                    T temp = arr[i];
+                if (vector[i - gap] > vector[i]) {
+                    T temp = vector[i];
                     int j = i;
 
                     do {
-                        arr[j] = arr[j - gap];
+                        vector[j] = vector[j - gap];
                         j -= gap;
 
-                    } while (j >= gap && arr[j - gap] > temp);
-                    
-                    arr[j] = temp;
+                    } while (j >= gap && vector[j - gap] > temp);
+
+                    vector[j] = temp;
                 }
             }
         }
     }
 
-    template <typename T, std::size_t A_SIZE, std::size_t G_SIZE>
-    ops_stats shellsort_improved_reported(std::array<T, A_SIZE>& arr, const std::array<int, G_SIZE>& gaps) {
+    template <typename T>
+    ops_stats shellsort_improved_reported(std::vector<T>& vector, const std::vector<int>& gaps) {
         ops_stats stats;
 
         for (int gap: gaps) {
-            for (int i = gap; i < A_SIZE; i++)
+            for (int i = gap; i < vector.size(); i++)
             {
                 stats.comparisons += 1;
 
-                if (arr[i - gap] > arr[i]) {
-                    T temp = arr[i];
+                if (vector[i - gap] > vector[i]) {
+                    T temp = vector[i];
                     int j = i;
                     stats.assignments += 2;
 
@@ -102,20 +102,20 @@ namespace algorithms {
                             stats.comparisons += 2;
                         }
 
-                        arr[j] = arr[j - gap];
+                        vector[j] = vector[j - gap];
                         j -= gap;
                         stats.assignments += 2;
 
                         loop_counter++;
-                    } while (j >= gap && arr[j - gap] > temp);
+                    } while (j >= gap && vector[j - gap] > temp);
 
                     if (j < gap) {
                         stats.comparisons += 1;
                     } else {
                         stats.comparisons += 2;
                     }
-                    
-                    arr[j] = temp;
+
+                    vector[j] = temp;
                     stats.assignments += 1;
                 }
                 stats.comparisons += 1;

@@ -14,7 +14,7 @@ namespace sobj_ga_shellsort {
 	
 	const int GAP_COUNT = 7;
 	const int EVAL_ARRAY_SIZE = 1000;
-	const int EVAL_RUNS = 10;
+	const int EVAL_RUNS = 1;
 	const int MIN_GAP_VALUE = 1;
 	const int MAX_GAP_VALUE = EVAL_ARRAY_SIZE;
 	const char* result_filename = "sobj_ga_shellsort.json";
@@ -58,7 +58,7 @@ namespace sobj_ga_shellsort {
 	}
 
 	bool eval_solution(const solution& p, middle_cost &c) {
-		auto fitness = fitness::eval_classic_fitness<EVAL_ARRAY_SIZE>(p.gaps, EVAL_RUNS);
+		auto fitness = fitness::eval_classic_fitness(p.gaps, EVAL_ARRAY_SIZE, EVAL_RUNS);
 
 		c.avg_comparison_count = fitness.avg_comparisons;
 

@@ -1,4 +1,6 @@
 .vscode/
+.vs/
+.idea/
 obj/
 lab.exe
 sobj_ga_shellsort.json

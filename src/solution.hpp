@@ -1,9 +1,7 @@
 #pragma once
 #include <array>
-// #include <cmath>
 #include <functional>
 #include "json.hpp"
-#include "array_utils.hpp"
 #include "iterator_utils.hpp"
 
 namespace ga_solution {
@@ -17,12 +15,12 @@ namespace ga_solution {
 
     template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
 	struct solution_base {
-		std::array<int, GAP_COUNT> gaps;
+		std::vector<int> gaps = std::vector<int>(GAP_COUNT);
 
-        solution_base() {}
+        solution_base() = default;
 
-        solution_base(std::vector<int> x) {
-            array_utils::fill_random(gaps, MIN_GAP_VALUE, MAX_GAP_VALUE);
+        explicit solution_base(std::vector<int> x) {
+            iterator_utils::fill_random(gaps.begin(), gaps.end(), MIN_GAP_VALUE, MAX_GAP_VALUE);
             std::copy_backward(x.begin(), x.end(), gaps.end());
             normalize();
         }
