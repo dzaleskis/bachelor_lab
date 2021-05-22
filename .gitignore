@@ -3,3 +3,4 @@ obj/
 lab.exe
 sobj_ga_shellsort.json
 mobj_ga_shellsort.json
+transformed_gaps.json

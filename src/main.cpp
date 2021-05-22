@@ -100,7 +100,55 @@ void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	std::cout << "ciura assignments:" << ciura_stats.avg_assignments << " comparisons: " << ciura_stats.avg_comparisons << std::endl;
 	std::cout << "simpson assignments:" << simpson_stats.avg_assignments << " comparisons: " << simpson_stats.avg_comparisons << std::endl;
 	std::cout << "my assignments:" << my_stats.avg_assignments << " comparisons: " << my_stats.avg_comparisons << std::endl;
+}
 
+void print_gap_seq(std::vector<int> gap_seq) {
+	for (const auto gap: gap_seq) {
+		std::cout << gap << ' ';
+	}
+
+	std::cout << std::endl;
+}
+
+void run_bench(std::vector<std::vector<int>> & gaps, int runs) {
+	const int GAP_SEQ_LEN = 7;
+
+	int best_comparisons = INT_MAX;
+	int best_assignments = INT_MAX;
+
+	std::vector<int> best_assignments_seq;
+	std::vector<int> best_comparisons_seq;
+
+	best_comparisons_seq.reserve(GAP_SEQ_LEN);
+	best_assignments_seq.reserve(GAP_SEQ_LEN);
+
+	for (auto gap_seq: gaps) {
+		print_gap_seq(gap_seq);
+		
+		std::array<int, GAP_SEQ_LEN> gap_arr;
+		std::copy_n(gap_seq.begin(), GAP_SEQ_LEN, gap_arr.begin());
+
+		auto stats = fitness::eval_classic_fitness<1000>(gap_arr, runs);
+		std::cout << "assignments:" << stats.avg_assignments << " comparisons: " << stats.avg_comparisons << std::endl;
+
+		if (stats.avg_assignments < best_assignments) {
+			best_assignments = stats.avg_assignments;
+			best_assignments_seq = gap_seq;
+		}
+
+		if (stats.avg_comparisons < best_comparisons) {
+			best_comparisons = stats.avg_comparisons;
+			best_comparisons_seq = gap_seq;
+		}
+	}
+
+	std::cout << std::endl;
+	std::cout << "best assignments:" << best_assignments << std::endl;
+	print_gap_seq(best_assignments_seq);
+
+	std::cout << std::endl;
+	std::cout << " best comparisons: " << best_comparisons << std::endl;
+	print_gap_seq(best_comparisons_seq);
 }
 
 int main(int argc, char* argv[]) {
@@ -108,8 +156,11 @@ int main(int argc, char* argv[]) {
 
     std::string filename = "";
 	std::string mode = "mobj";
+	int runs = 100;
+
     app.add_option("-f,--file", filename, "Specify input file for gap initialization");
 	app.add_option("-m,--mode", mode, "Specify run mode");
+	app.add_option("-r,--runs", runs, "Specify benchmark runs");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -128,6 +179,8 @@ int main(int argc, char* argv[]) {
 		run_mobj_ga_shellsort(initial_gaps);
 	} else if (mode == "sobj") {
 		run_sobj_ga_shellsort(initial_gaps);
+	} else if (mode == "bench") {
+		run_bench(initial_gaps, runs);
 	} else {
 		std::cerr << "invalid mode" << std::endl;
 		exit(-1);
