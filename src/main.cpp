@@ -78,7 +78,7 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.multi_threading=true;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
-	ga_obj.population=1000;
+	ga_obj.population=5000;
 	ga_obj.user_initial_solutions=initial_solutions;
 	ga_obj.generation_max=100;
 	ga_obj.calculate_SO_total_fitness=sobj_ga_shellsort::calculate_SO_total_fitness;
@@ -88,21 +88,15 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.crossover=sobj_ga_shellsort::crossover;
 	ga_obj.SO_report_generation=sobj_ga_shellsort::SO_report_generation;
 	ga_obj.crossover_fraction=0.1;
-	ga_obj.mutation_rate=0.7;
-	ga_obj.best_stall_max=20;
-	ga_obj.average_stall_max=20;
+	ga_obj.mutation_rate=0.5;
+	ga_obj.elite_count=10;
+	ga_obj.best_stall_max=10;
+	ga_obj.average_stall_max=5;
 	ga_obj.verbose=false;
 	ga_obj.solve();
 
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
 	sobj_ga_shellsort::save_results(ga_obj);
-
-//	auto ciura_gaps = std::vector<int> {301, 132, 57, 23, 10, 4, 1};
-//	auto simpson_gaps = std::vector<int> {893, 219, 83, 36, 13, 4, 1};
-//	auto my_gaps = ga_obj.last_generation.chromosomes[ga_obj.last_generation.best_chromosome_index].genes.gaps;
-//
-//	auto all_gaps = std::vector<std::vector<int>> {ciura_gaps, simpson_gaps, my_gaps};
-//	run_bench(all_gaps, 1000, 20);
 }
 
 int main(int argc, char* argv[]) {
