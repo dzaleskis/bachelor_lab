@@ -8,13 +8,13 @@ namespace ga_solution {
 
     using json = nlohmann::json;
 
-	const double EQUAL_PROBABILITY = 0.5;
-	const double MUT_SCALE = 0.2;
-	const double MUTATION_PROBABILITY = 0.5;
-	const int MUT_CEILING = 100;
+	constexpr const double EQUAL_PROBABILITY = 0.5;
 
     template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
 	struct solution_base {
+        constexpr static const double MUT_SCALE = 0.2;
+        constexpr static const double MUTATION_PROBABILITY = 0.5;
+        constexpr static const int MUT_CEILING = 100;
 		std::vector<int> gaps = std::vector<int>(GAP_COUNT);
 
         solution_base() = default;
@@ -26,8 +26,8 @@ namespace ga_solution {
         }
 
 		void init_genes(const std::function<double(void)> &rnd01) {
-			for (int i = 0; i < gaps.size(); i++) {
-				gaps[i] = std::floor(rnd01() * MAX_GAP_VALUE);
+			for (int & gap : gaps) {
+				gap = std::floor(rnd01() * MAX_GAP_VALUE);
 			}
 			normalize();
 		}
@@ -88,6 +88,85 @@ namespace ga_solution {
 	};
 
     template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
+    struct solution_extended {
+        constexpr static const double MUT_SCALE = 0.2;
+        constexpr static const double MUTATION_PROBABILITY = 0.5;
+        constexpr static const int MUT_CEILING = 1000;
+
+        std::vector<int> gaps = std::vector<int>(GAP_COUNT);
+
+        solution_extended() = default;
+
+        explicit solution_extended(std::vector<int> x) {
+            iterator_utils::fill_random(gaps.begin(), gaps.end(), MIN_GAP_VALUE, MAX_GAP_VALUE);
+            std::copy_backward(x.begin(), x.end(), gaps.end());
+            normalize();
+        }
+
+        void init_genes(const std::function<double(void)> &rnd01) {
+            for (int & gap : gaps) {
+                gap = std::floor(rnd01() * MAX_GAP_VALUE);
+            }
+            normalize();
+        }
+
+        void normalize() {
+            const static std::vector<int> tail_seq = std::vector<int> {974,669,137,40,13,5,1};
+            // ensure the end contains tail sequence
+            std::copy_backward(tail_seq.begin(), tail_seq.end(), this->gaps.end());
+            std::sort(this->gaps.begin(), this->gaps.end(), std::greater<int>());
+        }
+
+        solution_extended crossover(
+                const solution_extended& X2,
+                const std::function<double(void)> &rnd01) const {
+            solution_extended X_new;
+
+            // using uniform distribution
+            for (int i = 0; i < X_new.gaps.size(); i++) {
+                double prob = rnd01();
+                if (prob < EQUAL_PROBABILITY) {
+                    X_new.gaps[i] = this->gaps[i];
+                } else {
+                    X_new.gaps[i] = X2.gaps[i];
+                }
+            }
+
+            X_new.normalize();
+
+            return X_new;
+        }
+
+        solution_extended mutate(
+                const std::function<double(void)> &rnd01,
+                double shrink_scale) const {
+            solution_extended X_new = *this;
+            const double mut_radius = MUT_SCALE * shrink_scale;
+
+            for (int i = 0; i < gaps.size(); i++) {
+                bool do_mutate = rnd01() < MUTATION_PROBABILITY;
+                if (do_mutate) {
+                    int new_gap;
+                    do {
+                        double raw_mutation = mut_radius * (rnd01()-rnd01()); // value is between -1.0 and 1.0
+                        int adjusted_mutation = std::floor(raw_mutation * MUT_CEILING); // scale the value
+                        new_gap = gaps[i] + adjusted_mutation;
+                    } while(!is_gap_valid(new_gap));
+                    X_new.gaps[i] = new_gap;
+                }
+            }
+
+            X_new.normalize();
+
+            return X_new;
+        }
+
+        inline bool is_gap_valid(int gap) const {
+            return gap >= MIN_GAP_VALUE && gap <= MAX_GAP_VALUE;
+        }
+    };
+
+    template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
     void to_json(json& j, const solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>& sol) {
 		j = json{
 			{"gaps", sol.gaps},
@@ -96,6 +175,19 @@ namespace ga_solution {
 
     template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
 	void from_json(const json& j, solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>& sol) {
+        j.at("gaps").get_to(sol.gaps);
+    }
+
+
+    template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
+    void to_json(json& j, const solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>& sol) {
+        j = json{
+                {"gaps", sol.gaps},
+        };
+    }
+
+    template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
+    void from_json(const json& j, solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>& sol) {
         j.at("gaps").get_to(sol.gaps);
     }
 }

@@ -7,6 +7,6 @@ const [input_file = 'gaps.json', output_file = 'transformed_gaps.json'] = args;
 
 const raw_result = fs.readFileSync(input_file, 'utf8');
 const data = JSON.parse(raw_result);
-data.forEach(gap_seq => gap_seq.sort());
+const transformed = data.map(gap_seq => gap_seq.sort((a, b) => a < b));
 
-fs.writeFileSync(output_file, JSON.stringify(data));
+fs.writeFileSync(output_file, JSON.stringify(transformed));

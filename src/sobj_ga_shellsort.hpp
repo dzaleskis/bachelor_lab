@@ -12,15 +12,15 @@
 
 namespace sobj_ga_shellsort {
 	
-	const int GAP_COUNT = 7;
-	const int EVAL_ARRAY_SIZE = 1000;
+	const int GAP_COUNT = 15;
+	const int EVAL_ARRAY_SIZE = 1000000;
 	const int EVAL_RUNS = 1;
 	const int MIN_GAP_VALUE = 1;
-	const int MAX_GAP_VALUE = EVAL_ARRAY_SIZE;
+	const int MAX_GAP_VALUE = 600000;
 	const char* result_filename = "sobj_ga_shellsort.json";
 
 	using json = nlohmann::json;
-	using solution = ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
+	using solution = ga_solution::solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
 
 	struct middle_cost {
 		double avg_comparison_count;

@@ -58,11 +58,17 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	const int MIN_GAP_VALUE = sobj_ga_shellsort::MIN_GAP_VALUE;
 	const int MAX_GAP_VALUE = sobj_ga_shellsort::MAX_GAP_VALUE;
 
-	std::vector<ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
+//	std::vector<ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
+//
+//	for (const auto& gaps: initial_gaps) {
+//		initial_solutions.push_back(ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
+//	}
 
-	for (const auto& gaps: initial_gaps) {
-		initial_solutions.push_back(ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
-	}
+    std::vector<ga_solution::solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
+
+    for (const auto& gaps: initial_gaps) {
+        initial_solutions.push_back(ga_solution::solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
+    }
 
 	EA::Chronometer timer;
 	timer.tic();
@@ -72,17 +78,17 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.multi_threading=true;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
-	ga_obj.population=15000;
+	ga_obj.population=1000;
 	ga_obj.user_initial_solutions=initial_solutions;
-	ga_obj.generation_max=500;
+	ga_obj.generation_max=100;
 	ga_obj.calculate_SO_total_fitness=sobj_ga_shellsort::calculate_SO_total_fitness;
 	ga_obj.init_genes=sobj_ga_shellsort::init_genes;
 	ga_obj.eval_solution=sobj_ga_shellsort::eval_solution;
 	ga_obj.mutate= sobj_ga_shellsort::mutate;
 	ga_obj.crossover=sobj_ga_shellsort::crossover;
 	ga_obj.SO_report_generation=sobj_ga_shellsort::SO_report_generation;
-	ga_obj.crossover_fraction=0.01;
-	ga_obj.mutation_rate=0.9;
+	ga_obj.crossover_fraction=0.1;
+	ga_obj.mutation_rate=0.7;
 	ga_obj.best_stall_max=20;
 	ga_obj.average_stall_max=20;
 	ga_obj.verbose=false;
@@ -91,12 +97,12 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
 	sobj_ga_shellsort::save_results(ga_obj);
 
-	auto ciura_gaps = std::vector<int> {301, 132, 57, 23, 10, 4, 1};
-	auto simpson_gaps = std::vector<int> {893, 219, 83, 36, 13, 4, 1};
-	auto my_gaps = ga_obj.last_generation.chromosomes[ga_obj.last_generation.best_chromosome_index].genes.gaps;
-
-	auto all_gaps = std::vector<std::vector<int>> {ciura_gaps, simpson_gaps, my_gaps};
-	run_bench(all_gaps, 1000, 20);
+//	auto ciura_gaps = std::vector<int> {301, 132, 57, 23, 10, 4, 1};
+//	auto simpson_gaps = std::vector<int> {893, 219, 83, 36, 13, 4, 1};
+//	auto my_gaps = ga_obj.last_generation.chromosomes[ga_obj.last_generation.best_chromosome_index].genes.gaps;
+//
+//	auto all_gaps = std::vector<std::vector<int>> {ciura_gaps, simpson_gaps, my_gaps};
+//	run_bench(all_gaps, 1000, 20);
 }
 
 int main(int argc, char* argv[]) {
