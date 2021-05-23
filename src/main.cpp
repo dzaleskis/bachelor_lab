@@ -1,57 +1,20 @@
 #include <iostream>
 #include <array>
-#include <algorithm>
 #include "json.hpp"
 #include "array_utils.hpp"
 #include "openGA.hpp"
 #include "mobj_ga_shellsort.hpp"
 #include "sobj_ga_shellsort.hpp"
 #include "CLI11.hpp"
+#include "benchmarks.hpp"
 
 using json = nlohmann::json;
 
-void print_gap_seq(const std::vector<int>& gap_seq) {
-    for (const auto gap: gap_seq) {
-        std::cout << gap << ' ';
-    }
-
-    std::cout << std::endl;
-}
-
 void run_bench(std::vector<std::vector<int>> & gaps, int array_size, int runs) {
-    double best_comparisons = INT_MAX;
-    double best_assignments = INT_MAX;
-
-    std::vector<int> best_assignments_seq;
-    std::vector<int> best_comparisons_seq;
-
-    for (auto gap_seq: gaps) {
-        print_gap_seq(gap_seq);
-
-        auto stats = fitness::eval_classic_fitness(gap_seq, array_size, runs);
-        std::cout << "assignments:" << stats.avg_assignments << " comparisons: " << stats.avg_comparisons << std::endl;
-
-        if (stats.avg_assignments < best_assignments) {
-            best_assignments = stats.avg_assignments;
-            best_assignments_seq = gap_seq;
-        }
-
-        if (stats.avg_comparisons < best_comparisons) {
-            best_comparisons = stats.avg_comparisons;
-            best_comparisons_seq = gap_seq;
-        }
-    }
-
-    std::cout << std::endl;
-    std::cout << "best assignments:" << best_assignments << std::endl;
-    print_gap_seq(best_assignments_seq);
-
-    std::cout << std::endl;
-    std::cout << " best comparisons: " << best_comparisons << std::endl;
-    print_gap_seq(best_comparisons_seq);
+    benchmarks::bench_classic_ops(gaps, array_size, runs);
 }
 
-void run_mobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
+void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 
 	const int GAP_COUNT = mobj_ga_shellsort::GAP_COUNT;
 	const int MIN_GAP_VALUE = mobj_ga_shellsort::MIN_GAP_VALUE;
@@ -89,7 +52,7 @@ void run_mobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 }
 
 
-void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
+void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 
 	const int GAP_COUNT = sobj_ga_shellsort::GAP_COUNT;
 	const int MIN_GAP_VALUE = sobj_ga_shellsort::MIN_GAP_VALUE;
@@ -131,8 +94,8 @@ void run_sobj_ga_shellsort(std::vector<std::vector<int>> & initial_gaps) {
 	auto ciura_gaps = std::vector<int> {301, 132, 57, 23, 10, 4, 1};
 	auto simpson_gaps = std::vector<int> {893, 219, 83, 36, 13, 4, 1};
 	auto my_gaps = ga_obj.last_generation.chromosomes[ga_obj.last_generation.best_chromosome_index].genes.gaps;
-	auto all_gaps = std::vector<std::vector<int>> {ciura_gaps, simpson_gaps, my_gaps};
 
+	auto all_gaps = std::vector<std::vector<int>> {ciura_gaps, simpson_gaps, my_gaps};
 	run_bench(all_gaps, 1000, 20);
 }
 
