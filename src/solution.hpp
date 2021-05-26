@@ -87,7 +87,7 @@ namespace ga_solution {
 		}
 	};
 
-    template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
+    template <std::size_t GAP_COUNT>
     struct solution_extended {
         constexpr static const double MUTATION_PROBABILITY = 0.5;
         constexpr static const int TAIL_SEQ_LEN = 7;
@@ -138,7 +138,6 @@ namespace ga_solution {
             for (int i = 0; i < gaps.size() - TAIL_SEQ_LEN; i++) {
                 if (rnd01() < MUTATION_PROBABILITY) {
                     X_new.gaps[i] = mutate_gap(i, gaps[i], rnd01, mut_radius);
-                    break;
                 }
             }
 
@@ -170,23 +169,23 @@ namespace ga_solution {
         }
 
         inline int get_mut_ceiling(int index) const {
-            static const std::array<int, 8> mut_ceilings {30000, 10000, 5000,
-                                                          2500, 1000, 500,
-                                                          250, 100};
+            static const std::array<int, 8> mut_ceilings {3000, 2000, 1000,
+                                                          500, 400, 200,
+                                                          100, 25};
             return mut_ceilings[index];
         }
 
         inline int get_lower_bound(int index) const {
-            static const std::array<int, 8> lower_bounds {300000, 100000, 50000,
-                                                          25000, 10000, 5000,
-                                                          2500, 1000};
+            static const std::array<int, 8> lower_bounds {550000, 110000, 50000,
+                                                          30000, 10000, 5000,
+                                                          2500, 1400};
             return lower_bounds[index];
         }
 
         inline int get_higher_bound(int index) const {
-            static const std::array<int, 8> higher_bounds {600000, 300000-1, 100000-1,
-                                                           50000-1, 25000-1, 10000-1,
-                                                           5000-1, 2500-1};
+            static const std::array<int, 8> higher_bounds {600000, 210000, 100000,
+                                                           40000, 15000, 9000,
+                                                           4000, 1600};
             return higher_bounds[index];
         }
     };
@@ -204,15 +203,15 @@ namespace ga_solution {
     }
 
 
-    template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
-    void to_json(json& j, const solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>& sol) {
+    template <std::size_t GAP_COUNT>
+    void to_json(json& j, const solution_extended<GAP_COUNT>& sol) {
         j = json{
                 {"gaps", sol.gaps},
         };
     }
 
-    template <std::size_t GAP_COUNT, int MIN_GAP_VALUE, int MAX_GAP_VALUE>
-    void from_json(const json& j, solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>& sol) {
+    template <std::size_t GAP_COUNT>
+    void from_json(const json& j, solution_extended<GAP_COUNT>& sol) {
         j.at("gaps").get_to(sol.gaps);
     }
 }

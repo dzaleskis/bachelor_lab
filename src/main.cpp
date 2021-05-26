@@ -23,7 +23,7 @@ void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	std::vector<ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
 
 	for (const auto& gaps: initial_gaps) {
-		initial_solutions.push_back(ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
+		initial_solutions.emplace_back(gaps);
 	}
 
 	EA::Chronometer timer;
@@ -55,8 +55,6 @@ void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 
 	const int GAP_COUNT = sobj_ga_shellsort::GAP_COUNT;
-	const int MIN_GAP_VALUE = sobj_ga_shellsort::MIN_GAP_VALUE;
-	const int MAX_GAP_VALUE = sobj_ga_shellsort::MAX_GAP_VALUE;
 
 //	std::vector<ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
 //
@@ -64,10 +62,10 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 //		initial_solutions.push_back(ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
 //	}
 
-    std::vector<ga_solution::solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>> initial_solutions;
+    std::vector<ga_solution::solution_extended<GAP_COUNT>> initial_solutions;
 
     for (const auto& gaps: initial_gaps) {
-        initial_solutions.push_back(ga_solution::solution_extended<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>(gaps));
+        initial_solutions.emplace_back(gaps);
     }
 
 	EA::Chronometer timer;
@@ -89,7 +87,7 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.SO_report_generation=sobj_ga_shellsort::SO_report_generation;
 	ga_obj.crossover_fraction=0.1;
 	ga_obj.mutation_rate=0.5;
-	ga_obj.elite_count=10;
+	ga_obj.elite_count=5;
 	ga_obj.best_stall_max=10;
 	ga_obj.average_stall_max=5;
 	ga_obj.verbose=false;

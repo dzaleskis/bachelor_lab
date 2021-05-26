@@ -3,6 +3,7 @@
 #include <random>
 #include <functional>
 #include <chrono>
+#include <limits.h>
 
 namespace random_utils {
     // NOTE: random device does NOT work correctly on win with MinGW
