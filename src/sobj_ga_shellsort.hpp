@@ -27,7 +27,7 @@ namespace sobj_ga_shellsort {
 	};
 
 	struct optimization_result {
-		middle_cost middle_cost;
+		middle_cost cost;
 		sobj_solution solution;
 	};
 
@@ -42,11 +42,11 @@ namespace sobj_ga_shellsort {
     }
 
 	void to_json(json& j, const optimization_result& res) {
-        j = json{{"middle_cost", res.middle_cost}, {"sobj_solution", res.solution}};
+        j = json{{"cost", res.cost}, {"sobj_solution", res.solution}};
     }
 
     void from_json(const json& j, optimization_result& res) {
-        j.at("middle_cost").get_to(res.middle_cost);
+        j.at("cost").get_to(res.cost);
         j.at("sobj_solution").get_to(res.solution);
     }
 

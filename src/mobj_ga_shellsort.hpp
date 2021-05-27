@@ -28,7 +28,7 @@ namespace mobj_ga_shellsort {
 	};
 
 	struct optimization_result {
-		middle_cost middle_cost;
+		middle_cost cost;
         mobj_solution solution;
 	};
 
@@ -45,11 +45,11 @@ namespace mobj_ga_shellsort {
     }
 
 	void to_json(json& j, const optimization_result& res) {
-        j = json{{"middle_cost", res.middle_cost}, {"my_solution", res.solution}};
+        j = json{{"cost", res.cost}, {"my_solution", res.solution}};
     }
 
     void from_json(const json& j, optimization_result& res) {
-        j.at("middle_cost").get_to(res.middle_cost);
+        j.at("cost").get_to(res.cost);
         j.at("my_solution").get_to(res.solution);
     }
 
