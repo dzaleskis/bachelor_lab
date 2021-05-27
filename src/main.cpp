@@ -10,11 +10,17 @@
 
 using json = nlohmann::json;
 
+struct ga_config {
+    int population;
+    double mut_rate;
+    double crossover_frac;
+};
+
 void run_bench(std::vector<std::vector<int>> & gaps, int array_size, int runs) {
     benchmarks::bench_classic_ops(gaps, array_size, runs);
 }
 
-void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
+void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps, const ga_config & config) {
 
 	const int GAP_COUNT = mobj_ga_shellsort::GAP_COUNT;
 	const int MIN_GAP_VALUE = mobj_ga_shellsort::MIN_GAP_VALUE;
@@ -34,7 +40,7 @@ void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.multi_threading=true;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
-	ga_obj.population=1000;
+	ga_obj.population=config.population;
 	ga_obj.user_initial_solutions=initial_solutions;
 	ga_obj.generation_max=100;
 	ga_obj.calculate_MO_objectives=mobj_ga_shellsort::calculate_MO_objectives;
@@ -43,8 +49,8 @@ void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps) {
 	ga_obj.mutate= mobj_ga_shellsort::mutate;
 	ga_obj.crossover= mobj_ga_shellsort::crossover;
 	ga_obj.MO_report_generation=mobj_ga_shellsort::MO_report_generation;
-	ga_obj.crossover_fraction=0.1;
-	ga_obj.mutation_rate=0.8;
+	ga_obj.crossover_fraction=config.crossover_frac;
+	ga_obj.mutation_rate=config.mut_rate;
 	ga_obj.solve();
 
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
@@ -104,11 +110,15 @@ int main(int argc, char* argv[]) {
 	std::string mode = "sobj";
 	int runs = 100;
 	int array_size = 1000;
+	ga_config config = { 1000, 0.7, 0.1 };
 
     app.add_option("-f,--file", filename, "Specify input file for gap initialization");
 	app.add_option("-m,--mode", mode, "Specify run mode");
 	app.add_option("-r,--runs", runs, "Specify benchmark runs");
     app.add_option("-s,--size", array_size, "Specify benchmark array size");
+    app.add_option("-p,--pop", config.population, "Specify GA population");
+    app.add_option("-m,--mut", config.mut_rate, "Specify GA mutation rate");
+    app.add_option("-c,--cro", config.crossover_frac, "Specify GA crossover fraction");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -124,7 +134,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (mode == "mobj") {
-		run_mobj_ga_shellsort(initial_gaps);
+		run_mobj_ga_shellsort(initial_gaps, config);
 	} else if (mode == "sobj") {
 		run_sobj_ga_shellsort(initial_gaps);
 	} else if (mode == "bench") {
