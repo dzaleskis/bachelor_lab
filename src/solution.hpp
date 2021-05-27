@@ -89,7 +89,7 @@ namespace ga_solution {
 
     template <std::size_t GAP_COUNT>
     struct solution_extended {
-        constexpr static const double MUTATION_PROBABILITY = 0.5;
+        constexpr static const double MUTATION_PROBABILITY = 0.33;
         constexpr static const int TAIL_SEQ_LEN = 7;
 
         std::vector<int> gaps = std::vector<int>(GAP_COUNT);
@@ -169,9 +169,9 @@ namespace ga_solution {
         }
 
         inline int get_mut_ceiling(int index) const {
-            static const std::array<int, 8> mut_ceilings {3000, 2000, 1000,
-                                                          500, 400, 200,
-                                                          100, 25};
+            static const std::array<int, 8> mut_ceilings {120, 100, 80,
+                                                          60, 40, 20,
+                                                          10, 5};
             return mut_ceilings[index];
         }
 

@@ -14,9 +14,7 @@ namespace sobj_ga_shellsort {
 	
 	const int GAP_COUNT = 15;
 	const int EVAL_ARRAY_SIZE = 1000000;
-	const int EVAL_RUNS = 2;
-	const int MIN_GAP_VALUE = 1;
-	const int MAX_GAP_VALUE = 600000;
+	const int EVAL_RUNS = 3;
 	const char* result_filename = "sobj_ga_shellsort.json";
 
 	using json = nlohmann::json;

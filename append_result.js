@@ -11,7 +11,7 @@ const [input_file, output_file = 'gaps.json'] = args;
 
 const raw_result = fs.readFileSync(input_file, 'utf8');
 const data = JSON.parse(raw_result);
-const transformed = data.results.map(res => res.solution.gaps);
+const transformed = data.results.map(res => res.sobj_solution.gaps);
 
 let existing_gaps = [];
 
