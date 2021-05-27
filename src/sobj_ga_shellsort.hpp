@@ -20,7 +20,7 @@ namespace sobj_ga_shellsort {
 	const char* result_filename = "sobj_ga_shellsort.json";
 
 	using json = nlohmann::json;
-	using solution = ga_solution::solution_extended<GAP_COUNT>;
+	using sobj_solution = ga_solution::solution_extended<GAP_COUNT>;
 
 	struct middle_cost {
 		double avg_comparison_count;
@@ -28,7 +28,7 @@ namespace sobj_ga_shellsort {
 
 	struct optimization_result {
 		middle_cost middle_cost;
-		solution solution;
+		sobj_solution solution;
 	};
 
 	void to_json(json& j, const middle_cost& m_cost) {
@@ -42,22 +42,22 @@ namespace sobj_ga_shellsort {
     }
 
 	void to_json(json& j, const optimization_result& res) {
-        j = json{{"middle_cost", res.middle_cost}, {"solution", res.solution}};
+        j = json{{"middle_cost", res.middle_cost}, {"sobj_solution", res.solution}};
     }
 
     void from_json(const json& j, optimization_result& res) {
         j.at("middle_cost").get_to(res.middle_cost);
-        j.at("solution").get_to(res.solution);
+        j.at("sobj_solution").get_to(res.solution);
     }
 
-	typedef EA::Genetic<solution, middle_cost> GA_Type;
-	typedef EA::GenerationType<solution, middle_cost> Generation_Type;
+	typedef EA::Genetic<sobj_solution, middle_cost> GA_Type;
+	typedef EA::GenerationType<sobj_solution, middle_cost> Generation_Type;
 
-	void init_genes(solution& p, const std::function<double(void)> &rnd01) {
+	void init_genes(sobj_solution& p, const std::function<double(void)> &rnd01) {
 		p.init_genes(rnd01);
 	}
 
-	bool eval_solution(const solution& p, middle_cost &c) {
+	bool eval_solution(const sobj_solution& p, middle_cost &c) {
 		auto fitness = fitness::eval_classic_fitness(p.gaps, EVAL_ARRAY_SIZE, EVAL_RUNS);
 
 		c.avg_comparison_count = fitness.avg_comparisons;
@@ -65,17 +65,17 @@ namespace sobj_ga_shellsort {
 		return true; // genes are accepted
 	}
 
-	solution mutate(
-	const solution& X_base,
+	sobj_solution mutate(
+	const sobj_solution& X_base,
 	const std::function<double(void)> &rnd01,
 	double shrink_scale)
 	{
 		return X_base.mutate(rnd01, shrink_scale);
 	}
 
-	solution crossover(
-		const solution& X1,
-		const solution& X2,
+	sobj_solution crossover(
+		const sobj_solution& X1,
+		const sobj_solution& X2,
 		const std::function<double(void)> &rnd01)
 	{
 		return X1.crossover(X2, rnd01);
@@ -89,8 +89,8 @@ namespace sobj_ga_shellsort {
 
     void SO_report_generation(
 	int generation_number,
-	const EA::GenerationType<solution, middle_cost> &last_generation,
-	const solution& best_genes)
+	const EA::GenerationType<sobj_solution, middle_cost> &last_generation,
+	const sobj_solution& best_genes)
     {
         json j = {
 			{"generation_number", generation_number},

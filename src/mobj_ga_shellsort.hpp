@@ -20,7 +20,7 @@ namespace mobj_ga_shellsort {
 	const char* result_filename = "mobj_ga_shellsort.json";
 
 	using json = nlohmann::json;
-	using solution = ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
+	using mobj_solution = ga_solution::solution_base<GAP_COUNT, MIN_GAP_VALUE, MAX_GAP_VALUE>;
 
 	struct middle_cost {
 		double avg_comparison_count;
@@ -29,7 +29,7 @@ namespace mobj_ga_shellsort {
 
 	struct optimization_result {
 		middle_cost middle_cost;
-		solution solution;
+        mobj_solution solution;
 	};
 
 	void to_json(json& j, const middle_cost& m_cost) {
@@ -45,22 +45,22 @@ namespace mobj_ga_shellsort {
     }
 
 	void to_json(json& j, const optimization_result& res) {
-        j = json{{"middle_cost", res.middle_cost}, {"solution", res.solution}};
+        j = json{{"middle_cost", res.middle_cost}, {"my_solution", res.solution}};
     }
 
     void from_json(const json& j, optimization_result& res) {
         j.at("middle_cost").get_to(res.middle_cost);
-        j.at("solution").get_to(res.solution);
+        j.at("my_solution").get_to(res.solution);
     }
 
-	typedef EA::Genetic<solution, middle_cost> GA_Type;
-	typedef EA::GenerationType<solution, middle_cost> Generation_Type;
+	typedef EA::Genetic<mobj_solution, middle_cost> GA_Type;
+	typedef EA::GenerationType<mobj_solution, middle_cost> Generation_Type;
 
-	void init_genes(solution& p, const std::function<double(void)> &rnd01) {
+	void init_genes(mobj_solution& p, const std::function<double(void)> &rnd01) {
 		p.init_genes(rnd01);
 	}
 
-	bool eval_solution(const solution& p, middle_cost &c) {
+	bool eval_solution(const mobj_solution& p, middle_cost &c) {
 		auto fitness = fitness::eval_classic_fitness(p.gaps, EVAL_ARRAY_SIZE, EVAL_RUNS);
 
 		c.avg_comparison_count = fitness.avg_comparisons;
@@ -69,17 +69,17 @@ namespace mobj_ga_shellsort {
 		return true; // genes are accepted
 	}
 
-	solution mutate(
-	const solution& X_base,
+    mobj_solution mutate(
+	const mobj_solution& X_base,
 	const std::function<double(void)> &rnd01,
 	double shrink_scale)
 	{
 		return X_base.mutate(rnd01, shrink_scale);
 	}
 
-	solution crossover(
-		const solution& X1,
-		const solution& X2,
+    mobj_solution crossover(
+		const mobj_solution& X1,
+		const mobj_solution& X2,
 		const std::function<double(void)> &rnd01)
 	{
 		return X1.crossover(X2, rnd01);
@@ -96,7 +96,7 @@ namespace mobj_ga_shellsort {
 		
 	void MO_report_generation(
 		int generation_number,
-		const EA::GenerationType<solution, middle_cost> &last_generation,
+		const EA::GenerationType<mobj_solution, middle_cost> &last_generation,
 		const std::vector<unsigned int>& pareto_front)
 	{
 		(void) last_generation;

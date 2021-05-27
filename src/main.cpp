@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
 	app.add_option("-r,--runs", runs, "Specify benchmark runs");
     app.add_option("-s,--size", array_size, "Specify benchmark array size");
     app.add_option("-p,--pop", config.population, "Specify GA population");
-    app.add_option("-m,--mut", config.mut_rate, "Specify GA mutation rate");
+    app.add_option("-x,--x_rate", config.mut_rate, "Specify GA mutation rate");
     app.add_option("-c,--cro", config.crossover_frac, "Specify GA crossover fraction");
 
     CLI11_PARSE(app, argc, argv);
