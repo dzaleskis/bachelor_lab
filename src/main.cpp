@@ -61,7 +61,8 @@ void run_mobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps, c
 void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps, const ga_config & config) {
 
 	const int GAP_COUNT = sobj_ga_shellsort::GAP_COUNT;
-    std::vector<ga_solution::solution_extended<GAP_COUNT>> initial_solutions;
+	const int MAX_GAP_VALUE = sobj_ga_shellsort::MAX_GAP_VALUE;
+    std::vector<ga_solution::solution_extended<GAP_COUNT, MAX_GAP_VALUE>> initial_solutions;
 
     for (const auto& gaps: initial_gaps) {
         initial_solutions.emplace_back(gaps);
@@ -77,7 +78,7 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps, c
 	ga_obj.verbose=false;
 	ga_obj.population=config.population;
 	ga_obj.user_initial_solutions=initial_solutions;
-	ga_obj.generation_max=100;
+	ga_obj.generation_max=200;
 	ga_obj.calculate_SO_total_fitness=sobj_ga_shellsort::calculate_SO_total_fitness;
 	ga_obj.init_genes=sobj_ga_shellsort::init_genes;
 	ga_obj.eval_solution=sobj_ga_shellsort::eval_solution;
@@ -86,8 +87,8 @@ void run_sobj_ga_shellsort(const std::vector<std::vector<int>> & initial_gaps, c
 	ga_obj.SO_report_generation=sobj_ga_shellsort::SO_report_generation;
 	ga_obj.crossover_fraction=config.crossover_frac;
 	ga_obj.mutation_rate=config.mut_rate;
-	ga_obj.elite_count=5;
-	ga_obj.best_stall_max=20;
+	ga_obj.elite_count=75;
+	ga_obj.best_stall_max=30;
 	ga_obj.average_stall_max=5;
 	ga_obj.verbose=false;
 	ga_obj.solve();
@@ -103,7 +104,7 @@ int main(int argc, char* argv[]) {
 	std::string mode = "sobj";
 	int runs = 100;
 	int array_size = 1000;
-	ga_config config = { 1000, 0.7, 0.1 };
+	ga_config config = { 1000, 0.02, 0.1 };
 
     app.add_option("-f,--file", filename, "Specify input file for gap initialization");
 	app.add_option("-m,--mode", mode, "Specify run mode");

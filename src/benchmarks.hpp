@@ -27,24 +27,25 @@ namespace benchmarks {
 
     void print_gap_seq(const std::vector<int>& gap_seq) {
         for (const auto gap: gap_seq) {
-            std::cout << gap << ' ';
+            std::cout << gap << ", ";
         }
 
         std::cout << std::endl;
     }
 
     void print_gap_seq_bench_comparisons(const gap_seq_bench& gap_seq_bench) {
-        std::cout << "avg. comparisons: " << gap_seq_bench.avg_comparisons << std::endl;
+        std::cout << "1. avg. comparisons: " << gap_seq_bench.avg_comparisons << std::endl;
     }
 
     void print_gap_seq_bench_assignments(const gap_seq_bench& gap_seq_bench) {
-        std::cout << "avg. assignments:" << gap_seq_bench.avg_assignments << std::endl;
+        std::cout << "2. avg. assignments:" << gap_seq_bench.avg_assignments << std::endl;
     }
 
     void print_gap_seq_ops_bench(const gap_seq_bench& gap_seq_bench) {
         print_gap_seq(gap_seq_bench.gap_seq);
         print_gap_seq_bench_comparisons(gap_seq_bench);
         print_gap_seq_bench_assignments(gap_seq_bench);
+        std::cout << std::endl;
     }
 
     void bench_classic_ops(const std::vector<std::vector<int>>& gap_seqs, int array_size, int runs) {

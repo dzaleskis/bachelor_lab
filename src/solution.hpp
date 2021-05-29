@@ -15,6 +15,7 @@ namespace ga_solution {
         constexpr static const double MUT_SCALE = 0.2;
         constexpr static const double MUTATION_PROBABILITY = 0.5;
         constexpr static const int MUT_CEILING = 100;
+
 		std::vector<int> gaps = std::vector<int>(GAP_COUNT);
 
         solution_base() = default;
@@ -87,10 +88,12 @@ namespace ga_solution {
 		}
 	};
 
-    template <std::size_t GAP_COUNT>
+    const static std::vector<int> tail_seq = std::vector<int> {974,669,137,40,13,5,1};
+
+    template <std::size_t GAP_COUNT, int MAX_GAP_VALUE>
     struct solution_extended {
         constexpr static const double MUTATION_PROBABILITY = 0.33;
-        constexpr static const int TAIL_SEQ_LEN = 7;
+        constexpr static const int MUT_CEILING = 50;
 
         std::vector<int> gaps = std::vector<int>(GAP_COUNT);
 
@@ -101,13 +104,11 @@ namespace ga_solution {
         }
 
         void init_genes(const std::function<double(void)> &rnd01) {
-            for (int i = 0; i < gaps.size(); i++) {
-                gaps[i] = generate_gap(i);
+            for (int & gap : gaps) {
+                gap = std::floor(rnd01() * MAX_GAP_VALUE);
             }
-        }
-
-        void normalize() {
-            std::sort(gaps.begin(), gaps.end(), std::greater<int>());
+            std::copy_backward(tail_seq.begin(), tail_seq.end(), gaps.end());
+            normalize();
         }
 
         solution_extended crossover(
@@ -123,7 +124,6 @@ namespace ga_solution {
                     X_new.gaps[i] = X2.gaps[i];
                 }
             }
-
             X_new.normalize();
 
             return X_new;
@@ -135,58 +135,29 @@ namespace ga_solution {
             solution_extended X_new = solution_extended(gaps);
             const double mut_radius = 0.2 * shrink_scale;
 
-            for (int i = 0; i < gaps.size() - TAIL_SEQ_LEN; i++) {
+            for (int i = 0; i < gaps.size() - tail_seq.size(); i++) {
                 if (rnd01() < MUTATION_PROBABILITY) {
-                    X_new.gaps[i] = mutate_gap(i, gaps[i], rnd01, mut_radius);
+                    X_new.gaps[i] = mutate_gap(gaps[i], rnd01, mut_radius);
                 }
             }
+            X_new.normalize();
 
             return X_new;
         }
 
-        inline int mutate_gap(int index, int value, const std::function<double(void)> &rnd01, double mut_radius) const {
+        void normalize() {
+            std::sort(gaps.begin(), gaps.end(), std::greater<int>());
+        }
+
+        inline int mutate_gap(int value, const std::function<double(void)> &rnd01, double mut_radius) const {
             double raw_mutation = mut_radius * (rnd01()-rnd01()); // value is between -1.0 and 1.0
-            int adjusted_mutation = std::floor(raw_mutation * get_mut_ceiling(index));
-
-            if (adjusted_mutation >= 0) {
-                // do positive mutation
-                return std::min(get_higher_bound(index), value + adjusted_mutation);
-            } else {
-                // do negative mutation
-                return std::max(get_lower_bound(index), value + adjusted_mutation);
-            }
-        }
-
-        inline int generate_gap(int index) const {
-            const static std::vector<int> tail_seq = std::vector<int> {974,669,137,40,13,5,1};
-
-            int diff = gaps.size() - tail_seq.size();
-
-            if (index >= diff) {
-                return tail_seq[index - diff];
-            }
-            return random_utils::get_random_int(get_lower_bound(index), get_higher_bound(index));
-        }
-
-        inline int get_mut_ceiling(int index) const {
-            static const std::array<int, 8> mut_ceilings {120, 100, 80,
-                                                          60, 40, 20,
-                                                          10, 5};
-            return mut_ceilings[index];
-        }
-
-        inline int get_lower_bound(int index) const {
-            static const std::array<int, 8> lower_bounds {550000, 110000, 50000,
-                                                          30000, 10000, 5000,
-                                                          2500, 1400};
-            return lower_bounds[index];
-        }
-
-        inline int get_higher_bound(int index) const {
-            static const std::array<int, 8> higher_bounds {600000, 210000, 100000,
-                                                           40000, 15000, 9000,
-                                                           4000, 1600};
-            return higher_bounds[index];
+            int adjusted_mutation = std::floor(raw_mutation * MUT_CEILING); // scale the value
+//            if (raw_mutation < 0) {
+//                adjusted_mutation = std::min(adjusted_mutation, -1);
+//            } else {
+//                adjusted_mutation = std::max(adjusted_mutation, 1);
+//            }
+            return value + adjusted_mutation;
         }
     };
 
@@ -203,15 +174,15 @@ namespace ga_solution {
     }
 
 
-    template <std::size_t GAP_COUNT>
-    void to_json(json& j, const solution_extended<GAP_COUNT>& sol) {
+    template <std::size_t GAP_COUNT, int MAX_GAP_VALUE>
+    void to_json(json& j, const solution_extended<GAP_COUNT, MAX_GAP_VALUE>& sol) {
         j = json{
                 {"gaps", sol.gaps},
         };
     }
 
-    template <std::size_t GAP_COUNT>
-    void from_json(const json& j, solution_extended<GAP_COUNT>& sol) {
+    template <std::size_t GAP_COUNT, int MAX_GAP_VALUE>
+    void from_json(const json& j, solution_extended<GAP_COUNT, MAX_GAP_VALUE>& sol) {
         j.at("gaps").get_to(sol.gaps);
     }
 }

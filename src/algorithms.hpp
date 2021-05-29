@@ -10,8 +10,10 @@ namespace algorithms {
 
     template <typename T>
     void shellsort_classic(std::vector<T>& vector, const std::vector<int>& gaps) {
+        const std::size_t size = vector.size();
+
         for (int gap: gaps) {
-            for (int i = gap; i < vector.size(); i++)
+            for (int i = gap; i < size; i++)
             {
                 T temp = vector[i];
                 int j = i;
@@ -29,9 +31,10 @@ namespace algorithms {
     template <typename T>
     ops_stats shellsort_classic_reported(std::vector<T>& vector, const std::vector<int>& gaps) {
         ops_stats stats;
+        const std::size_t size = vector.size();
 
         for (int gap: gaps) {
-            for (int i = gap; i < vector.size(); i++)
+            for (int i = gap; i < size; i++)
             {
                 stats.comparisons += 1;
 
@@ -55,6 +58,7 @@ namespace algorithms {
                 vector[j] = temp;
                 stats.assignments += 1;
             }
+            stats.comparisons += 1;
         }
 
         return stats;
@@ -62,8 +66,10 @@ namespace algorithms {
 
     template <typename T>
     void shellsort_improved(std::vector<T>& vector, const std::vector<int>& gaps) {
+        const std::size_t size = vector.size();
+
         for (int gap: gaps) {
-            for (int i = gap; i < vector.size(); i++)
+            for (int i = gap; i < size; i++)
             {
                 if (vector[i - gap] > vector[i]) {
                     T temp = vector[i];
@@ -84,9 +90,10 @@ namespace algorithms {
     template <typename T>
     ops_stats shellsort_improved_reported(std::vector<T>& vector, const std::vector<int>& gaps) {
         ops_stats stats;
+        const std::size_t size = vector.size();
 
         for (int gap: gaps) {
-            for (int i = gap; i < vector.size(); i++)
+            for (int i = gap; i < size; i++)
             {
                 stats.comparisons += 1;
 
@@ -120,6 +127,7 @@ namespace algorithms {
                 }
                 stats.comparisons += 1;
             }
+            stats.comparisons += 1;
         }
 
         return stats;
