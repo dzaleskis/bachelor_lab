@@ -36,29 +36,24 @@ namespace algorithms {
         for (int gap: gaps) {
             for (int i = gap; i < size; i++)
             {
-                stats.comparisons += 1;
-
                 T temp = vector[i];
+                stats.assignments += 1; // this is part of a swap, so needs to be counted
                 int j = i;
-                stats.assignments += 2;
-                
+
                 for (j; j >= gap && vector[j - gap] > temp; j -= gap)
                 {
-                    vector[j] = vector[j - gap];
-                    stats.comparisons += 2;
-                    stats.assignments += 2;
-                }
+                    stats.comparisons += 1; // loop comparison vector[j - gap] > temp
 
-                if (j < gap) {
+                    vector[j] = vector[j - gap];
+                    stats.assignments += 1;
+                }
+                if (j >= gap) { // this means vector[j - gap] > temp comparison was made
                     stats.comparisons += 1;
-                } else {
-                    stats.comparisons += 2;
                 }
 
                 vector[j] = temp;
-                stats.assignments += 1;
+                stats.assignments += 1; // part of a swap
             }
-            stats.comparisons += 1;
         }
 
         return stats;
@@ -95,39 +90,33 @@ namespace algorithms {
         for (int gap: gaps) {
             for (int i = gap; i < size; i++)
             {
-                stats.comparisons += 1;
-
                 if (vector[i - gap] > vector[i]) {
                     T temp = vector[i];
+                    stats.assignments += 1; // this is part of a swap, so needs to be counted
                     int j = i;
-                    stats.assignments += 2;
-
                     int loop_counter = 0;
 
                     do {
                         if (loop_counter > 0) {
-                            stats.comparisons += 2;
+                            stats.comparisons += 1; // vector[j - gap] > temp in the while condition
                         }
 
                         vector[j] = vector[j - gap];
                         j -= gap;
-                        stats.assignments += 2;
 
+                        stats.assignments += 1; // vector[j] = vector[j - gap];
                         loop_counter++;
                     } while (j >= gap && vector[j - gap] > temp);
 
-                    if (j < gap) {
-                        stats.comparisons += 1;
-                    } else {
-                        stats.comparisons += 2;
+                    if (j >= gap) {
+                        stats.comparisons += 1; // means vector[j - gap] > temp was executed, but false
                     }
 
                     vector[j] = temp;
-                    stats.assignments += 1;
+                    stats.assignments += 1; // part of a swap
                 }
-                stats.comparisons += 1;
+                stats.comparisons += 1; // vector[i - gap] > vector[i] in the if statement
             }
-            stats.comparisons += 1;
         }
 
         return stats;

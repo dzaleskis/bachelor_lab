@@ -24,20 +24,4 @@ namespace fitness {
 
         return { total_comparisons / runs, total_assignments / runs };
     }
-
-    gap_seq_fitness eval_improved_fitness(const std::vector<int>& gaps, int array_size, int runs) {
-        std::vector<int> vec = std::vector<int>(array_size);
-        double total_comparisons = 0;
-        double total_assignments = 0;
-
-        for (int i = 0; i < runs; i++) {
-            iterator_utils::fill_random(vec.begin(), vec.end());
-            auto stats = algorithms::shellsort_improved_reported(vec, gaps);
-            total_comparisons += stats.comparisons;
-            total_assignments += stats.assignments;
-        }
-
-        return { total_comparisons / runs, total_assignments / runs };
-    }
-
 }
