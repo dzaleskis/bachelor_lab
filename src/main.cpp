@@ -19,7 +19,7 @@ void run_classic_bench(std::vector<std::vector<int>> & gaps, int array_size, int
     std::cout << std::endl << "ops bench" << std::endl;
     benchmarks::bench_classic_ops(gaps, array_size, runs);
     std::cout << std::endl << "time bench" << std::endl;
-    // benchmarks::bench_classic_time(gaps, array_size, runs);
+    benchmarks::bench_classic_time(gaps, array_size, runs);
 }
 
 void run_improved_bench(std::vector<std::vector<int>> & gaps, int array_size, int runs) {
