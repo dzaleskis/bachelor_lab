@@ -2,6 +2,7 @@
 .vs/
 .idea/
 obj/
+cmake-build-debug/
 lab.exe
 sobj_ga_shellsort.json
 mobj_ga_shellsort.json
