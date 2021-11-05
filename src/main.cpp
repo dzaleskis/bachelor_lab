@@ -2,6 +2,9 @@
 #include "json.hpp"
 #include "openGA.hpp"
 #include "CLI11.hpp"
+#include "element.hpp"
+#include "fitness.hpp"
+#include "pass.hpp"
 
 using json = nlohmann::json;
 
@@ -41,6 +44,36 @@ void run_ga(const ga_config & config) {
 //	sobj_ga_shellsort::save_results(ga_obj);
 }
 
+void elements_example() {
+    auto report = global_measure.with_report([&] () {
+        auto e1 = Element<int>(5);
+        auto e2 = Element<int>(10);
+
+        assert(e1 < e2);
+        e1 = e2;
+        assert(e1 == e2);
+    });
+
+    std::cout << "assignments performed: " << report.assignments << '\n';
+    std::cout << "comparisons performed: " << report.comparisons << '\n';
+}
+
+void passes_example() {
+    auto e1 = Element<int>(15);
+    auto e2 = Element<int>(10);
+
+    std::vector<Element<int>> vec = {e1, e2};
+
+    auto factory = PassFactory<typeof(vec)>();
+    auto pass = factory.getPass(PassType::INSERTION);
+    pass->perform_pass(vec, vec.size(), 1);
+
+    for (auto e: vec) {
+        std::cout << e.get_value() << '\n';
+    }
+}
+
+
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA on gapsort"};
 
@@ -52,7 +85,9 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-    run_ga(config);
+    elements_example();
+//    passes_example();
+//    run_ga(config);
 
 	return 0;
 }

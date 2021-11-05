@@ -12,44 +12,47 @@ struct measure_report {
 class Measure {
     public:
         void incr_assignments() {
-            auto report = reports.at(current_key);
-            report.assignments += 1;
+            auto it = reports.find(current_key);
+            if (it == reports.end()) {
+                return;
+            }
+
+            (*it).second->assignments += 1;
         }
 
         void incr_comparisons() {
-            auto report = reports.at(current_key);
-            report.comparisons += 1;
+            auto it = reports.find(current_key);
+            if (it == reports.end()) {
+                return;
+            }
+
+            (*it).second->comparisons += 1;
         }
 
-        const measure_report & with_report(std::function<void()>& fn) {
+        const measure_report & with_report(const std::function<void()>& fn) {
             create_report();
             fn();
-            return get_report(current_key);
+
+            return *(reports.at(current_key));
         }
 
     private:
         void create_report() {
-            current_key = random_utils::get_random();
+            current_key = random_utils::get_random_int();
             reports.insert(std::make_pair(current_key, new measure_report()));
         }
 
-        const measure_report & get_report(int measure_key) const {
-            return reports.at(measure_key);
-        }
-
-        int current_key;
+        int current_key = 0;
         std::unordered_map<int, measure_report*> reports;
 };
 
 // avoid locks
-thread_local Measure measure;
+thread_local Measure global_measure;
 
 template <typename T>
 class Element {
     public:
-        static Element<T> & from(T value) {
-            return new Element<T>(value);
-        }
+        explicit Element(T val): value(val) {}
 
         T get_value() const {
             return this->value;
@@ -57,54 +60,53 @@ class Element {
 
         Element<T> & operator = (const Element<T> & b) {
             this->value = b.get_value();
-            measure.incr_assignments();
+            global_measure.incr_assignments();
             return *this;
         }
 
         Element<T> & operator = (const T & b) {
             this->value = b;
-            measure.incr_assignments();
+            global_measure.incr_assignments();
             return *this;
         }
 
     private:
-        Element(T value): value(value) {}
         T value;
 };
 
 
 template <typename T>
 bool operator > (const Element<T> left, const Element<T> right) {
-    measure.incr_comparisons();
-    return left.value() > right.value();
+    global_measure.incr_comparisons();
+    return left.get_value() > right.get_value();
 }
 
 template <typename T>
 bool operator >= (const Element<T> left, const Element<T> right) {
-    measure.incr_comparisons();
-    return left.value() >= right.value();
+    global_measure.incr_comparisons();
+    return left.get_value() >= right.get_value();
 }
 
 template <typename T>
 bool operator < (const Element<T> left, const Element<T> right) {
-    measure.incr_comparisons();
-    return left.value() < right.value();
+    global_measure.incr_comparisons();
+    return left.get_value() < right.get_value();
 }
 
 template <typename T>
 bool operator <= (const Element<T> left, const Element<T> right) {
-    measure.incr_comparisons();
-    return left.value() <= right.value();
+    global_measure.incr_comparisons();
+    return left.get_value() <= right.get_value();
 }
 
 template <typename T>
 bool operator == (const Element<T> left, const Element<T> right) {
-    measure.incr_comparisons();
-    return left.value() == right.value();
+    global_measure.incr_comparisons();
+    return left.get_value() == right.get_value();
 }
 
 template <typename T>
 bool operator != (const Element<T> left, const Element<T> right) {
-    measure.incr_comparisons();
-    return left.value() != right.value();
+    global_measure.incr_comparisons();
+    return left.get_value() != right.get_value();
 }
