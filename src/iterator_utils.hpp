@@ -54,6 +54,7 @@ namespace iterator_utils {
                 }
             }
         }
+
         return inv_count;
     }
 }

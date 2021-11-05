@@ -59,18 +59,19 @@ void elements_example() {
 }
 
 void passes_example() {
-    auto e1 = Element<int>(15);
-    auto e2 = Element<int>(10);
+    std::vector<int> vec(200);
+    iterator_utils::fill_random(vec.begin(), vec.end());
 
-    std::vector<Element<int>> vec = {e1, e2};
-
-    auto factory = PassFactory<typeof(vec)>();
-    auto pass = factory.getPass(PassType::INSERTION);
-    pass->perform_pass(vec, vec.size(), 1);
-
-    for (auto e: vec) {
-        std::cout << e.get_value() << '\n';
+    std::vector<Element<int>> elVec;
+    for (int e: vec) {
+        elVec.push_back(Element<int>(e));
     }
+
+    auto factory = PassFactory<typeof(elVec)>();
+    auto pass = factory.getPass(PassType::INSERTION);
+    pass->perform_pass(elVec, elVec.size(), 1);
+
+    assert(std::is_sorted(elVec.begin(), elVec.end()));
 }
 
 
@@ -86,7 +87,7 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
     elements_example();
-//    passes_example();
+    passes_example();
 //    run_ga(config);
 
 	return 0;
