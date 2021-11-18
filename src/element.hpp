@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <exception>
 #include <functional>
+#include <memory>
 #include "random_utils.hpp"
 
 struct measure_report {
@@ -39,11 +40,11 @@ class Measure {
     private:
         void create_report() {
             current_key = random_utils::get_random_int();
-            reports.insert(std::make_pair(current_key, new measure_report()));
+            reports.insert(std::make_pair(current_key, std::make_unique<measure_report>()));
         }
 
         int current_key = 0;
-        std::unordered_map<int, measure_report*> reports;
+        std::unordered_map<int, std::unique_ptr<measure_report>> reports;
 };
 
 // avoid locks

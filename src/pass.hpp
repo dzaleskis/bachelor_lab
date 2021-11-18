@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <unordered_map>
+#include <memory>
 
 enum class PassType {
     INSERTION,
@@ -74,7 +75,6 @@ class BrickPass: public Pass<T> {
 public:
     void perform_pass(T & container, std::size_t n, int gap) const override {
         int increment = gap * 2;
-        // TODO: is this implementation correct??
 
         for (int i = 0; i < n - gap; i+= increment) {
             if (container[i] > container[i + gap]) {
@@ -95,14 +95,14 @@ class ShakePass: public Pass<T> {
 public:
     void perform_pass(T & container, std::size_t n, int gap) const override {
         // perform bubble pass forward
-        for (int i = 0; i < n - gap; ++i) {
+        for (std::size_t i = 0; i < n - gap; ++i) {
             if (container[i] > container[i+gap]) {
                 std::swap(container[i], container[i + gap]);
             }
         }
 
         // perform bubble pass backward
-        for (int i = n - gap - 1; i >= 0; ++i) {
+        for (std::size_t i = n - gap - 1; i >= 0; ++i) {
             if (container[i] > container[i+gap]) {
                 std::swap(container[i], container[i + gap]);
             }
@@ -113,18 +113,18 @@ public:
 template <typename T>
 class PassFactory {
 public:
-    Pass<T>* getPass(PassType passType) {
+    std::unique_ptr<Pass<T>> getPass(PassType passType) {
         switch (passType) {
             case PassType::INSERTION:
-                return new InsertionPass<T>();
+                return std::make_unique<InsertionPass<T>>();
             case PassType::INSERTION_IMPROVED:
-                return new ImprovedInsertionPass<T>();
+                return std::make_unique<ImprovedInsertionPass<T>>();
             case PassType::BRICK:
-                return new BrickPass<T>();
+                return std::make_unique<BrickPass<T>>();
             case PassType::BUBBLE:
-                return new BubblePass<T>();
+                return std::make_unique<BubblePass<T>>();
             case PassType::SHAKE:
-                return new ShakePass<T>();
+                return std::make_unique<ShakePass<T>>();
             default:
                 throw std::runtime_error("something wrong");
         }
