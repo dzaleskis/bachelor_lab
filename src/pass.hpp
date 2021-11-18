@@ -17,13 +17,13 @@ enum class PassType {
 template <typename T>
 class Pass {
 public:
-    virtual void perform_pass(T & container, std::size_t n, int gap) const = 0;
+    virtual void performPass(T & container, std::size_t n, int gap) const = 0;
 };
 
 template <typename T>
 class InsertionPass: public Pass<T> {
 public:
-    void perform_pass(T & container, std::size_t n, int gap) const override {
+    void performPass(T & container, std::size_t n, int gap) const override {
         for (int i = gap; i < n; ++i) {
             auto temp = container[i];
             int j = i;
@@ -40,7 +40,7 @@ public:
 template <typename T>
 class ImprovedInsertionPass: public Pass<T> {
 public:
-    void perform_pass(T & container, std::size_t n, int gap) const override {
+    void performPass(T & container, std::size_t n, int gap) const override {
         for (int i = gap; i < n; ++i) {
             if (container[i - gap] > container[i]) {
                 auto temp = container[i];
@@ -61,7 +61,7 @@ public:
 template <typename T>
 class BubblePass: public Pass<T> {
 public:
-    void perform_pass(T & container, std::size_t n, int gap) const override {
+    void performPass(T & container, std::size_t n, int gap) const override {
         for (int i = 0; i < n - gap; ++i) {
             if(container[i] > container[i + gap]){
                 std::swap(container[i], container[i + gap]);
@@ -73,7 +73,7 @@ public:
 template <typename T>
 class BrickPass: public Pass<T> {
 public:
-    void perform_pass(T & container, std::size_t n, int gap) const override {
+    void performPass(T & container, std::size_t n, int gap) const override {
         int increment = gap * 2;
 
         for (int i = 0; i < n - gap; i+= increment) {
@@ -93,7 +93,7 @@ public:
 template <typename T>
 class ShakePass: public Pass<T> {
 public:
-    void perform_pass(T & container, std::size_t n, int gap) const override {
+    void performPass(T & container, std::size_t n, int gap) const override {
         // perform bubble pass forward
         for (std::size_t i = 0; i < n - gap; ++i) {
             if (container[i] > container[i+gap]) {
@@ -113,7 +113,7 @@ public:
 template <typename T>
 class PassFactory {
 public:
-    std::unique_ptr<Pass<T>> getPass(PassType passType) {
+    std::unique_ptr<Pass<T>> getPass(PassType passType) const {
         switch (passType) {
             case PassType::INSERTION:
                 return std::make_unique<InsertionPass<T>>();

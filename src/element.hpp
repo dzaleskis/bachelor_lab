@@ -12,7 +12,7 @@ struct measure_report {
 
 class Measure {
     public:
-        void incr_assignments() {
+        void incrAssignments() {
             auto it = reports.find(current_key);
             if (it == reports.end()) {
                 return;
@@ -21,7 +21,7 @@ class Measure {
             (*it).second->assignments += 1;
         }
 
-        void incr_comparisons() {
+        void incrComparisons() {
             auto it = reports.find(current_key);
             if (it == reports.end()) {
                 return;
@@ -30,7 +30,7 @@ class Measure {
             (*it).second->comparisons += 1;
         }
 
-        const measure_report & with_report(const std::function<void()>& fn) {
+        const measure_report & withReport(const std::function<void()>& fn) {
             create_report();
             fn();
 
@@ -61,13 +61,13 @@ class Element {
 
         Element<T> & operator = (const Element<T> & b) {
             this->value = b.get_value();
-            global_measure.incr_assignments();
+            global_measure.incrAssignments();
             return *this;
         }
 
         Element<T> & operator = (const T & b) {
             this->value = b;
-            global_measure.incr_assignments();
+            global_measure.incrAssignments();
             return *this;
         }
 
@@ -78,36 +78,36 @@ class Element {
 
 template <typename T>
 bool operator > (const Element<T> left, const Element<T> right) {
-    global_measure.incr_comparisons();
+    global_measure.incrComparisons();
     return left.get_value() > right.get_value();
 }
 
 template <typename T>
 bool operator >= (const Element<T> left, const Element<T> right) {
-    global_measure.incr_comparisons();
+    global_measure.incrComparisons();
     return left.get_value() >= right.get_value();
 }
 
 template <typename T>
 bool operator < (const Element<T> left, const Element<T> right) {
-    global_measure.incr_comparisons();
+    global_measure.incrComparisons();
     return left.get_value() < right.get_value();
 }
 
 template <typename T>
 bool operator <= (const Element<T> left, const Element<T> right) {
-    global_measure.incr_comparisons();
+    global_measure.incrComparisons();
     return left.get_value() <= right.get_value();
 }
 
 template <typename T>
 bool operator == (const Element<T> left, const Element<T> right) {
-    global_measure.incr_comparisons();
+    global_measure.incrComparisons();
     return left.get_value() == right.get_value();
 }
 
 template <typename T>
 bool operator != (const Element<T> left, const Element<T> right) {
-    global_measure.incr_comparisons();
+    global_measure.incrComparisons();
     return left.get_value() != right.get_value();
 }

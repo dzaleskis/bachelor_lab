@@ -5,6 +5,7 @@
 #include "element.hpp"
 #include "fitness.hpp"
 #include "pass.hpp"
+#include "sorting_algorithm.hpp"
 
 using json = nlohmann::json;
 
@@ -45,7 +46,7 @@ void run_ga(const ga_config & config) {
 }
 
 void elements_example() {
-    auto report = global_measure.with_report([&] () {
+    auto report = global_measure.withReport([&]() {
         auto e1 = Element<int>(5);
         auto e2 = Element<int>(10);
 
@@ -62,18 +63,25 @@ void passes_example() {
     std::vector<int> vec(200);
     iterator_utils::fill_random(vec.begin(), vec.end());
 
-    std::vector<Element<int>> elVec;
-    for (int e: vec) {
-        elVec.push_back(Element<int>(e));
-    }
-
-    auto factory = PassFactory<typeof(elVec)>();
+    auto factory = PassFactory<typeof(vec)>();
     auto pass = factory.getPass(PassType::INSERTION);
-    pass->perform_pass(elVec, elVec.size(), 1);
+    pass->performPass(vec, vec.size(), 1);
 
-    assert(std::is_sorted(elVec.begin(), elVec.end()));
+    assert(std::is_sorted(vec.begin(), vec.end()));
 }
 
+void algorithms_example() {
+    std::vector<int> vec(200);
+    iterator_utils::fill_random(vec.begin(), vec.end());
+
+    auto factory = ConcreteSortingAlgorithmFactory<typeof(vec)>();
+    auto blueprint = SortingAlgorithmBlueprint( { PassDescription(PassType::INSERTION, 1) });
+    auto algorithm = factory.getSortingAlgorithm(blueprint);
+
+    algorithm->sort(vec);
+
+    assert(std::is_sorted(vec.begin(), vec.end()));
+}
 
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA on gapsort"};
@@ -88,6 +96,7 @@ int main(int argc, char* argv[]) {
 
     elements_example();
     passes_example();
+    algorithms_example();
 //    run_ga(config);
 
 	return 0;
