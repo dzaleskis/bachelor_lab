@@ -110,10 +110,10 @@ public:
     }
 };
 
-template <typename T>
 class PassFactory {
 public:
-    std::unique_ptr<Pass<T>> getPass(PassType passType) const {
+    template <typename T>
+    static std::unique_ptr<Pass<T>> getPass(PassType passType) {
         switch (passType) {
             case PassType::INSERTION:
                 return std::make_unique<InsertionPass<T>>();

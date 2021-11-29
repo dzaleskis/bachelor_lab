@@ -63,8 +63,7 @@ void passes_example() {
     std::vector<int> vec(200);
     iterator_utils::fill_random(vec.begin(), vec.end());
 
-    auto factory = PassFactory<typeof(vec)>();
-    auto pass = factory.getPass(PassType::INSERTION);
+    auto pass = PassFactory::getPass<typeof(vec)>(PassType::INSERTION);
     pass->performPass(vec, vec.size(), 1);
 
     assert(std::is_sorted(vec.begin(), vec.end()));
@@ -74,9 +73,8 @@ void algorithms_example() {
     std::vector<int> vec(200);
     iterator_utils::fill_random(vec.begin(), vec.end());
 
-    auto factory = ConcreteSortingAlgorithmFactory<typeof(vec)>();
-    auto blueprint = SortingAlgorithmBlueprint( { PassDescription(PassType::INSERTION, 1) });
-    auto algorithm = factory.getSortingAlgorithm(blueprint);
+    auto blueprint = AlgorithmBlueprint({PassBlueprint(PassType::INSERTION, 1) });
+    auto algorithm = SortingAlgorithmFactory::getSortingAlgorithm<typeof(vec)>(blueprint);
 
     algorithm->sort(vec);
 
