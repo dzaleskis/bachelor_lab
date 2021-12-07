@@ -6,6 +6,7 @@
 #include "fitness.hpp"
 #include "pass.hpp"
 #include "sorting_algorithm.hpp"
+#include "fitness.hpp"
 
 using json = nlohmann::json;
 
@@ -73,12 +74,21 @@ void algorithms_example() {
     std::vector<int> vec(200);
     iterator_utils::fill_random(vec.begin(), vec.end());
 
-    auto blueprint = AlgorithmBlueprint({PassBlueprint(PassType::INSERTION, 1) });
-    auto algorithm = SortingAlgorithmFactory::getSortingAlgorithm<typeof(vec)>(blueprint);
+    auto blueprint = AlgorithmBlueprint({ PassBlueprint(PassType::INSERTION, 1) });
+    auto algorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<typeof(vec)>(blueprint);
 
     algorithm->sort(vec);
 
     assert(std::is_sorted(vec.begin(), vec.end()));
+}
+
+void efficiency_example() {
+    auto blueprint = AlgorithmBlueprint({ PassBlueprint(PassType::BRICK, 1) });
+    auto stats = fitness::get_sorting_stats(blueprint, 5);
+    auto efficiency = fitness::calculate_fitness(stats);
+
+    std::cout << "inversions " << stats.inversions << " comparisons " << stats.comparisons << " assignments " << stats.assignments << "\n";
+    std::cout << "efficiency is: " << efficiency << "\n";
 }
 
 int main(int argc, char* argv[]) {
@@ -95,6 +105,8 @@ int main(int argc, char* argv[]) {
     elements_example();
     passes_example();
     algorithms_example();
+    efficiency_example();
+
 //    run_ga(config);
 
 	return 0;

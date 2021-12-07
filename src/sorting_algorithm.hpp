@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "pass.hpp"
 
-// pair that describes a single sorting pass
+// describes a single sorting pass with gap and pass type
 struct PassBlueprint {
     PassBlueprint(PassType _passType, int _gap): passType(_passType), gap(_gap) {}
 
@@ -13,7 +13,7 @@ struct PassBlueprint {
     int gap;
 };
 
-// use this simple structure for the GA process to make mutations/crossover easy
+// describes an algorithm, contains a list of pass descriptions
 struct AlgorithmBlueprint {
     explicit AlgorithmBlueprint(std::vector<PassBlueprint> _passBlueprints): passBlueprints(std::move(_passBlueprints)) {}
 
@@ -21,9 +21,9 @@ struct AlgorithmBlueprint {
 };
 
 template <typename T>
-class PassWrapper {
+class ConcretePass {
 public:
-    PassWrapper(std::unique_ptr<Pass<T>> _pass, int _gap): pass(std::move(_pass)), gap(_gap) {}
+    ConcretePass(std::unique_ptr<Pass<T>> _pass, int _gap): pass(std::move(_pass)), gap(_gap) {}
 
     void performPass(T & container, std::size_t n) const {
         pass->performPass(container, n, gap);
@@ -36,33 +36,33 @@ private:
 
 // use this to actually perform the sorting
 template <typename T>
-class SortingAlgorithm {
+class ConcreteAlgorithm {
 public:
-    explicit SortingAlgorithm(const AlgorithmBlueprint & blueprint) {
+    explicit ConcreteAlgorithm(const AlgorithmBlueprint & blueprint) {
         auto passBlueprints = blueprint.passBlueprints;
 
-        passWrappers.reserve(passBlueprints.size());
+        concretePasses.reserve(passBlueprints.size());
 
-        for (const auto & pd: passBlueprints) {
-            passWrappers.push_back(PassWrapper<T>(PassFactory::getPass<T>(pd.passType), pd.gap));
+        for (const auto & pb: passBlueprints) {
+            concretePasses.push_back(ConcretePass<T>(PassFactory::getPass<T>(pb.passType), pb.gap));
         }
     }
 
     void sort(T & container) {
         std::size_t n = container.size();
 
-        for (const auto & pw: passWrappers) {
-            pw.performPass(container, n);
+        for (const auto & cp: concretePasses) {
+            cp.performPass(container, n);
         }
     }
 private:
-    std::vector<PassWrapper<T>> passWrappers;
+    std::vector<ConcretePass<T>> concretePasses;
 };
 
-class SortingAlgorithmFactory {
+class ConcreteAlgorithmFactory {
 public:
     template <typename T>
-    static std::unique_ptr<SortingAlgorithm<T>> getSortingAlgorithm(const AlgorithmBlueprint & blueprint) {
-        return std::make_unique<SortingAlgorithm<T>>(blueprint);
+    static std::unique_ptr<ConcreteAlgorithm<T>> getConcreteAlgorithm(const AlgorithmBlueprint & blueprint) {
+        return std::make_unique<ConcreteAlgorithm<T>>(blueprint);
     }
 };

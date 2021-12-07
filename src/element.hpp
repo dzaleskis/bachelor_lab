@@ -53,21 +53,28 @@ thread_local Measure global_measure;
 template <typename T>
 class Element {
     public:
-        explicit Element(T val): value(val) {}
+        Element() = default;
+        Element(T val): value(val) {}
 
         T get_value() const {
             return this->value;
         }
 
+        void set_value(T val) {
+            this->value = val;
+        }
+
         Element<T> & operator = (const Element<T> & b) {
-            this->value = b.get_value();
+            set_value(b.get_value());
             global_measure.incrAssignments();
+
             return *this;
         }
 
         Element<T> & operator = (const T & b) {
-            this->value = b;
+            set_value(b);
             global_measure.incrAssignments();
+
             return *this;
         }
 

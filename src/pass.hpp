@@ -95,14 +95,14 @@ class ShakePass: public Pass<T> {
 public:
     void performPass(T & container, std::size_t n, int gap) const override {
         // perform bubble pass forward
-        for (std::size_t i = 0; i < n - gap; ++i) {
+        for (int i = 0; i < n - gap; ++i) {
             if (container[i] > container[i+gap]) {
                 std::swap(container[i], container[i + gap]);
             }
         }
 
         // perform bubble pass backward
-        for (std::size_t i = n - gap - 1; i >= 0; ++i) {
+        for (int i = n - gap - 1; i >= 0; --i) {
             if (container[i] > container[i+gap]) {
                 std::swap(container[i], container[i + gap]);
             }
@@ -126,7 +126,7 @@ public:
             case PassType::SHAKE:
                 return std::make_unique<ShakePass<T>>();
             default:
-                throw std::runtime_error("something wrong");
+                throw std::runtime_error("unsupported pass type");
         }
     }
 };

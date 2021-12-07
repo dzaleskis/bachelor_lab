@@ -9,7 +9,8 @@ namespace iterator_utils {
     template<class forward_it>
     void fill_random(forward_it begin, forward_it end, int min = INT_MIN, int max = INT_MAX) {
         std::generate(begin, end, [&] () {
-            return random_utils::get_random_int(min, max);
+            auto rand = random_utils::get_random_int(min, max);
+            return rand;
         });
     }
 
