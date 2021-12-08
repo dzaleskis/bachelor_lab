@@ -3,9 +3,9 @@
 #include <random>
 #include <functional>
 #include <chrono>
-#include <limits.h>
+#include <climits>
 
-namespace random_utils {
+namespace utils {
     // NOTE: random device does NOT work correctly on win with MinGW
 
     static uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();

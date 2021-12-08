@@ -39,7 +39,7 @@ class Measure {
 
     private:
         void create_report() {
-            current_key = random_utils::get_random_int();
+            current_key = utils::get_random_int();
             reports.insert(std::make_pair(current_key, std::make_unique<measure_report>()));
         }
 

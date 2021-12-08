@@ -13,11 +13,19 @@ enum class PassType {
     SHAKE
 };
 
-const std::vector<PassType> ALL_PASSES
-    {PassType::INSERTION, PassType::INSERTION_IMPROVED, PassType::BRICK, PassType::BUBBLE, PassType::SHAKE};
+NLOHMANN_JSON_SERIALIZE_ENUM(PassType, {
+    {PassType::INSERTION, "insertion"},
+    {PassType::INSERTION_IMPROVED, "insertion_improved"},
+    {PassType::BRICK, "brick"},
+    {PassType::SHAKE, "shake"},
+    {PassType::BUBBLE, "bubble"},
+})
 
-// would be nice if the class could just have a virtual template method
-// but c++ does not allow it
+const std::vector<PassType> ALL_PASSES
+    { PassType::INSERTION, PassType::INSERTION_IMPROVED, PassType::BRICK, PassType::BUBBLE, PassType::SHAKE };
+
+// TODO: look into optimizations
+
 template <typename T>
 class Pass {
 public:
