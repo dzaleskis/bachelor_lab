@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <functional>
 #include <unordered_map>
 #include <memory>
@@ -11,6 +12,9 @@ enum class PassType {
     BUBBLE,
     SHAKE
 };
+
+const std::vector<PassType> ALL_PASSES
+    {PassType::INSERTION, PassType::INSERTION_IMPROVED, PassType::BRICK, PassType::BUBBLE, PassType::SHAKE};
 
 // would be nice if the class could just have a virtual template method
 // but c++ does not allow it

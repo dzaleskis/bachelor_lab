@@ -3,7 +3,6 @@
 #include "iterator_utils.hpp"
 #include "sorting_algorithm.hpp"
 
-
 namespace fitness {
 
     struct SortingStats {
@@ -57,15 +56,8 @@ namespace fitness {
         auto comparisons = avgStats.avg_comparisons;
         auto assignments = avgStats.avg_assignments;
 
-        double efficiency = std::pow(inversions, 2.0) + ((comparisons / assignments) * (comparisons + assignments));
+        auto efficiency = std::pow(inversions, 2.0) + ((comparisons / assignments) * (comparisons + assignments));
 
         return efficiency;
-    }
-
-    // lower is better
-    double get_fitness(const AlgorithmBlueprint& algorithmBlueprint, int size) {
-        auto stats = get_sorting_stats(algorithmBlueprint, size);
-
-        return calculate_fitness(stats);
     }
 }

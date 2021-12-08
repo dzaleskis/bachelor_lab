@@ -7,7 +7,13 @@
 
 // describes a single sorting pass with gap and pass type
 struct PassBlueprint {
+    PassBlueprint() = default;
     PassBlueprint(PassType _passType, int _gap): passType(_passType), gap(_gap) {}
+
+    bool operator > (const PassBlueprint& b) const
+    {
+        return gap > b.gap;
+    }
 
     PassType passType;
     int gap;
@@ -15,7 +21,8 @@ struct PassBlueprint {
 
 // describes an algorithm, contains a list of pass descriptions
 struct AlgorithmBlueprint {
-    explicit AlgorithmBlueprint(std::vector<PassBlueprint> _passBlueprints): passBlueprints(std::move(_passBlueprints)) {}
+    AlgorithmBlueprint() = default;
+    AlgorithmBlueprint(std::vector<PassBlueprint> _passBlueprints): passBlueprints(std::move(_passBlueprints)) {}
 
     std::vector<PassBlueprint> passBlueprints;
 };
@@ -26,7 +33,10 @@ public:
     ConcretePass(std::unique_ptr<Pass<T>> _pass, int _gap): pass(std::move(_pass)), gap(_gap) {}
 
     void performPass(T & container, std::size_t n) const {
-        pass->performPass(container, n, gap);
+        // only perform pass if gap is not too big
+        if (gap < n) {
+            pass->performPass(container, n, gap);
+        }
     }
 
 private:

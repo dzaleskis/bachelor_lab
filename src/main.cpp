@@ -7,13 +7,20 @@
 #include "pass.hpp"
 #include "sorting_algorithm.hpp"
 #include "fitness.hpp"
+#include "genetic.hpp"
+#include "json_serializers.hpp"
 
 using json = nlohmann::json;
+using Solution = genetic::Solution;
 
 struct ga_config {
     int population;
     double mut_rate;
     double crossover_frac;
+
+    int size = 1000;
+//    int gap_count = 7;
+    int evaluation_runs = 5;
 };
 
 void run_ga(const ga_config & config) {
@@ -44,20 +51,6 @@ void run_ga(const ga_config & config) {
 
 	std::cout<<"The problem is optimized in "<<timer.toc()<<" seconds."<<std::endl;
 //	sobj_ga_shellsort::save_results(ga_obj);
-}
-
-void elements_example() {
-    auto report = global_measure.withReport([&]() {
-        auto e1 = Element<int>(5);
-        auto e2 = Element<int>(10);
-
-        assert(e1 < e2);
-        e1 = e2;
-        assert(e1 == e2);
-    });
-
-    std::cout << "assignments performed: " << report.assignments << '\n';
-    std::cout << "comparisons performed: " << report.comparisons << '\n';
 }
 
 void passes_example() {
@@ -91,6 +84,17 @@ void efficiency_example() {
     std::cout << "efficiency is: " << efficiency << "\n";
 }
 
+void json_example() {
+    auto blueprint = AlgorithmBlueprint({ PassBlueprint(PassType::BRICK, 1) });
+    json serialized(blueprint);
+
+    auto deserialized = serialized.get<AlgorithmBlueprint>();
+    json serializedAgain(deserialized);
+
+    std::cout << serialized.dump() << "\n";
+    std::cout << serializedAgain.dump() << "\n";
+}
+
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA on gapsort"};
 
@@ -102,10 +106,10 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-    elements_example();
-    passes_example();
-    algorithms_example();
-    efficiency_example();
+//    passes_example();
+//    algorithms_example();
+//    efficiency_example();
+    json_example();
 
 //    run_ga(config);
 
