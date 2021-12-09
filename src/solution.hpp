@@ -6,7 +6,6 @@
 #include "gaps.hpp"
 
 constexpr double EQUAL_PROBABILITY = 0.5;
-constexpr double MUTATION_PROBABILITY = EQUAL_PROBABILITY;
 constexpr double MUTATION_SCALE = 0.2;
 constexpr double MUTATION_MAX = 2;
 
@@ -30,7 +29,7 @@ inline PassType get_random_pass(const std::function<double(void)> &rnd01) {
 
 inline int get_mutated_gap(const std::function<double(void)> &rnd01, double mut_radius, int old_gap) {
     double raw_mutation = mut_radius * (rnd01()-rnd01()); // belongs to [-1, 1]
-    int scaled_mutation = std::floor(raw_mutation * MUTATION_MAX); // belongs to [-MUTATION_MAX, MUTATION_MAX]
+    int scaled_mutation = std::floor(raw_mutation * old_gap); // belongs to [-gap, gap]
     int new_gap = std::max(1, old_gap + scaled_mutation); // ensure gap is positive
 
     return new_gap;

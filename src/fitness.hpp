@@ -5,28 +5,12 @@
 #include "sorting_algorithm.hpp"
 
 struct SortingStats {
-    int runs;
-    double inversions;
-    double comparisons;
-    double assignments;
-};
-
-struct AvgSortingStats {
-    AvgSortingStats() = default;
-
-    explicit AvgSortingStats(const SortingStats & stats) {
-        avg_inversions = stats.inversions / stats.runs;
-        avg_comparisons = stats.comparisons / stats.runs;
-        avg_assignments = stats.assignments / stats.runs;
-    }
-
     double avg_inversions;
     double avg_comparisons;
     double avg_assignments;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SortingStats, inversions, assignments, comparisons, runs)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AvgSortingStats, avg_inversions, avg_assignments, avg_comparisons)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SortingStats, avg_inversions, avg_assignments, avg_comparisons)
 
 SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int size, int runs) {
     auto elements = std::vector<Element<int>>(size);
@@ -48,13 +32,13 @@ SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int
         total_assignments += report.assignments;
     }
 
-    auto stats = SortingStats { runs, total_inversions, total_comparisons, total_assignments };
+    auto stats = SortingStats { total_inversions / runs, total_comparisons / runs, total_assignments / runs };
 
     return stats;
 }
 
 // lower is better
-double evaluate_fitness(const AvgSortingStats& avgSortingStats) {
+double evaluate_fitness(const SortingStats& avgSortingStats) {
     auto inversions = avgSortingStats.avg_inversions;
     auto comparisons = avgSortingStats.avg_comparisons;
     auto assignments = avgSortingStats.avg_assignments;
