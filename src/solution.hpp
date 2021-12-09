@@ -7,7 +7,6 @@
 
 constexpr double EQUAL_PROBABILITY = 0.5;
 constexpr double MUTATION_SCALE = 0.2;
-constexpr double MUTATION_MAX = 2;
 
 inline bool withProbability(double probability, const std::function<double(void)> &rnd01) {
     return probability < rnd01();

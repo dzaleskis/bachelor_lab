@@ -10,8 +10,9 @@
 using json = nlohmann::json;
 
 // TODO: FIX LATER
-constexpr int RUNS = 3;
-constexpr int SIZE = 1000;
+constexpr int EVAL_RUNS = 3;
+constexpr int CONTAINER_SIZE = 1000;
+const char* RESULT_PATH = "result.json";
 
 typedef SortingStats MiddleCost;
 
@@ -24,6 +25,8 @@ struct GeneticAlgorithmResult: SortingStats {
     double fitness;
     AlgorithmBlueprint algorithm;
 };
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, fitness, algorithm)
 
 typedef EA::Genetic<Solution, MiddleCost> GAType;
 typedef EA::GenerationType<Solution, MiddleCost> GenerationType;
@@ -49,7 +52,7 @@ Solution crossover(
 }
 
 bool eval_solution(const Solution& s, MiddleCost &c) {
-    auto stats = get_sorting_stats(s.algorithm, SIZE, RUNS);
+    auto stats = get_sorting_stats(s.algorithm, CONTAINER_SIZE, EVAL_RUNS);
 
     c.avg_inversions = stats.avg_inversions;
     c.avg_comparisons = stats.avg_comparisons;
@@ -81,8 +84,15 @@ void SO_report_generation(
 
 void save_results(const GAType &ga_obj)
 {
+    std::ofstream output_file;
+    output_file.open(RESULT_PATH);
+
     int best_index = ga_obj.last_generation.best_chromosome_index;
     auto best_solution = ga_obj.last_generation.chromosomes[best_index];
 
     GeneticAlgorithmResult result(best_solution.middle_costs, best_solution.total_cost, best_solution.genes.algorithm);
+    json resultJson(result);
+
+    output_file << resultJson << std::endl;
+    output_file.close();
 }
