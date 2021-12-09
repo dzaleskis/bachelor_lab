@@ -3,6 +3,7 @@
 .idea/
 obj/
 cmake-build-debug/
+cmake-build-release/
 lab.exe
 sobj_ga_shellsort.json
 mobj_ga_shellsort.json
