@@ -75,7 +75,7 @@ class BubblePass: public Pass<T> {
 public:
     void performPass(T & container, std::size_t n, int gap) const override {
         for (int i = 0; i < n - gap; ++i) {
-            if(container[i] > container[i + gap]){
+            if (container[i] > container[i + gap]){
                 std::swap(container[i], container[i + gap]);
             }
         }

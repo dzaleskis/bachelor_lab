@@ -1,9 +1,24 @@
 #pragma once
 #include <vector>
-#include <algorithm>
+
+constexpr int SMALL_GAPS_SIZE = 8;
+constexpr int MEDIUM_GAPS_SIZE = 14;
+
+const std::vector<int> CIURA_SMALL_GAPS {701,301,132,57,23,10,4,1};
+const std::vector<int> TOKUDA_SMALL_GAPS {525,233,103,46,20,9,4,1};
+const std::vector<int> SEDGEWICK_SMALL_GAPS {929,505,209,109,41,19,5,1};
+const std::vector<int> INCERPI_SEDGEWICK_SMALL_GAPS {861,336,112,48,21,7,3,1};
+const std::vector<int> PRATT_SMALL_GAPS {12,9,8,6,4,3,2,1};
+
+const std::vector<std::vector<int>> SMALL_GAPS { CIURA_SMALL_GAPS, TOKUDA_SMALL_GAPS, SEDGEWICK_SMALL_GAPS, INCERPI_SEDGEWICK_SMALL_GAPS, PRATT_SMALL_GAPS };
 
 const std::vector<int> CIURA_GAPS {90927,40412,17961,7983,3548,1577,701,301,132,57,23,10,4,1};
 const std::vector<int> TOKUDA_GAPS {68178,30301,13467,5985,2660,1182,525,233,103,46,20,9,4,1};
 const std::vector<int> SEDGEWICK_GAPS {64769,36289,16001,8929,3905,2161,929,505,209,109,41,19,5,1};
+const std::vector<int> INCERPI_SEDGEWICK_GAPS {91511, 86961,33936,13776,4592,1968,861,336,112,48,21,7,3,1};
+const std::vector<int> PRATT_GAPS {36,32,27,24,18,16,12,9,8,6,4,3,2,1};
 
-const std::vector<std::vector<int>> ALL_GAPS { CIURA_GAPS, TOKUDA_GAPS, SEDGEWICK_GAPS };
+const std::vector<std::vector<int>> MEDIUM_GAPS { CIURA_GAPS, TOKUDA_GAPS, SEDGEWICK_GAPS, INCERPI_SEDGEWICK_GAPS, PRATT_GAPS };
+
+const auto ALL_GAPS = SMALL_GAPS;
+//const auto ALL_GAPS = MEDIUM_GAPS;

@@ -54,67 +54,67 @@ template <typename T>
 class Element {
     public:
         Element() = default;
-        Element(T val): value(val) {}
 
-        T get_value() const {
+        Element(Element<T> const &other): value(other.get_value()) {
+            global_measure.incrAssignments();
+        }
+
+        Element(const T & val): value(val) {
+            global_measure.incrAssignments();
+        }
+
+        inline T get_value() const {
             return this->value;
         }
 
-        void set_value(T val) {
-            this->value = val;
-        }
-
         Element<T> & operator = (const Element<T> & b) {
-            set_value(b.get_value());
+            this->value = b.get_value();
             global_measure.incrAssignments();
-
             return *this;
         }
 
         Element<T> & operator = (const T & b) {
-            set_value(b);
+            this->value = b;
             global_measure.incrAssignments();
-
             return *this;
+        }
+
+        bool operator > (const Element<T>& b) const
+        {
+            global_measure.incrComparisons();
+            return value > b.get_value();
+        }
+
+        bool operator >= (const Element<T>& b) const
+        {
+            global_measure.incrComparisons();
+            return value >= b.get_value();
+        }
+
+        bool operator < (const Element<T>& b) const
+        {
+            global_measure.incrComparisons();
+            return value < b.get_value();
+        }
+
+        bool operator <= (const Element<T>& b) const
+        {
+            global_measure.incrComparisons();
+            return value <= b.get_value();
+        }
+
+        bool operator == (const Element<T>& b) const
+        {
+            global_measure.incrComparisons();
+            return value == b.get_value();
+        }
+
+        bool operator != (const Element<T>& b) const
+        {
+            global_measure.incrComparisons();
+            return value != b.get_value();
         }
 
     private:
         T value;
 };
-
-
-template <typename T>
-bool operator > (const Element<T> left, const Element<T> right) {
-    global_measure.incrComparisons();
-    return left.get_value() > right.get_value();
-}
-
-template <typename T>
-bool operator >= (const Element<T> left, const Element<T> right) {
-    global_measure.incrComparisons();
-    return left.get_value() >= right.get_value();
-}
-
-template <typename T>
-bool operator < (const Element<T> left, const Element<T> right) {
-    global_measure.incrComparisons();
-    return left.get_value() < right.get_value();
-}
-
-template <typename T>
-bool operator <= (const Element<T> left, const Element<T> right) {
-    global_measure.incrComparisons();
-    return left.get_value() <= right.get_value();
-}
-
-template <typename T>
-bool operator == (const Element<T> left, const Element<T> right) {
-    global_measure.incrComparisons();
-    return left.get_value() == right.get_value();
-}
-
-template <typename T>
-bool operator != (const Element<T> left, const Element<T> right) {
-    global_measure.incrComparisons();
-    return left.get_value() != right.get_value();
-}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <fstream>
 #include "json.hpp"
 #include "solution.hpp"
@@ -74,12 +75,11 @@ void SO_report_generation(
 {
     json j = {
             {"generation_number", generation_number},
-            {"best_genes", best_genes.algorithm},
             {"best_total_cost", last_generation.best_total_cost},
-            {"best_average_cost", last_generation.average_cost},
+            {"average_cost", last_generation.average_cost},
     };
 
-    std::cout << j << std::endl;
+    std::cout << j.dump(2) << std::endl;
 }
 
 void save_results(const GAType &ga_obj)
@@ -91,8 +91,13 @@ void save_results(const GAType &ga_obj)
     auto best_solution = ga_obj.last_generation.chromosomes[best_index];
 
     GeneticAlgorithmResult result(best_solution.middle_costs, best_solution.total_cost, best_solution.genes.algorithm);
+
     json resultJson(result);
 
+    // print to console (pretty)
+    std::cout << resultJson.dump(2) << std::endl;
+
+    // save to file
     output_file << resultJson << std::endl;
     output_file.close();
 }
