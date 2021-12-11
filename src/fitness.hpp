@@ -57,6 +57,15 @@ SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int
                 case ClassicAlgorithm::SHELLSORT_IMPROVED:
                     shellsort_improved(elements, CIURA_GAPS);
                     break;
+                case ClassicAlgorithm::INSERTION_SORT:
+                    insertion_sort(elements);
+                    break;
+                case ClassicAlgorithm::BRICK_SORT:
+                    brick_sort(elements);
+                    break;
+                case ClassicAlgorithm::BUBBLE_SORT:
+                    bubble_sort(elements);
+                    break;
                 default:
                     throw std::runtime_error("unsupported algorithm type");
             }

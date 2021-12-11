@@ -88,13 +88,13 @@ public:
     void performPass(T & container, std::size_t n, int gap) const override {
         int increment = gap * 2;
 
-        for (int i = 0; i < n - gap; i+= increment) {
+        for (int i = gap; i < n - gap; i+= increment) {
             if (container[i] > container[i + gap]) {
                 std::swap(container[i], container[i + gap]);
             }
         }
 
-        for (int i = gap; i < n - gap; i+= increment) {
+        for (int i = 0; i < n - gap; i+= increment) {
             if (container[i] > container[i + gap]) {
                 std::swap(container[i], container[i + gap]);
             }
