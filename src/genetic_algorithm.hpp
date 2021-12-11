@@ -53,7 +53,7 @@ Solution crossover(
 }
 
 bool eval_solution(const Solution& s, MiddleCost &c) {
-    auto stats = get_sorting_stats(s.algorithm, CONTAINER_SIZE, EVAL_RUNS);
+    auto stats = get_genetic_sorting_stats(s.algorithm, CONTAINER_SIZE, EVAL_RUNS);
 
     c.avg_inversions = stats.avg_inversions;
     c.avg_comparisons = stats.avg_comparisons;

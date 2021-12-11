@@ -7,17 +7,13 @@
 
 using json = nlohmann::json;
 
-struct ga_config {
+struct GaConfig {
     int population;
     double mut_rate;
     double crossover_frac;
-
-//    int size = 1000;
-//    int gap_count = 7;
-//    int evaluation_runs = 5;
 };
 
-void run_ga(const ga_config & config) {
+void run_ga(const GaConfig & config) {
     std::cout << "Starting genetic algorithm" << std::endl;
 
 	EA::Chronometer timer;
@@ -49,10 +45,19 @@ void run_ga(const ga_config & config) {
 	save_results(ga_obj);
 }
 
+void eval_classic(ClassicAlgorithm algorithm, int size, int runs) {
+    auto stats = get_classic_sorting_stats(algorithm, size, runs);
+    auto fitness = evaluate_fitness(stats);
+
+    json j(stats);
+    std::cout << j.dump(2) << std::endl;
+    std::cout << "fitness: " << fitness << std::endl;
+}
+
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	ga_config config = { 400, 0.1, 0.4 };
+	GaConfig config = {400, 0.2, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-m", config.mut_rate, "Specify GA mutation rate");
@@ -61,6 +66,8 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
     run_ga(config);
+
+//    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 1000, 5);
 
 	return 0;
 }
