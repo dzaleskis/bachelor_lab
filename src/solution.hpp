@@ -26,14 +26,6 @@ inline PassType get_random_pass(const std::function<double(void)> &rnd01) {
     return pass;
 }
 
-inline int get_mutated_gap(const std::function<double(void)> &rnd01, double mut_radius, int old_gap) {
-    double raw_mutation = mut_radius * (rnd01()-rnd01()); // belongs to [-1, 1]
-    int scaled_mutation = std::floor(raw_mutation * old_gap); // belongs to [-gap, gap]
-    int new_gap = std::max(1, old_gap + scaled_mutation); // ensure gap is positive
-
-    return new_gap;
-}
-
 struct Solution {
     AlgorithmBlueprint algorithm;
 
@@ -69,18 +61,12 @@ struct Solution {
     Solution mutate(const std::function<double(void)> &rnd01, double shrink_scale) const {
         Solution X_new(*this);
 
-        double mut_radius = MUTATION_SCALE * shrink_scale;
         int random_blueprint_index = std::floor(rnd01() * X_new.algorithm.passBlueprints.size());
         auto & blueprint = X_new.algorithm.passBlueprints.at(random_blueprint_index);
 
-        if (withProbability(EQUAL_PROBABILITY, rnd01)) {
-            // mutate the gap
-            blueprint.gap = get_mutated_gap(rnd01, mut_radius, blueprint.gap);
-        } else {
-            // mutate pass type (pick a random new one)
-            auto new_pass = get_random_pass(rnd01);
-            blueprint.passType = new_pass;
-        }
+        // mutate pass type (pick a random new one)
+        auto new_pass = get_random_pass(rnd01);
+        blueprint.passType = new_pass;
 
         X_new.normalize();
 

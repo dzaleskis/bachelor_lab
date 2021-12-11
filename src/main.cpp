@@ -57,7 +57,7 @@ void eval_classic(ClassicAlgorithm algorithm, int size, int runs) {
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {400, 0.2, 0.4 };
+	GaConfig config = {400, 0.2, 0.8 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-m", config.mut_rate, "Specify GA mutation rate");
