@@ -25,9 +25,10 @@ struct GeneticAlgorithmResult: SortingStats {
 
     double fitness;
     AlgorithmBlueprint algorithm;
+    int size = CONTAINER_SIZE;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, fitness, algorithm)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, avg_time, fitness, algorithm, size)
 
 typedef EA::Genetic<Solution, MiddleCost> GAType;
 typedef EA::GenerationType<Solution, MiddleCost> GenerationType;
@@ -53,11 +54,7 @@ Solution crossover(
 }
 
 bool eval_solution(const Solution& s, MiddleCost &c) {
-    auto stats = get_genetic_sorting_stats(s.algorithm, CONTAINER_SIZE, EVAL_RUNS);
-
-    c.avg_inversions = stats.avg_inversions;
-    c.avg_comparisons = stats.avg_comparisons;
-    c.avg_assignments = stats.avg_assignments;
+    c = get_genetic_sorting_stats(s.algorithm, CONTAINER_SIZE, EVAL_RUNS);
 
     return true; // genes are accepted
 }

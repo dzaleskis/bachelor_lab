@@ -22,7 +22,7 @@ void run_ga(const GaConfig & config) {
 	GAType ga_obj;
 	ga_obj.problem_mode=EA::GA_MODE::SOGA;
 	ga_obj.multi_threading=true;
-	ga_obj.N_threads=4;
+//	ga_obj.N_threads=4;
 	ga_obj.idle_delay_us=1; // switch between threads quickly
 	ga_obj.verbose=false;
 	ga_obj.population=config.population;
@@ -65,9 +65,9 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-    run_ga(config);
+//    run_ga(config);
 
-//    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 1000, 5);
+    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 1000, 5);
 
 	return 0;
 }
