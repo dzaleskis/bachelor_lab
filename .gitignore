@@ -4,6 +4,8 @@
 obj/
 cmake-build-debug/
 cmake-build-release/
+cmake-build-debug_visual/
+cmake-build-release_visual/
 lab.exe
 sobj_ga_shellsort.json
 mobj_ga_shellsort.json
