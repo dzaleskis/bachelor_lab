@@ -68,29 +68,6 @@ SortingStats get_genetic_sorting_stats(const AlgorithmBlueprint& algorithmBluepr
     return stats;
 }
 
-template <typename T>
-void perform_classic_sort(ClassicAlgorithm algorithm, T & data) {
-    switch(algorithm) {
-        case ClassicAlgorithm::SHELLSORT:
-            shellsort(data, CIURA_GAPS);
-            break;
-        case ClassicAlgorithm::SHELLSORT_IMPROVED:
-            shellsort_improved(data, CIURA_GAPS);
-            break;
-        case ClassicAlgorithm::INSERTION_SORT:
-            insertion_sort(data);
-            break;
-        case ClassicAlgorithm::BRICK_SORT:
-            brick_sort(data);
-            break;
-        case ClassicAlgorithm::BUBBLE_SORT:
-            bubble_sort(data);
-            break;
-        default:
-            throw std::runtime_error("unsupported algorithm type");
-    }
-}
-
 SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int runs) {
     auto raw = std::vector<int>(size);
     auto elements = std::vector<Element<int>>(size);
@@ -135,7 +112,7 @@ double evaluate_fitness(const SortingStats& sortingStats) {
     // TODO: how to scale time?
     auto time = sortingStats.avg_time;
 
-    auto fitness = std::pow(inversions, 2.0) + (2*comparisons) + assignments + time;
+    auto fitness = std::pow(inversions, 2.0) + std::pow(time, 1.5) + (2*comparisons) + assignments;
 
     return fitness;
 }

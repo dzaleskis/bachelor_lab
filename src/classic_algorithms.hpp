@@ -108,3 +108,26 @@ void brick_sort(T & vector)
         }
     }
 }
+
+template <typename T>
+void perform_classic_sort(ClassicAlgorithm algorithm, T & data) {
+    switch(algorithm) {
+        case ClassicAlgorithm::SHELLSORT:
+            shellsort(data, CIURA_GAPS);
+            break;
+        case ClassicAlgorithm::SHELLSORT_IMPROVED:
+            shellsort_improved(data, CIURA_GAPS);
+            break;
+        case ClassicAlgorithm::INSERTION_SORT:
+            insertion_sort(data);
+            break;
+        case ClassicAlgorithm::BRICK_SORT:
+            brick_sort(data);
+            break;
+        case ClassicAlgorithm::BUBBLE_SORT:
+            bubble_sort(data);
+            break;
+        default:
+            throw std::runtime_error("unsupported algorithm type");
+    }
+}
