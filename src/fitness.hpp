@@ -112,7 +112,7 @@ double evaluate_fitness(const SortingStats& sortingStats) {
     // TODO: how to scale time?
     auto time = sortingStats.avg_time;
 
-    auto fitness = std::pow(inversions, 2.0) + std::pow(time, 1.5) + (2*comparisons) + assignments;
+    auto fitness = std::pow(inversions, 2.0) + std::pow(time, 1.5) + comparisons + assignments;
 
     return fitness;
 }

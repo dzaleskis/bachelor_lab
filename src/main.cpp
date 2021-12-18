@@ -27,7 +27,7 @@ void run_ga(const GaConfig & config) {
 	ga_obj.verbose=false;
 	ga_obj.population=config.population;
 	// ga_obj.user_initial_solutions=initial_solutions;
-	ga_obj.generation_max=250;
+	ga_obj.generation_max=200;
 	ga_obj.calculate_SO_total_fitness=calculate_SO_total_fitness;
 	ga_obj.init_genes=init_genes;
 	ga_obj.eval_solution=eval_solution;
@@ -37,8 +37,8 @@ void run_ga(const GaConfig & config) {
 	ga_obj.crossover_fraction=config.crossover_frac;
 	ga_obj.mutation_rate=config.mut_rate;
 	ga_obj.elite_count=20;
-	ga_obj.best_stall_max=20;
-	ga_obj.average_stall_max=10;
+	ga_obj.best_stall_max=15;
+	ga_obj.average_stall_max=5;
 	ga_obj.solve();
 
 	std::cout << "The problem is optimized in " << timer.toc() << " seconds." << std::endl;
@@ -57,7 +57,7 @@ void eval_classic(ClassicAlgorithm algorithm, int size, int runs) {
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {400, 0.2, 0.8 };
+	GaConfig config = {150, 0.2, 0.7 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-m", config.mut_rate, "Specify GA mutation rate");
@@ -65,9 +65,9 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-//    run_ga(config);
+    run_ga(config);
 
-    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 1000, 5);
+//    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 2);
 
 	return 0;
 }

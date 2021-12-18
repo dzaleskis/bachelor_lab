@@ -1,4 +1,5 @@
 #pragma once
+#include "gaps.hpp"
 
 enum class ClassicAlgorithm {
     SHELLSORT,

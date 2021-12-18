@@ -1,1 +1,9 @@
-for ($num = 1 ; $num -le 10 ; $num++){ & .\run_send.ps1 }
+$runs = 5
+
+for ($num = 1 ; $num -le $runs ; $num++){
+    & .\run_send.ps1
+    echo "finished iteration: ${num}"
+}
+
+$voice = New-Object -ComObject Sapi.spvoice
+$voice.speak("Hey, David, your genetic algorithm loop is finished!")
