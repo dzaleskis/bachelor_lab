@@ -109,7 +109,7 @@ Solution crossover(
 }
 
 bool eval_solution(const Solution& s, MiddleCost &c) {
-    c = get_genetic_sorting_stats(s, CONTAINER_SIZE, EVAL_RUNS);
+    c = get_blueprint_sorting_stats(s, CONTAINER_SIZE, EVAL_RUNS);
 
     return true; // genes are accepted
 }

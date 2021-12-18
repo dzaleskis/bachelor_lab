@@ -29,7 +29,7 @@ time_size measure_time_us(const std::function<void()> & fn) {
     return duration.count();
 }
 
-SortingStats get_genetic_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int size, int runs) {
+SortingStats get_blueprint_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int size, int runs) {
     auto raw = std::vector<int>(size);
     auto elements = std::vector<Element<int>>(size);
 

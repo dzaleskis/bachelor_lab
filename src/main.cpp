@@ -4,6 +4,7 @@
 #include "CLI11.hpp"
 #include "fitness.hpp"
 #include "genetic_algorithm.hpp"
+#include "benchmarks.hpp"
 
 using json = nlohmann::json;
 
@@ -67,7 +68,9 @@ int main(int argc, char* argv[]) {
 
 //    run_ga(config);
 
-    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 10);
+//    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 10);
+
+    run_small_benchmarks(100);
 
 	return 0;
 }
