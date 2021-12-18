@@ -65,9 +65,9 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-    run_ga(config);
+//    run_ga(config);
 
-//    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 2);
+    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 10);
 
 	return 0;
 }
