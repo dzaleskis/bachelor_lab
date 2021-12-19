@@ -136,30 +136,54 @@ const std::vector<BenchmarkAlgorithm> ALL_MID_ALGORITHMS {
 
 void run_small_benchmarks(int runs) {
     std::vector<int> sizes {125,250, 500, 1000};
+    std::vector<BenchmarkResult> results;
+
+    std::ofstream output_file;
+    output_file.open("benchmark_results_small.json");
+
 
     for (auto size: sizes) {
         for (auto & benchmarkAlgorithm: ALL_SMALL_ALGORITHMS) {
             auto stats = get_blueprint_sorting_stats(benchmarkAlgorithm.algorithmBlueprint, size, runs);
             BenchmarkResult result(stats, size, benchmarkAlgorithm.name);
 
-            json j(result);
-            std::cout << j.dump(2) << std::endl;
-            // TODO: save to file, then dump to DB
+            results.push_back(result);
         }
     }
+
+    json resultsJson(results);
+    std::cout << resultsJson.dump(2) << std::endl;
+
+    output_file << resultsJson << std::endl;
+    output_file.close();
 }
 
 void run_mid_benchmarks(int runs) {
     std::vector<int> sizes { 1250, 2500, 5000, 10000 };
+    std::vector<BenchmarkResult> results;
+
+    std::ofstream output_file;
+    output_file.open("benchmark_results_mid.json");
+
 
     for (auto size: sizes) {
         for (auto & benchmarkAlgorithm: ALL_MID_ALGORITHMS) {
             auto stats = get_blueprint_sorting_stats(benchmarkAlgorithm.algorithmBlueprint, size, runs);
             BenchmarkResult result(stats, size, benchmarkAlgorithm.name);
 
-            json j(result);
-            std::cout << j.dump(2) << std::endl;
-            // TODO: save to file, then dump to DB
+            results.push_back(result);
         }
     }
+
+    json resultsJson(results);
+    std::cout << resultsJson.dump(2) << std::endl;
+
+    output_file << resultsJson << std::endl;
+    output_file.close();
+}
+
+void run_benchmarks() {
+    run_small_benchmarks(1000);
+
+    run_mid_benchmarks(100);
 }
