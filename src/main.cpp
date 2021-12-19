@@ -70,7 +70,9 @@ int main(int argc, char* argv[]) {
 
 //    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 10);
 
-    run_small_benchmarks(100);
+    run_small_benchmarks(1000);
+
+    run_mid_benchmarks(100);
 
 	return 0;
 }
