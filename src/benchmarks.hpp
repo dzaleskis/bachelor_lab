@@ -143,6 +143,7 @@ void run_small_benchmarks(int runs) {
 
 
     for (auto size: sizes) {
+        // TODO: use the same data for all
         for (auto & benchmarkAlgorithm: ALL_SMALL_ALGORITHMS) {
             auto stats = get_blueprint_sorting_stats(benchmarkAlgorithm.algorithmBlueprint, size, runs);
             BenchmarkResult result(stats, size, benchmarkAlgorithm.name);
@@ -167,6 +168,7 @@ void run_mid_benchmarks(int runs) {
 
 
     for (auto size: sizes) {
+        // TODO: use the same data for all
         for (auto & benchmarkAlgorithm: ALL_MID_ALGORITHMS) {
             auto stats = get_blueprint_sorting_stats(benchmarkAlgorithm.algorithmBlueprint, size, runs);
             BenchmarkResult result(stats, size, benchmarkAlgorithm.name);

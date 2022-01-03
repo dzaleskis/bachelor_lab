@@ -24,8 +24,6 @@ NLOHMANN_JSON_SERIALIZE_ENUM(PassType, {
 const std::vector<PassType> ALL_PASSES
     { PassType::INSERTION, PassType::INSERTION_IMPROVED, PassType::BRICK, PassType::BUBBLE, PassType::SHAKE };
 
-// TODO: look into optimizations
-
 template <typename T>
 class Pass {
 public:
