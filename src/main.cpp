@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
 //    run_ga(config);
 
-    run_benchmarks();
+    run_all_benchmarks();
 
 	return 0;
 }

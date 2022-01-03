@@ -30,8 +30,7 @@ time_size measure_time_us(const std::function<void()> & fn) {
 }
 
 SortingStats get_blueprint_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int size, int runs) {
-    auto raw = std::vector<int>(size);
-    auto elements = std::vector<Element<int>>(size);
+    auto data = std::vector<int>(size);
 
     auto rawAlgorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<std::vector<int>>(algorithmBlueprint);
     auto elementAlgorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<std::vector<Element<int>>>(algorithmBlueprint);
@@ -42,22 +41,20 @@ SortingStats get_blueprint_sorting_stats(const AlgorithmBlueprint& algorithmBlue
     double total_time = 0;
 
     for (int i = 0; i < runs; i++) {
-        utils::fill_random(raw.begin(), raw.end());
+        utils::fill_random(data.begin(), data.end());
+
+        std::vector<int> raw(data.begin(), data.end());
+        std::vector<Element<int>> elements(data.begin(), data.end());
 
         auto time = measure_time_us([&]() {
             rawAlgorithm->sort(raw);
         });
 
-        total_time += time;
-    }
-
-    for (int i = 0; i < runs; i++) {
-        utils::fill_random(elements.begin(), elements.end());
-
         auto report = global_measure.withReport([&]() {
             elementAlgorithm->sort(elements);
         });
 
+        total_time += time;
         total_inversions += utils::count_inversions(elements.begin(), elements.end());
         total_comparisons += report.comparisons;
         total_assignments += report.assignments;
@@ -69,8 +66,7 @@ SortingStats get_blueprint_sorting_stats(const AlgorithmBlueprint& algorithmBlue
 }
 
 SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    auto raw = std::vector<int>(size);
-    auto elements = std::vector<Element<int>>(size);
+    auto data = std::vector<int>(size);
 
     double total_inversions = 0;
     double total_comparisons = 0;
@@ -78,22 +74,20 @@ SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int
     double total_time = 0;
 
     for (int i = 0; i < runs; i++) {
-        utils::fill_random(raw.begin(), raw.end());
+        utils::fill_random(data.begin(), data.end());
+
+        std::vector<int> raw(data.begin(), data.end());
+        std::vector<Element<int>> elements(data.begin(), data.end());
 
         auto time = measure_time_us([&]() {
             perform_classic_sort(algorithm, raw);
         });
 
-        total_time += time;
-    }
-
-    for (int i = 0; i < runs; i++) {
-        utils::fill_random(elements.begin(), elements.end());
-
         auto report = global_measure.withReport([&]() {
             perform_classic_sort(algorithm, elements);
         });
 
+        total_time += time;
         total_inversions += utils::count_inversions(elements.begin(), elements.end());
         total_comparisons += report.comparisons;
         total_assignments += report.assignments;
