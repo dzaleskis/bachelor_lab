@@ -3,21 +3,19 @@
 #include <random>
 #include <functional>
 #include <chrono>
-#include <climits>
 
 namespace utils {
-    // NOTE: random device does NOT work correctly on win with MinGW
-
+    // shamelessly stolen from openGA
     static uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     static std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed>>32)};
     static std::mt19937 mte(ss);
 
-    int get_random_int(int min = INT_MIN, int max = INT_MAX) {
+    int get_random_int(int min, int max) {
         std::uniform_int_distribution<int> dist(min, max);
         return dist(mte);
     }
 
-    unsigned int get_random_uint(unsigned int min = 0, unsigned int max = UINT_MAX) {
+    unsigned int get_random_uint(unsigned int min, unsigned int max) {
         std::uniform_int_distribution<unsigned int> dist(min, max);
         return dist(mte);
     }

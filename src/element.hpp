@@ -5,46 +5,49 @@
 #include <memory>
 #include "random_utils.hpp"
 
-struct measure_report {
-    int assignments;
-    int comparisons;
+struct MeasureReport {
+    int assignments = 0;
+    int comparisons = 0;
+
+    void reset() {
+        assignments = 0;
+        comparisons = 0;
+    }
 };
 
 class Measure {
     public:
         void incrAssignments() {
-            auto it = reports.find(current_key);
-            if (it == reports.end()) {
+            if (!isEnabled) {
                 return;
             }
 
-            (*it).second->assignments += 1;
+            report.assignments += 1;
         }
 
         void incrComparisons() {
-            auto it = reports.find(current_key);
-            if (it == reports.end()) {
+            if (!isEnabled) {
                 return;
             }
 
-            (*it).second->comparisons += 1;
+            report.comparisons += 1;
         }
 
-        const measure_report & withReport(const std::function<void()>& fn) {
-            create_report();
+        MeasureReport withReport(const std::function<void()>& fn) {
+            isEnabled = true;
+
             fn();
 
-            return *(reports.at(current_key));
+            isEnabled = false;
+            auto collectedReport = report;
+            report.reset();
+
+            return collectedReport;
         }
 
     private:
-        void create_report() {
-            current_key = utils::get_random_int();
-            reports.insert(std::make_pair(current_key, std::make_unique<measure_report>()));
-        }
-
-        int current_key = 0;
-        std::unordered_map<int, std::unique_ptr<measure_report>> reports;
+        bool isEnabled = false;
+        MeasureReport report;
 };
 
 // avoid locks

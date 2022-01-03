@@ -149,12 +149,13 @@ void run_small_benchmarks(int runs) {
             BenchmarkResult result(stats, size, benchmarkAlgorithm.name);
 
             results.push_back(result);
+
+            json resultJson(result);
+            std::cout << resultJson.dump(2) << std::endl;
         }
     }
 
     json resultsJson(results);
-    std::cout << resultsJson.dump(2) << std::endl;
-
     output_file << resultsJson << std::endl;
     output_file.close();
 }
@@ -174,12 +175,14 @@ void run_mid_benchmarks(int runs) {
             BenchmarkResult result(stats, size, benchmarkAlgorithm.name);
 
             results.push_back(result);
+
+
+            json resultJson(result);
+            std::cout << resultJson.dump(2) << std::endl;
         }
     }
 
     json resultsJson(results);
-    std::cout << resultsJson.dump(2) << std::endl;
-
     output_file << resultsJson << std::endl;
     output_file.close();
 }
