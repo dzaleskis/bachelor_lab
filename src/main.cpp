@@ -46,15 +46,6 @@ void run_ga(const GaConfig & config) {
 	save_results(ga_obj);
 }
 
-void eval_classic(ClassicAlgorithm algorithm, int size, int runs) {
-    auto stats = get_classic_sorting_stats(algorithm, size, runs);
-    auto fitness = evaluate_fitness(stats);
-
-    json j(stats);
-    std::cout << j.dump(2) << std::endl;
-    std::cout << "fitness: " << fitness << std::endl;
-}
-
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
@@ -67,8 +58,6 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
 //    run_ga(config);
-
-//    eval_classic(ClassicAlgorithm::SHELLSORT_IMPROVED, 10000, 10);
 
     run_benchmarks();
 
