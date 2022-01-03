@@ -4,7 +4,6 @@
 #include "CLI11.hpp"
 #include "fitness.hpp"
 #include "genetic_algorithm.hpp"
-#include "benchmarks.hpp"
 
 using json = nlohmann::json;
 
@@ -57,9 +56,11 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-//    run_ga(config);
+    run_ga(config);
 
-    run_all_benchmarks();
+//    check_inversions();
+
+//    run_all_benchmarks();
 
 	return 0;
 }

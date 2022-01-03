@@ -6,6 +6,7 @@
 #include "sorting_algorithm.hpp"
 #include "classic_algorithms.hpp"
 #include "gaps.hpp"
+#include "inversion_utils.hpp"
 
 typedef long long time_size;
 
@@ -55,7 +56,7 @@ SortingStats get_blueprint_sorting_stats(const AlgorithmBlueprint& algorithmBlue
         });
 
         total_time += time;
-        total_inversions += utils::count_inversions(elements.begin(), elements.end());
+        total_inversions += utils::merge_sort_with_inversions(elements);
         total_comparisons += report.comparisons;
         total_assignments += report.assignments;
     }
@@ -88,7 +89,7 @@ SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int
         });
 
         total_time += time;
-        total_inversions += utils::count_inversions(elements.begin(), elements.end());
+        total_inversions += utils::merge_sort_with_inversions(elements);
         total_comparisons += report.comparisons;
         total_assignments += report.assignments;
     }
