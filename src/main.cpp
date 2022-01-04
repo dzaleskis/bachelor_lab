@@ -4,6 +4,7 @@
 #include "CLI11.hpp"
 #include "fitness.hpp"
 #include "genetic_algorithm.hpp"
+#include "benchmarks.hpp"
 
 using json = nlohmann::json;
 
@@ -27,7 +28,7 @@ void run_ga(const GaConfig & config) {
 	ga_obj.verbose=false;
 	ga_obj.population=config.population;
 	// ga_obj.user_initial_solutions=initial_solutions;
-	ga_obj.generation_max=200;
+	ga_obj.generation_max=250;
 	ga_obj.calculate_SO_total_fitness=calculate_SO_total_fitness;
 	ga_obj.init_genes=init_genes;
 	ga_obj.eval_solution=eval_solution;
@@ -36,8 +37,8 @@ void run_ga(const GaConfig & config) {
 	ga_obj.SO_report_generation=SO_report_generation;
 	ga_obj.crossover_fraction=config.crossover_frac;
 	ga_obj.mutation_rate=config.mut_rate;
-	ga_obj.elite_count=20;
-	ga_obj.best_stall_max=15;
+	ga_obj.elite_count=5;
+	ga_obj.best_stall_max=100;
 	ga_obj.average_stall_max=5;
 	ga_obj.solve();
 
@@ -48,7 +49,7 @@ void run_ga(const GaConfig & config) {
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {150, 0.2, 0.7 };
+	GaConfig config = {200, 0.1, 0.2 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-m", config.mut_rate, "Specify GA mutation rate");
@@ -56,11 +57,9 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
-    run_ga(config);
+//    run_ga(config);
 
-//    check_inversions();
-
-//    run_all_benchmarks();
+    run_all_benchmarks();
 
 	return 0;
 }

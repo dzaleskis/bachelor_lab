@@ -53,7 +53,7 @@ SortingStats run_algorithm_benchmark(AlgorithmBlueprint algorithmBlueprint, std:
     return stats;
 }
 
-void run_benchmark(int runs, const std::vector<int>& sizes, const char* outputPath) {
+void run_benchmark(int runs, const std::vector<BenchmarkAlgorithm>& algorithms, const std::vector<int>& sizes, const char* outputPath) {
     std::vector<BenchmarkResult> results;
 
     std::ofstream output_file;
@@ -65,9 +65,9 @@ void run_benchmark(int runs, const std::vector<int>& sizes, const char* outputPa
             utils::fill_random(data.begin(), data.end());
         }
 
-        for (auto & benchmarkAlgorithm: ALL_SMALL_ALGORITHMS) {
-            auto stats = run_algorithm_benchmark(benchmarkAlgorithm.algorithmBlueprint, allData);
-            BenchmarkResult result(stats, size, benchmarkAlgorithm.name);
+        for (const auto & algorithm: algorithms) {
+            auto stats = run_algorithm_benchmark(algorithm.algorithmBlueprint, allData);
+            BenchmarkResult result(stats, size, algorithm.name);
 
             results.push_back(result);
 
@@ -83,8 +83,8 @@ void run_benchmark(int runs, const std::vector<int>& sizes, const char* outputPa
 
 void run_all_benchmarks() {
     // RUN SMALL
-    run_benchmark(10000, {125, 250, 500, 1000}, "benchmark_results_small.json");
+    run_benchmark(10000, ALL_SMALL_ALGORITHMS, {125, 250, 500, 1000}, "benchmark_results_small.json");
 
-    // RUN MID
-    run_benchmark(1000, {1250, 2500, 5000, 10000}, "benchmark_results_mid.json");
+    // RUN BIG
+    run_benchmark(1000, ALL_BIG_ALGORITHMS, {12500, 25000, 50000, 100000}, "benchmark_results_big.json");
 }

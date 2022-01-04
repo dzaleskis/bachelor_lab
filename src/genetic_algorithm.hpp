@@ -14,7 +14,7 @@
 using json = nlohmann::json;
 
 constexpr int EVAL_RUNS = 1;
-constexpr int CONTAINER_SIZE = 10000;
+constexpr int CONTAINER_SIZE = 100000;
 constexpr double EQUAL_PROBABILITY = 0.5;
 
 const char* RESULT_PATH = "result.json";

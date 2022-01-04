@@ -101,13 +101,11 @@ SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int
 
 // lower is better
 double evaluate_fitness(const SortingStats& sortingStats) {
-    auto inversions = sortingStats.avg_inversions;
-    auto comparisons = sortingStats.avg_comparisons;
-    auto assignments = sortingStats.avg_assignments;
-    // TODO: how to scale time?
-    auto time = sortingStats.avg_time;
+    auto inv_penalty = std::pow(sortingStats.avg_inversions, 2.0);
+    auto time_penalty = std::pow(sortingStats.avg_time, 1.4);
+    auto operations = (sortingStats.avg_comparisons * 2) + sortingStats.avg_assignments;
 
-    auto fitness = std::pow(inversions, 2.0) + std::pow(time, 1.5) + comparisons + assignments;
+    auto fitness = inv_penalty + time_penalty + operations;
 
     return fitness;
 }
