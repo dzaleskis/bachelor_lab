@@ -1,25 +1,6 @@
 #pragma once
 
 namespace utils {
-    template<typename T>
-    int merge_sort_with_inversions(std::vector<T> &data) {
-        int n = size(data);
-        int middle = n / 2;
-        int inversions = 0;
-
-        if (n <= 1) {
-            return inversions;
-        }
-
-        std::vector<T> left(data.begin(), data.begin() + middle);
-        std::vector<T> right(data.begin() + middle, data.end());
-
-        inversions += merge_sort_with_inversions(left);
-        inversions += merge_sort_with_inversions(right);
-        inversions += merge(left, right, data);
-
-        return inversions;
-    }
 
     template<typename T>
     int merge(std::vector<T> &a, std::vector<T> &b, std::vector<T> &c) {
@@ -46,6 +27,26 @@ namespace utils {
                 c[k] = b[j++];
             }
         }
+
+        return inversions;
+    }
+
+    template<typename T>
+    int merge_sort_with_inversions(std::vector<T> &data) {
+        int n = data.size();
+        int middle = n / 2;
+        int inversions = 0;
+
+        if (n <= 1) {
+            return inversions;
+        }
+
+        std::vector<T> left(data.begin(), data.begin() + middle);
+        std::vector<T> right(data.begin() + middle, data.end());
+
+        inversions += merge_sort_with_inversions(left);
+        inversions += merge_sort_with_inversions(right);
+        inversions += merge(left, right, data);
 
         return inversions;
     }

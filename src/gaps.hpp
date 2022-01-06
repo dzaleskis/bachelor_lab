@@ -56,7 +56,7 @@ const std::vector<std::vector<int>> BIG_GAPS {
 };
 
 
-const auto ALL_GAPS = SMALL_GAPS;
+//const auto ALL_GAPS = SMALL_GAPS;
 //const auto ALL_GAPS = MID_GAPS;
-//const auto ALL_GAPS = BIG_GAPS;
+const auto ALL_GAPS = BIG_GAPS;
 

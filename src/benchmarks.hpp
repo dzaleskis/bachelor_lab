@@ -83,7 +83,7 @@ void run_benchmark(int runs, const std::vector<BenchmarkAlgorithm>& algorithms, 
 
 void run_all_benchmarks() {
     // RUN SMALL
-    run_benchmark(10000, ALL_SMALL_ALGORITHMS, {125, 250, 500, 1000}, "benchmark_results_small.json");
+//    run_benchmark(10000, ALL_SMALL_ALGORITHMS, {125, 250, 500, 1000}, "benchmark_results_small.json");
 
     // RUN BIG
     run_benchmark(1000, ALL_BIG_ALGORITHMS, {12500, 25000, 50000, 100000}, "benchmark_results_big.json");

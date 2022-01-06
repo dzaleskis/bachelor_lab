@@ -10,6 +10,7 @@
 #include "fitness.hpp"
 #include "sorting_algorithm.hpp"
 #include "openGA.hpp"
+#include "benchmark_algorithms.hpp"
 
 using json = nlohmann::json;
 
@@ -26,18 +27,19 @@ inline bool withProbability(double probability, const std::function<double(void)
     return probability < rnd01();
 }
 
-inline std::vector<int> get_random_gaps(const std::function<double(void)> &rnd01) {
+inline const std::vector<int> & get_random_gaps(const std::function<double(void)> &rnd01) {
     int random_gap_index = std::floor(rnd01() * ALL_GAPS.size());
-    auto gaps = ALL_GAPS.at(random_gap_index);
-
-    return std::move(gaps);
+    return ALL_GAPS.at(random_gap_index);
 }
 
 inline PassType get_random_pass(const std::function<double(void)> &rnd01) {
     int random_pass_index = std::floor(rnd01() * ALL_PASSES.size());
-    auto pass = ALL_PASSES.at(random_pass_index);
+    return ALL_PASSES.at(random_pass_index);
+}
 
-    return pass;
+inline const AlgorithmBlueprint & get_random_small_algorithm(const std::function<double(void)> &rnd01) {
+    int random_algorithm_index = std::floor(rnd01() * GA_SMALL_ALGORITHMS.size());
+    return GA_SMALL_ALGORITHMS.at(random_algorithm_index);
 }
 
 inline void normalize(Solution& s) {
@@ -67,6 +69,17 @@ void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
     for (int & gap : gaps) {
         auto pass = get_random_pass(rnd01);
         s.passBlueprints.emplace_back(pass, gap);
+    }
+
+    // HACK LIKE NEVER BEFORE
+    if (CONTAINER_SIZE > 1000) {
+        auto small_algorithm = get_random_small_algorithm(rnd01);
+        auto currIndex = s.passBlueprints.size() - 1;
+
+        for (int i = small_algorithm.passBlueprints.size() - 1; i >= 0; i--) {
+            s.passBlueprints.at(currIndex) = small_algorithm.passBlueprints.at(i);
+            currIndex--;
+        }
     }
 
     normalize(s);
