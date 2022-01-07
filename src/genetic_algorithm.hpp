@@ -63,22 +63,34 @@ typedef EA::Genetic<Solution, MiddleCost> GAType;
 typedef EA::GenerationType<Solution, MiddleCost> GenerationType;
 
 void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-    auto gaps = get_random_gaps(rnd01);
-    s.passBlueprints.reserve(gaps.size());
-
-    for (int & gap : gaps) {
-        auto pass = get_random_pass(rnd01);
-        s.passBlueprints.emplace_back(pass, gap);
-    }
+    s.passBlueprints.reserve(GAPS_SIZE);
 
     // HACK LIKE NEVER BEFORE
     if (CONTAINER_SIZE > 1000) {
         auto small_algorithm = get_random_small_algorithm(rnd01);
-        auto currIndex = s.passBlueprints.size() - 1;
+        auto q = 2.2 + (rnd01() / 20);
+        std::reverse(small_algorithm.passBlueprints.begin(), small_algorithm.passBlueprints.end());
 
-        for (int i = small_algorithm.passBlueprints.size() - 1; i >= 0; i--) {
-            s.passBlueprints.at(currIndex) = small_algorithm.passBlueprints.at(i);
-            currIndex--;
+        for (auto & passBlueprint : small_algorithm.passBlueprints) {
+            s.passBlueprints.emplace_back(passBlueprint.passType, passBlueprint.gap);
+        }
+
+        for (int i = s.passBlueprints.size(); i < GAPS_SIZE; i++) {
+            auto pass = get_random_pass(rnd01);
+            auto prevBlueprint = s.passBlueprints.at(i - 1);
+
+            s.passBlueprints.emplace_back(pass, std::floor(prevBlueprint.gap * q));
+        }
+
+        std::reverse(s.passBlueprints.begin(), s.passBlueprints.end());
+
+    } else {
+        auto gaps = get_random_gaps(rnd01);
+        s.passBlueprints.reserve(gaps.size());
+
+        for (int & gap : gaps) {
+            auto pass = get_random_pass(rnd01);
+            s.passBlueprints.emplace_back(pass, gap);
         }
     }
 

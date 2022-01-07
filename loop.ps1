@@ -1,4 +1,4 @@
-$runs = 30
+$runs = 20
 
 for ($num = 1 ; $num -le $runs ; $num++){
     & .\run_send.ps1

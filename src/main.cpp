@@ -38,8 +38,8 @@ void run_ga(const GaConfig & config) {
 	ga_obj.crossover_fraction=config.crossover_frac;
 	ga_obj.mutation_rate=config.mut_rate;
 	ga_obj.elite_count=5;
-	ga_obj.best_stall_max=100;
-	ga_obj.average_stall_max=5;
+	ga_obj.best_stall_max=50;
+	ga_obj.average_stall_max=10;
 	ga_obj.solve();
 
 	std::cout << "The problem is optimized in " << timer.toc() << " seconds." << std::endl;

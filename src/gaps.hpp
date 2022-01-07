@@ -1,9 +1,6 @@
 #pragma once
 #include <vector>
 
-constexpr int SMALL_GAPS_SIZE = 8;
-constexpr int MID_GAPS_SIZE = 11;
-
 const std::vector<int> CIURA_SMALL_GAPS {701,301,132,57,23,10,4,1};
 const std::vector<int> TOKUDA_SMALL_GAPS {525,233,103,46,20,9,4,1};
 const std::vector<int> SEDGEWICK_SMALL_GAPS {929,505,209,109,41,19,5,1};
@@ -55,8 +52,6 @@ const std::vector<std::vector<int>> BIG_GAPS {
         GEOMETRIC_195_BIG_GAPS, GEOMETRIC_205_BIG_GAPS, GEOMETRIC_215_BIG_GAPS, GEOMETRIC_225_BIG_GAPS, GEOMETRIC_235_BIG_GAPS
 };
 
-
-//const auto ALL_GAPS = SMALL_GAPS;
-//const auto ALL_GAPS = MID_GAPS;
 const auto ALL_GAPS = BIG_GAPS;
+const auto GAPS_SIZE = ALL_GAPS.front().size();
 
