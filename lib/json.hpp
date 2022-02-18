@@ -14388,7 +14388,7 @@ Target reinterpret_bits(const Source source)
 
 struct diyfp // f * 2^e
 {
-    static constexpr int kPrecision = 64; // = q
+    static constexpr int kPrecision = 64; // = coefficient
 
     std::uint64_t f = 0;
     int e = 0;
@@ -14409,15 +14409,15 @@ struct diyfp // f * 2^e
 
     /*!
     @brief returns x * y
-    @note The result is rounded. (Only the upper q bits are returned.)
+    @note The result is rounded. (Only the upper coefficient bits are returned.)
     */
     static diyfp mul(const diyfp& x, const diyfp& y) noexcept
     {
         static_assert(kPrecision == 64, "internal error");
 
         // Computes:
-        //  f = round((x.f * y.f) / 2^q)
-        //  e = x.e + y.e + q
+        //  f = round((x.f * y.f) / 2^coefficient)
+        //  e = x.e + y.e + coefficient
 
         // Emulate the 64-bit * 64-bit multiplication:
         //
@@ -14473,7 +14473,7 @@ struct diyfp // f * 2^e
     }
 
     /*!
-    @brief normalize x such that the significand is >= 2^(q-1)
+    @brief normalize x such that the significand is >= 2^(coefficient-1)
     @pre x.f != 0
     */
     static diyfp normalize(diyfp x) noexcept
@@ -14589,20 +14589,20 @@ boundaries compute_boundaries(FloatType value)
 // power-of-ten c, such that the exponent of the product c * w = f * 2^e lies
 // within a certain range [alpha, gamma] (Definition 3.2 from [1])
 //
-//      alpha <= e = e_c + e_w + q <= gamma
+//      alpha <= e = e_c + e_w + coefficient <= gamma
 //
 // or
 //
-//      f_c * f_w * 2^alpha <= f_c 2^(e_c) * f_w 2^(e_w) * 2^q
+//      f_c * f_w * 2^alpha <= f_c 2^(e_c) * f_w 2^(e_w) * 2^coefficient
 //                          <= f_c * f_w * 2^gamma
 //
-// Since c and w are normalized, i.e. 2^(q-1) <= f < 2^q, this implies
+// Since c and w are normalized, i.e. 2^(coefficient-1) <= f < 2^coefficient, this implies
 //
-//      2^(q-1) * 2^(q-1) * 2^alpha <= c * w * 2^q < 2^q * 2^q * 2^gamma
+//      2^(coefficient-1) * 2^(coefficient-1) * 2^alpha <= c * w * 2^coefficient < 2^coefficient * 2^coefficient * 2^gamma
 //
 // or
 //
-//      2^(q - 2 + alpha) <= c * w < 2^(q + gamma)
+//      2^(coefficient - 2 + alpha) <= c * w < 2^(coefficient + gamma)
 //
 // The choice of (alpha,gamma) determines the size of the table and the form of
 // the digit generation procedure. Using (alpha,gamma)=(-60,-32) works out well
@@ -14655,18 +14655,18 @@ For a normalized diyfp w = f * 2^e, this function returns a (normalized) cached
 power-of-ten c = f_c * 2^e_c, such that the exponent of the product w * c
 satisfies (Definition 3.2 from [1])
 
-     alpha <= e_c + e + q <= gamma.
+     alpha <= e_c + e + coefficient <= gamma.
 */
 inline cached_power get_cached_power_for_binary_exponent(int e)
 {
     // Now
     //
-    //      alpha <= e_c + e + q <= gamma                                    (1)
-    //      ==> f_c * 2^alpha <= c * 2^e * 2^q
+    //      alpha <= e_c + e + coefficient <= gamma                                    (1)
+    //      ==> f_c * 2^alpha <= c * 2^e * 2^coefficient
     //
-    // and since the c's are normalized, 2^(q-1) <= f_c,
+    // and since the c's are normalized, 2^(coefficient-1) <= f_c,
     //
-    //      ==> 2^(q - 1 + alpha) <= c * 2^(e + q)
+    //      ==> 2^(coefficient - 1 + alpha) <= c * 2^(e + coefficient)
     //      ==> 2^(alpha - e - 1) <= c
     //
     // If c were an exact power of ten, i.e. c = 10^k, one may determine k as
@@ -14680,7 +14680,7 @@ inline cached_power get_cached_power_for_binary_exponent(int e)
     //  this simple function is sufficient."
     //
     // For IEEE double precision floating-point numbers converted into
-    // normalized diyfp's w = f * 2^e, with q = 64,
+    // normalized diyfp's w = f * 2^e, with coefficient = 64,
     //
     //      e >= -1022      (min IEEE exponent)
     //           -52        (p - 1)
@@ -15178,7 +15178,7 @@ inline void grisu2(char* buf, int& len, int& decimal_exponent,
 
     const diyfp c_minus_k(cached.f, cached.e); // = c ~= 10^-k
 
-    // The exponent of the products is = v.e + c_minus_k.e + q and is in the range [alpha,gamma]
+    // The exponent of the products is = v.e + c_minus_k.e + coefficient and is in the range [alpha,gamma]
     const diyfp w       = diyfp::mul(v,       c_minus_k);
     const diyfp w_minus = diyfp::mul(m_minus, c_minus_k);
     const diyfp w_plus  = diyfp::mul(m_plus,  c_minus_k);

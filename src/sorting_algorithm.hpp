@@ -59,6 +59,9 @@ public:
         for (const auto & pb: passBlueprints) {
             concretePasses.push_back(ConcretePass<T>(PassFactory::getPass<T>(pb.passType), pb.gap));
         }
+
+        // prepare for sorting by reversing the passes
+        std::reverse(concretePasses.begin(), concretePasses.end());
     }
 
     void sort(T & container) {

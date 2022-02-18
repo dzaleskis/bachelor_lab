@@ -114,10 +114,10 @@ template <typename T>
 void perform_classic_sort(ClassicAlgorithm algorithm, T & data) {
     switch(algorithm) {
         case ClassicAlgorithm::SHELLSORT:
-            shellsort(data, CIURA_MID_GAPS);
+            shellsort(data, CIURA_BIG_GAPS);
             break;
         case ClassicAlgorithm::SHELLSORT_IMPROVED:
-            shellsort_improved(data, CIURA_MID_GAPS);
+            shellsort_improved(data, CIURA_BIG_GAPS);
             break;
         case ClassicAlgorithm::INSERTION_SORT:
             insertion_sort(data);
