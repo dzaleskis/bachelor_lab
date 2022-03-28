@@ -1,4 +1,4 @@
-$runs = 20
+$runs = 10
 
 for ($num = 1 ; $num -le $runs ; $num++){
     & .\run_send.ps1
@@ -6,4 +6,4 @@ for ($num = 1 ; $num -le $runs ; $num++){
 }
 
 $voice = New-Object -ComObject Sapi.spvoice
-$voice.speak("Hey, David, your genetic algorithm loop is finished!")
+$voice.speak("Hey David, your genetic algorithm loop is finished!")

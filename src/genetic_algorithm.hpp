@@ -21,7 +21,7 @@ const double INVERSIONS_THRESHOLD = 5;
 const double ACCEPTABLE_INVERSIONS = 50;
 
 const double CYCLES_THRESHOLD = 4000;
-const double ACCEPTABLE_CYCLES = 7000;
+const double ACCEPTABLE_CYCLES = 8000;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
@@ -66,7 +66,7 @@ public:
     }
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.2, 2.4));
+        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.2, 3.3));
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
@@ -135,7 +135,7 @@ public:
 
     std::vector<double> calculate_objectives(const GAType::thisChromosomeType &x)
     {
-        // prioritize inversions
+        // first, prioritize inversions
         if (x.middle_costs.avg_inversions > INVERSIONS_THRESHOLD) {
             return {
                     x.middle_costs.avg_inversions,
@@ -181,7 +181,7 @@ public:
         std::ofstream output_file;
         output_file.open(RESULT_PATH);
 
-        std::vector<unsigned int> frontIndices = ga_obj.last_generation.fronts[0];
+        const auto& frontIndices = ga_obj.last_generation.fronts[0];
         std::vector<GeneticAlgorithmResult> results;
 
         for (auto i: frontIndices) {

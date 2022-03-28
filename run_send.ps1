@@ -1,4 +1,4 @@
-cd cmake-build-release_visual
+cd cmake-build-release
 ./course_project_lab.exe
+send_result
 cd ..
-node send_result "$PWD\cmake-build-release_visual\result.json"

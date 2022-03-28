@@ -8,6 +8,7 @@
 using json = nlohmann::json;
 
 struct GaConfig {
+    int generations;
     int population;
     int size;
     int eval_runs;
@@ -20,7 +21,7 @@ void init_common_config(GAType& ga_obj, const GaConfig & config) {
     ga_obj.idle_delay_us=1;
     ga_obj.verbose=false;
     ga_obj.population=config.population;
-    ga_obj.generation_max=100;
+    ga_obj.generation_max=config.generations;
     ga_obj.crossover_fraction=config.crossover_frac;
     ga_obj.mutation_rate=config.mut_rate;
 }
@@ -67,7 +68,7 @@ void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {500, 64, 5, 0.075, 0.4 };
+	GaConfig config = {150, 500, 64, 5, 0.08, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-s", config.size, "Specify size of data to sort");
