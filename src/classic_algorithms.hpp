@@ -5,9 +5,12 @@ enum class ClassicAlgorithm {
     SHELLSORT,
     SHELLSORT_IMPROVED,
     INSERTION_SORT,
+    INSERTION_SORT_IMPROVED,
     BUBBLE_SORT,
     BRICK_SORT
 };
+
+const std::vector<int> CIURA_GAPS {701,301,132,57,23,10,4,1};
 
 template <typename T>
 void shellsort(T & vector, const std::vector<int> & gaps) {
@@ -86,6 +89,28 @@ void insertion_sort(T & vector)
 }
 
 template <typename T>
+void insertion_sort_improved(T & vector)
+{
+    const std::size_t size = vector.size();
+
+    for (int i = 1; i < size; i++)
+    {
+        if (vector[i-1] > vector[i]) {
+            auto temp = vector[i];
+            int j = i - 1;
+
+            do {
+                vector[j + 1] = vector[j];
+                j -= 1;
+
+            } while (j >= 0 && vector[j] > temp);
+
+            vector[j + 1] = temp;
+        }
+    }
+}
+
+template <typename T>
 void brick_sort(T & vector)
 {
     const std::size_t size = vector.size();
@@ -111,16 +136,19 @@ void brick_sort(T & vector)
 }
 
 template <typename T>
-void perform_classic_sort(ClassicAlgorithm algorithm, T & data) {
+void run_classic_sort(ClassicAlgorithm algorithm, T & data) {
     switch(algorithm) {
         case ClassicAlgorithm::SHELLSORT:
-            shellsort(data, CIURA_BIG_GAPS);
+            shellsort(data, CIURA_GAPS);
             break;
         case ClassicAlgorithm::SHELLSORT_IMPROVED:
-            shellsort_improved(data, CIURA_BIG_GAPS);
+            shellsort_improved(data, CIURA_GAPS);
             break;
         case ClassicAlgorithm::INSERTION_SORT:
             insertion_sort(data);
+            break;
+        case ClassicAlgorithm::INSERTION_SORT_IMPROVED:
+            insertion_sort_improved(data);
             break;
         case ClassicAlgorithm::BRICK_SORT:
             brick_sort(data);

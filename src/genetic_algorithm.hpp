@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <limits>
 #include "pass.hpp"
 #include "random_utils.hpp"
 #include "gaps.hpp"
@@ -13,34 +14,46 @@
 
 using json = nlohmann::json;
 
-const double EQUAL_PROBABILITY = 0.5;
 const char* RESULT_PATH = "result.json";
+
+// TODO: these should adjust to size of data
+const double INVERSIONS_THRESHOLD = 5;
+const double ACCEPTABLE_INVERSIONS = 50;
+
+const double CYCLES_THRESHOLD = 4000;
+const double ACCEPTABLE_CYCLES = 7000;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
 
-inline bool withProbability(double probability, const std::function<double(void)> &rnd01) {
-    return probability < rnd01();
+inline bool rand_chance(const std::function<double(void)> &rnd01) {
+    return 0.5 < rnd01();
 }
 
-inline PassType get_random_pass(const std::function<double(void)> &rnd01) {
-    int random_pass_index = std::floor(rnd01() * ALL_PASSES.size());
-    return ALL_PASSES.at(random_pass_index);
+inline double rand_num(const std::function<double(void)> &rnd01, double min, double max) {
+    return rnd01() * (max - min) + min;
+}
+
+template<typename T>
+inline int rand_index(const std::function<double(void)> &rnd01, const T& value) {
+    return std::floor(rand_num(rnd01, 0, value.size()));
+}
+
+inline PassType rand_pass(const std::function<double(void)> &rnd01) {
+    return ALL_PASSES.at(rand_index(rnd01, ALL_PASSES));
 }
 
 struct GeneticAlgorithmResult: SortingStats {
-    GeneticAlgorithmResult(const SortingStats &stats, double fitness, const Solution & solution, int size) : SortingStats(stats) {
-        this->fitness = fitness;
+    GeneticAlgorithmResult(const SortingStats &stats, const Solution & solution, int size) : SortingStats(stats) {
         this->solution = solution;
         this->size = size;
     }
 
-    double fitness;
     Solution solution;
     int size;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, fitness, solution, size)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, solution, size)
 
 typedef EA::Genetic<Solution, MiddleCost> GAType;
 typedef EA::GenerationType<Solution, MiddleCost> GenerationType;
@@ -53,17 +66,25 @@ public:
     }
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-        auto gaps = get_geometric_gaps(size, 2.25);
+        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.2, 2.4));
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
-            auto pass = get_random_pass(rnd01);
+            auto pass = rand_pass(rnd01);
             s.passBlueprints.emplace_back(pass, gap);
         }
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
         c = get_sorting_stats(s, size, runs);
+
+        if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
+            return false;
+        }
+
+        if (c.avg_cycles > ACCEPTABLE_CYCLES) {
+            return false;
+        }
 
         return true; // genes are accepted
     }
@@ -75,11 +96,9 @@ public:
     {
         Solution s_new(s_base);
 
-        int random_blueprint_index = std::floor(rnd01() * s_new.passBlueprints.size());
-        auto & blueprint = s_new.passBlueprints.at(random_blueprint_index);
-
         // mutate pass type (pick a random new one)
-        blueprint.passType = get_random_pass(rnd01);
+        int random_blueprint_index = rand_index(rnd01, s_new.passBlueprints);
+        s_new.passBlueprints.at(random_blueprint_index).passType = rand_pass(rnd01);
 
         return std::move(s_new);
     }
@@ -89,12 +108,14 @@ public:
             const Solution& s2,
             const std::function<double(void)> &rnd01)
     {
-        Solution s_new(s1);
-        int min_size = std::min(s1.passBlueprints.size(), s2.passBlueprints.size());
+        Solution s_new;
+        int max_size = std::min(s1.passBlueprints.size(), s2.passBlueprints.size());
 
-        for (int i = 0; i < min_size; i++) {
-            if (withProbability(EQUAL_PROBABILITY, rnd01)) {
-                s_new.passBlueprints.at(i).passType = s2.passBlueprints.at(i).passType;
+        for (int i = 0; i < max_size; ++i) {
+            if (rand_chance(rnd01)) {
+                s_new.passBlueprints.emplace_back(s1.passBlueprints.at(i));
+            } else {
+                s_new.passBlueprints.emplace_back(s2.passBlueprints.at(i));
             }
         }
 
@@ -114,8 +135,28 @@ public:
 
     std::vector<double> calculate_objectives(const GAType::thisChromosomeType &x)
     {
+        // prioritize inversions
+        if (x.middle_costs.avg_inversions > INVERSIONS_THRESHOLD) {
+            return {
+                    x.middle_costs.avg_inversions,
+                    std::numeric_limits<double>::infinity(),
+                    std::numeric_limits<double>::infinity(),
+                    std::numeric_limits<double>::infinity(),
+            };
+        }
+
+        // then prioritize cycle count
+        if (x.middle_costs.avg_cycles > CYCLES_THRESHOLD) {
+            return {
+                    x.middle_costs.avg_inversions,
+                    std::numeric_limits<double>::infinity(),
+                    std::numeric_limits<double>::infinity(),
+                    x.middle_costs.avg_cycles,
+            };
+        }
+
         return {
-                std::pow(x.middle_costs.avg_inversions, 2),
+                x.middle_costs.avg_inversions,
                 x.middle_costs.avg_comparisons,
                 x.middle_costs.avg_assignments,
                 x.middle_costs.avg_cycles,
@@ -127,13 +168,9 @@ public:
             const EA::GenerationType<Solution,MiddleCost> &last_generation,
             const std::vector<unsigned int>& pareto_front)
     {
-        const auto& first = last_generation.chromosomes[pareto_front[0]];
-
         json j = {
                 {"generation", generation},
                 {"pareto_front_size", pareto_front.size()},
-                {"first_costs", first.middle_costs},
-                {"first_objectives", first.objectives},
         };
 
         std::cout << j.dump(2) << std::endl;
@@ -149,19 +186,19 @@ public:
 
         for (auto i: frontIndices) {
             const auto &solution = ga_obj.last_generation.chromosomes[i];
-            GeneticAlgorithmResult result(solution.middle_costs, solution.total_cost, solution.genes, size);
+            GeneticAlgorithmResult result(solution.middle_costs, solution.genes, size);
 
             results.emplace_back(result);
         }
 
         json resultJson(results);
+        auto prettyJson = resultJson.dump(2);
 
-        // print to console (pretty)
-        std::cout << resultJson.dump(2) << std::endl;
+        // print to console
+        std::cout << prettyJson << std::endl;
 
         // save to file
-        output_file << resultJson << std::endl;
+        output_file << prettyJson << std::endl;
         output_file.close();
     }
-
 };

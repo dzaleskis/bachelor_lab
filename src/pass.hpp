@@ -7,7 +7,6 @@
 
 enum class PassType {
     INSERTION,
-    INSERTION_IMPROVED,
     BRICK,
     BUBBLE,
     SHAKE
@@ -15,14 +14,13 @@ enum class PassType {
 
 NLOHMANN_JSON_SERIALIZE_ENUM(PassType, {
     {PassType::INSERTION, "insertion"},
-    {PassType::INSERTION_IMPROVED, "insertion_improved"},
     {PassType::BRICK, "brick"},
     {PassType::SHAKE, "shake"},
     {PassType::BUBBLE, "bubble"},
 })
 
 const std::vector<PassType> ALL_PASSES
-    { PassType::INSERTION, PassType::INSERTION_IMPROVED, PassType::BRICK, PassType::BUBBLE, PassType::SHAKE };
+    { PassType::INSERTION, PassType::BRICK, PassType::BUBBLE, PassType::SHAKE };
 
 template <typename T>
 class Pass {
@@ -32,23 +30,6 @@ public:
 
 template <typename T>
 class InsertionPass: public Pass<T> {
-public:
-    void performPass(T & container, std::size_t n, int gap) const override {
-        for (int i = gap; i < n; ++i) {
-            auto temp = container[i];
-            int j = i;
-
-            for (; j >= gap && container[j - gap] > temp; j -= gap) {
-                container[j] = container[j - gap];
-            }
-
-            container[j] = temp;
-        }
-    }
-};
-
-template <typename T>
-class ImprovedInsertionPass: public Pass<T> {
 public:
     void performPass(T & container, std::size_t n, int gap) const override {
         for (int i = gap; i < n; ++i) {
@@ -127,8 +108,6 @@ public:
         switch (passType) {
             case PassType::INSERTION:
                 return std::make_unique<InsertionPass<T>>();
-            case PassType::INSERTION_IMPROVED:
-                return std::make_unique<ImprovedInsertionPass<T>>();
             case PassType::BRICK:
                 return std::make_unique<BrickPass<T>>();
             case PassType::BUBBLE:

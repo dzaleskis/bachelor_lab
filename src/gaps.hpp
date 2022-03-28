@@ -8,7 +8,7 @@ std::vector<int> get_geometric_gaps(const int size, const double q) {
 
     while (currentGap < size) {
         gaps.insert(floor(currentGap));
-        currentGap = currentGap * q;
+        currentGap *= q;
     }
 
     return std::vector<int>(gaps.begin(), gaps.end());
