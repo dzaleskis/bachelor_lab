@@ -36,9 +36,6 @@ SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int
     rng.seed(std::time(0));
     auto all_data = utils::all_test_data(size, rng);
 
-    auto rawAlgorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<std::vector<int>>(algorithmBlueprint);
-    auto elementAlgorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<std::vector<Element<int>>>(algorithmBlueprint);
-
     double total_inversions = 0;
     double total_comparisons = 0;
     double total_assignments = 0;
@@ -47,12 +44,12 @@ SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int
     for (const auto& data: all_data) {
         std::vector<int> raw(data.begin(), data.end());
         auto cycles = measure_cycles([&]() {
-            rawAlgorithm->sort(raw);
+            run_algorithm(raw, algorithmBlueprint);
         });
 
         std::vector<Element<int>> elements(data.begin(), data.end());
         auto report = global_measure.withReport([&]() {
-            elementAlgorithm->sort(elements);
+            run_algorithm(elements, algorithmBlueprint);
         });
 
         total_cycles += cycles;

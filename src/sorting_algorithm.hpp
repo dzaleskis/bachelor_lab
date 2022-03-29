@@ -19,10 +19,9 @@ struct PassBlueprint {
     int gap;
 };
 
-// describes an algorithm, contains a list of pass descriptions
+// describes an algorithm, contains a list of pass descriptions (gaps are in increasing order)
 struct AlgorithmBlueprint {
     AlgorithmBlueprint() = default;
-    AlgorithmBlueprint(std::vector<PassBlueprint> _passBlueprints): passBlueprints(std::move(_passBlueprints)) {}
 
     std::vector<PassBlueprint> passBlueprints;
 };
@@ -31,54 +30,28 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PassBlueprint, passType, gap)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AlgorithmBlueprint, passBlueprints)
 
 template <typename T>
-class ConcretePass {
-public:
-    ConcretePass(std::unique_ptr<Pass<T>> _pass, int _gap): pass(std::move(_pass)), gap(_gap) {}
-
-    void performPass(T & container, std::size_t n) const {
-        // only perform pass if gap is not too big
-        if (gap < n) {
-            pass->performPass(container, n, gap);
-        }
+void run_pass(T& container, const PassBlueprint& blueprint) {
+    switch (blueprint.passType) {
+        case PassType::INSERTION:
+            return insertion_pass(container, blueprint.gap);
+        case PassType::BRICK:
+            return brick_pass(container, blueprint.gap);
+        case PassType::BUBBLE:
+            return bubble_pass(container, blueprint.gap);
+        case PassType::SHAKE:
+            return shake_pass(container, blueprint.gap);
+        default:
+            throw std::runtime_error("unsupported pass type");
     }
+}
 
-private:
-    std::unique_ptr<Pass<T>> pass;
-    int gap;
-};
-
-// use this to actually perform the sorting
 template <typename T>
-class ConcreteAlgorithm {
-public:
-    explicit ConcreteAlgorithm(const AlgorithmBlueprint & blueprint) {
-        auto passBlueprints = blueprint.passBlueprints;
+void run_algorithm(T& container, const AlgorithmBlueprint& algorithmBlueprint) {
+    // make a copy and reverse the passes, since blueprint stores passes in increasing order
+    std::vector<PassBlueprint> passes(algorithmBlueprint.passBlueprints);
+    std::reverse(passes.begin(), passes.end());
 
-        concretePasses.reserve(passBlueprints.size());
-
-        for (const auto & pb: passBlueprints) {
-            concretePasses.push_back(ConcretePass<T>(PassFactory::getPass<T>(pb.passType), pb.gap));
-        }
-
-        // prepare for sorting by reversing the passes
-        std::reverse(concretePasses.begin(), concretePasses.end());
+    for (const auto& pass: passes) {
+        run_pass(container, pass);
     }
-
-    void sort(T & container) {
-        std::size_t n = container.size();
-
-        for (const auto & cp: concretePasses) {
-            cp.performPass(container, n);
-        }
-    }
-private:
-    std::vector<ConcretePass<T>> concretePasses;
-};
-
-class ConcreteAlgorithmFactory {
-public:
-    template <typename T>
-    static std::unique_ptr<ConcreteAlgorithm<T>> getConcreteAlgorithm(const AlgorithmBlueprint & blueprint) {
-        return std::make_unique<ConcreteAlgorithm<T>>(blueprint);
-    }
-};
+}
