@@ -22,69 +22,69 @@ NLOHMANN_JSON_SERIALIZE_ENUM(PassType, {
 })
 
 template <typename T>
-void insertion_pass(T & container, int gap) {
-    std::size_t n = container.size();
+void insertion_pass(T & data, int gap) {
+    std::size_t n = data.size();
 
     for (int i = gap; i < n; ++i) {
-        if (container[i - gap] > container[i]) {
-            auto temp = container[i];
+        if (data[i - gap] > data[i]) {
+            auto temp = data[i];
             int j = i;
 
             do {
-                container[j] = container[j - gap];
+                data[j] = data[j - gap];
                 j -= gap;
 
-            } while (j >= gap && container[j - gap] > temp);
+            } while (j >= gap && data[j - gap] > temp);
 
-            container[j] = temp;
+            data[j] = temp;
         }
     }
 }
 
 template <typename T>
-void bubble_pass(T & container, int gap) {
-    std::size_t n = container.size();
+void bubble_pass(T & data, int gap) {
+    std::size_t n = data.size();
 
     for (int i = 0; i < n - gap; ++i) {
-        if (container[i] > container[i + gap]){
-            std::swap(container[i], container[i + gap]);
+        if (data[i] > data[i + gap]){
+            std::swap(data[i], data[i + gap]);
         }
     }
 }
 
 template <typename T>
-void brick_pass(T & container, int gap) {
-    std::size_t n = container.size();
+void brick_pass(T & data, int gap) {
+    std::size_t n = data.size();
     int increment = gap * 2;
 
     for (int i = gap; i < n - gap; i+= increment) {
-        if (container[i] > container[i + gap]) {
-            std::swap(container[i], container[i + gap]);
+        if (data[i] > data[i + gap]) {
+            std::swap(data[i], data[i + gap]);
         }
     }
 
     for (int i = 0; i < n - gap; i+= increment) {
-        if (container[i] > container[i + gap]) {
-            std::swap(container[i], container[i + gap]);
+        if (data[i] > data[i + gap]) {
+            std::swap(data[i], data[i + gap]);
         }
     }
 }
 
 template <typename T>
-void shake_pass(T & container,  int gap) {
-    std::size_t n = container.size();
+void shake_pass(T & data,  int gap) {
+    std::size_t n = data.size();
 
     // perform bubble pass forward
     for (int i = 0; i < n - gap; ++i) {
-        if (container[i] > container[i+gap]) {
-            std::swap(container[i], container[i + gap]);
+        if (data[i] > data[i+gap]) {
+            std::swap(data[i], data[i + gap]);
         }
     }
 
     // perform bubble pass backward
     for (int i = n - gap - 1; i >= 0; --i) {
-        if (container[i] > container[i+gap]) {
-            std::swap(container[i], container[i + gap]);
+        if (data[i] > data[i+gap]) {
+            std::swap(data[i], data[i + gap]);
         }
     }
 }

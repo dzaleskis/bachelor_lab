@@ -65,7 +65,7 @@ public:
     }
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.2, 3.3));
+        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.5, 3));
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
@@ -75,7 +75,7 @@ public:
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
-        c = get_sorting_stats(s, size);
+        c = get_genetic_sorting_stats(s, size);
 
         if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
             return false;

@@ -68,7 +68,7 @@ void check_classic_stats(ClassicAlgorithm algorithm, int size) {
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {150, 500, 64, 5, 0.08, 0.4 };
+	GaConfig config = {50, 500, 64, 5, 0.08, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-s", config.size, "Specify size of data to sort");
