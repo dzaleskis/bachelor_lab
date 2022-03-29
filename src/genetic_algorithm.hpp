@@ -5,7 +5,6 @@
 #include <vector>
 #include <limits>
 #include "pass.hpp"
-#include "random_utils.hpp"
 #include "gaps.hpp"
 #include "json.hpp"
 #include "stats.hpp"
@@ -16,10 +15,10 @@ using json = nlohmann::json;
 
 const char* RESULT_PATH = "result.json";
 
-// TODO: these should adjust to size of data
-const double INVERSIONS_THRESHOLD = 5;
+const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
 
+// TODO: these should adjust to size of data somehow
 const double CYCLES_THRESHOLD = 4000;
 const double ACCEPTABLE_CYCLES = 8000;
 
@@ -76,7 +75,7 @@ public:
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
-        c = get_sorting_stats(s, size, runs);
+        c = get_sorting_stats(s, size);
 
         if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
             return false;

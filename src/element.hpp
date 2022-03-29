@@ -3,7 +3,6 @@
 #include <exception>
 #include <functional>
 #include <memory>
-#include "random_utils.hpp"
 
 struct MeasureReport {
     int assignments = 0;

@@ -58,8 +58,8 @@ void run_mo_ga(const GaConfig & config) {
     std::cout << "Genetic algorithm ran to completion" << std::endl;
 }
 
-void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    auto stats = get_classic_sorting_stats(algorithm, size, runs);
+void check_classic_stats(ClassicAlgorithm algorithm, int size) {
+    auto stats = get_classic_sorting_stats(algorithm, size);
 
     json statsJson(stats);
     std::cout << statsJson.dump(2) << std::endl;
@@ -80,8 +80,8 @@ int main(int argc, char* argv[]) {
 
     try {
         run_mo_ga(config);
-//        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 64, 5);
-//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 64, 5);
+//        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 64);
+//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 64);
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

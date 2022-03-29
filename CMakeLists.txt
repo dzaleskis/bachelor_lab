@@ -14,8 +14,7 @@ add_executable(course_project_lab
         src/stats.hpp
         src/iterator_utils.hpp
         src/main.cpp
-        src/random_utils.hpp
         src/pass.hpp
         src/sorting_algorithm.hpp
         src/genetic_algorithm.hpp
-        src/gaps.hpp src/classic_algorithms.hpp src/inversion_utils.hpp src/cycles.hpp)
+        src/gaps.hpp src/classic_algorithms.hpp src/inversion_utils.hpp src/cycles.hpp src/test_data.hpp)

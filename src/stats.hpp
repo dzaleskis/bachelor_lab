@@ -2,12 +2,12 @@
 #include <cmath>
 #include <chrono>
 #include "element.hpp"
-#include "iterator_utils.hpp"
 #include "sorting_algorithm.hpp"
 #include "classic_algorithms.hpp"
 #include "gaps.hpp"
 #include "inversion_utils.hpp"
 #include "cycles.hpp"
+#include "test_data.hpp"
 
 struct SortingStats {
     double avg_inversions;
@@ -29,8 +29,12 @@ uint64_t measure_cycles(const std::function<void()> & fn) {
     return duration;
 }
 
-SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int size, int runs) {
-    auto data = std::vector<int>(size);
+// reuse the mersenne twister, since it is expensive to initialize
+thread_local static std::mt19937_64 rng;
+
+SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int size) {
+    rng.seed(std::time(0));
+    auto all_data = utils::all_test_data(size, rng);
 
     auto rawAlgorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<std::vector<int>>(algorithmBlueprint);
     auto elementAlgorithm = ConcreteAlgorithmFactory::getConcreteAlgorithm<std::vector<Element<int>>>(algorithmBlueprint);
@@ -40,9 +44,7 @@ SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int
     double total_assignments = 0;
     double total_cycles = 0;
 
-    for (int i = 0; i < runs; i++) {
-        utils::fill_random(data.begin(), data.end());
-
+    for (const auto& data: all_data) {
         std::vector<int> raw(data.begin(), data.end());
         auto cycles = measure_cycles([&]() {
             rawAlgorithm->sort(raw);
@@ -59,22 +61,22 @@ SortingStats get_sorting_stats(const AlgorithmBlueprint& algorithmBlueprint, int
         total_assignments += report.assignments;
     }
 
+    auto runs = all_data.size();
     auto stats = SortingStats { total_inversions / runs, total_comparisons / runs, total_assignments / runs, total_cycles / runs };
 
     return stats;
 }
 
-SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    auto data = std::vector<int>(size);
+SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size) {
+    rng.seed(std::time(0));
+    auto all_data = utils::all_test_data(size, rng);
 
     double total_inversions = 0;
     double total_comparisons = 0;
     double total_assignments = 0;
     double total_cycles = 0;
 
-    for (int i = 0; i < runs; i++) {
-        utils::fill_random(data.begin(), data.end());
-
+    for (const auto& data: all_data) {
         std::vector<int> raw(data.begin(), data.end());
         auto cycles = measure_cycles([&]() {
             run_classic_sort(algorithm, raw);
@@ -91,6 +93,7 @@ SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int
         total_assignments += report.assignments;
     }
 
+    auto runs = all_data.size();
     auto stats = SortingStats { total_inversions / runs, total_comparisons / runs, total_assignments / runs, total_cycles / runs };
 
     return stats;
