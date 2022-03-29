@@ -19,8 +19,8 @@ const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
 
 // TODO: these should adjust to size of data somehow
-const double CYCLES_THRESHOLD = 4000;
-const double ACCEPTABLE_CYCLES = 8000;
+const double CYCLES_THRESHOLD = 2500;
+const double ACCEPTABLE_CYCLES = 5000;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
