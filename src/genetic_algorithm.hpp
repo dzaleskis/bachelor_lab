@@ -14,6 +14,7 @@
 using json = nlohmann::json;
 
 const char* RESULT_PATH = "result.json";
+const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
@@ -134,31 +135,19 @@ public:
 
     std::vector<double> calculate_objectives(const GAType::thisChromosomeType &x)
     {
-        // first, prioritize inversions
-        if (x.middle_costs.avg_inversions > INVERSIONS_THRESHOLD) {
-            return {
-                    x.middle_costs.avg_inversions,
-                    std::numeric_limits<double>::infinity(),
-                    std::numeric_limits<double>::infinity(),
-                    std::numeric_limits<double>::infinity(),
-            };
-        }
+        auto inversions = x.middle_costs.avg_inversions;
+        auto cycles = x.middle_costs.avg_cycles;
+        auto comparisons = x.middle_costs.avg_comparisons;
+        auto assignments = x.middle_costs.avg_assignments;
 
-        // then prioritize cycle count
-        if (x.middle_costs.avg_cycles > CYCLES_THRESHOLD) {
-            return {
-                    x.middle_costs.avg_inversions,
-                    std::numeric_limits<double>::infinity(),
-                    std::numeric_limits<double>::infinity(),
-                    x.middle_costs.avg_cycles,
-            };
-        }
+        bool tooManyInversions = inversions > INVERSIONS_THRESHOLD;
+        bool tooManyCycles = cycles > CYCLES_THRESHOLD;
 
         return {
-                x.middle_costs.avg_inversions,
-                x.middle_costs.avg_comparisons,
-                x.middle_costs.avg_assignments,
-                x.middle_costs.avg_cycles,
+                inversions,
+                tooManyInversions ? IGNORED_OBJECTIVE : cycles,
+                (tooManyInversions || tooManyCycles) ? IGNORED_OBJECTIVE : comparisons,
+                (tooManyInversions || tooManyCycles) ? IGNORED_OBJECTIVE : assignments,
         };
     }
 

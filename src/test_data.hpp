@@ -67,16 +67,37 @@ namespace utils {
         return v;
     }
 
+    std::vector<int> unshift_back_int(int size) {
+        std::vector<int> v;
+        v.reserve(size);
+        v.push_back(size);
+        for (int i = 1; i < size; ++i) v.push_back(i);
+        return v;
+    }
+
+    // TODO: validate
+    std::vector<int> partially_sorted_int(int size) {
+        std::vector<int> v;
+        v.reserve(size);
+        for (int i = 0; i < size; ++i) v.push_back(i);
+        std::partial_sort(v.begin(), v.begin() + size / 2, v.end());
+        return v;
+    }
+
+    // TODO: almost sorted (check FB messages)
+
     std::vector<std::vector<int>> all_test_data(int size, std::mt19937_64 &rng) {
         return {
-            shuffled_int(size, rng),
-            shuffled_16_values_int(size, rng),
-            all_equal_int(size),
-            ascending_int(size),
-            descending_int(size),
-            pipe_organ_int(size),
-            push_front_int(size),
-            push_middle_int(size),
+                shuffled_int(size, rng),
+                shuffled_16_values_int(size, rng),
+                all_equal_int(size),
+                ascending_int(size),
+                descending_int(size),
+                pipe_organ_int(size),
+                push_front_int(size),
+                push_middle_int(size),
+                unshift_back_int(size),
+                partially_sorted_int(size),
         };
     }
 }
