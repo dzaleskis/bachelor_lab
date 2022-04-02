@@ -100,4 +100,14 @@ namespace utils {
                 partially_sorted_int(size),
         };
     }
+
+    std::vector<std::vector<int>> all_random_data(int size, std::mt19937_64 &rng) {
+        return {
+                shuffled_int(size, rng),
+                shuffled_int(size, rng),
+                shuffled_int(size, rng),
+                shuffled_int(size, rng),
+                shuffled_int(size, rng),
+        };
+    }
 }

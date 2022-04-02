@@ -18,13 +18,22 @@ const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
-
-// TODO: these should adjust to size of data somehow
-const double CYCLES_THRESHOLD = 2500;
-const double ACCEPTABLE_CYCLES = 5000;
+const double TARGET_CYCLES_64 = 3500;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
+
+inline double process_cycles(double cycles, int size) {
+    return cycles / (size * log2(size));
+}
+
+inline double avg_target_cycles(int size) {
+    return process_cycles(TARGET_CYCLES_64, size);
+}
+
+inline double avg_acceptable_cycles(int size) {
+    return process_cycles(TARGET_CYCLES_64 * 3, size);
+}
 
 inline bool rand_chance(const std::function<double(void)> &rnd01) {
     return 0.5 < rnd01();
@@ -60,13 +69,12 @@ typedef EA::GenerationType<Solution, MiddleCost> GenerationType;
 
 class GeneticAlgorithm {
 public:
-    GeneticAlgorithm(int size, int runs) {
+    GeneticAlgorithm(int size) {
         this->size = size;
-        this->runs = runs;
     }
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.5, 3));
+        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.5, 5));
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
@@ -82,7 +90,7 @@ public:
             return false;
         }
 
-        if (c.avg_cycles > ACCEPTABLE_CYCLES) {
+        if (process_cycles(c.avg_cycles, size) > avg_acceptable_cycles(size)) {
             return false;
         }
 
@@ -126,12 +134,11 @@ public:
 
 protected:
     int size;
-    int runs;
 };
 
 class MOGeneticAlgorithm: public GeneticAlgorithm {
 public:
-    MOGeneticAlgorithm(int size, int runs) : GeneticAlgorithm(size, runs) {}
+    MOGeneticAlgorithm(int size) : GeneticAlgorithm(size) {}
 
     std::vector<double> calculate_objectives(const GAType::thisChromosomeType &x)
     {
@@ -141,7 +148,7 @@ public:
         auto assignments = x.middle_costs.avg_assignments;
 
         bool tooManyInversions = inversions > INVERSIONS_THRESHOLD;
-        bool tooManyCycles = cycles > CYCLES_THRESHOLD;
+        bool tooManyCycles = process_cycles(cycles, size) > avg_target_cycles(size);
 
         return {
                 inversions,

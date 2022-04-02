@@ -4,6 +4,7 @@
 #include "openGA.hpp"
 #include "CLI11.hpp"
 #include "genetic_algorithm.hpp"
+#include "custom_algorithms.hpp"
 
 using json = nlohmann::json;
 
@@ -11,7 +12,6 @@ struct GaConfig {
     int generations;
     int population;
     int size;
-    int eval_runs;
     double mut_rate;
     double crossover_frac;
 };
@@ -46,7 +46,7 @@ void run_mo_ga(const GaConfig & config) {
     std::cout << "Starting genetic algorithm" << std::endl;
 
     GAType ga_obj;
-    MOGeneticAlgorithm algorithm(config.size, config.eval_runs);
+    MOGeneticAlgorithm algorithm(config.size);
 
     init_common_config(ga_obj, config);
     init_mo_config(ga_obj, algorithm);
@@ -58,21 +58,41 @@ void run_mo_ga(const GaConfig & config) {
     std::cout << "Genetic algorithm ran to completion" << std::endl;
 }
 
-void check_classic_stats(ClassicAlgorithm algorithm, int size) {
-    auto stats = get_classic_sorting_stats(algorithm, size);
+void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
+    std::vector<SortingStats> all_stats;
 
-    json statsJson(stats);
-    std::cout << statsJson.dump(2) << std::endl;
+    for (int i = 0; i < runs; i++) {
+        auto stats = get_classic_sorting_stats(algorithm, size);
+        all_stats.emplace_back(stats);
+    }
+
+    for (const auto& stats: all_stats) {
+        json statsJson(stats);
+        std::cout << statsJson.dump(2) << std::endl;
+    }
+}
+
+void check_custom_stats(CustomAlgorithm algorithm, int size, int runs) {
+    std::vector<SortingStats> all_stats;
+
+    for (int i = 0; i < runs; i++) {
+        auto stats = get_custom_sorting_stats(algorithm, size);
+        all_stats.emplace_back(stats);
+    }
+
+    for (const auto& stats: all_stats) {
+        json statsJson(stats);
+        std::cout << statsJson.dump(2) << std::endl;
+    }
 }
 
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {50, 500, 64, 5, 0.08, 0.4 };
+	GaConfig config = {100, 500, 64, 0.08, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-s", config.size, "Specify size of data to sort");
-    app.add_option("-e", config.eval_runs, "Specify amount of runs for evaluation");
     app.add_option("-m", config.mut_rate, "Specify GA mutation rate");
     app.add_option("-x", config.crossover_frac, "Specify GA crossover fraction");
 
@@ -80,8 +100,9 @@ int main(int argc, char* argv[]) {
 
     try {
         run_mo_ga(config);
-//        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 64);
-//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 64);
+//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 64, 100);
+//        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 64, 100);
+//        check_custom_stats(CustomAlgorithm::ONE_TWO_SORT, 64, 100);
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

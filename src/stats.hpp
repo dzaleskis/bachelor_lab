@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <chrono>
+#include <random>
 #include "element.hpp"
 #include "sorting_algorithm.hpp"
 #include "classic_algorithms.hpp"
@@ -8,6 +9,7 @@
 #include "inversion_utils.hpp"
 #include "cycles.hpp"
 #include "test_data.hpp"
+#include "custom_algorithms.hpp"
 
 struct SortingStats {
     double avg_inversions;
@@ -29,15 +31,15 @@ uint64_t measure_cycles(const std::function<void()> & fn) {
     return duration;
 }
 
-// reuse the mersenne twister, since it is expensive to initialize
-thread_local static std::mt19937_64 rng;
+
+thread_local static std::random_device rand_dev;
+thread_local static std::mt19937_64 rng(rand_dev());
 
 static SortingStats get_sorting_stats(
         const std::function<void(std::vector<int>&)>& raw_sort_fn,
         const std::function<void(std::vector<Element<int>>&)>& element_sort_fn,
         int size) {
-    rng.seed(std::time(0));
-    auto all_data = utils::all_test_data(size, rng);
+    auto all_data = utils::all_random_data(size, rng);
 
     double total_inversions = 0;
     double total_comparisons = 0;
@@ -84,6 +86,17 @@ SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size) {
     };
     auto element_sort_fn = [&](std::vector<Element<int>>& data) {
         run_classic_sort(algorithm, data);
+    };
+
+    return get_sorting_stats(raw_sort_fn, element_sort_fn, size);
+}
+
+SortingStats get_custom_sorting_stats(CustomAlgorithm algorithm, int size) {
+    auto raw_sort_fn = [&](std::vector<int>& data) {
+        run_custom_sort(algorithm, data);
+    };
+    auto element_sort_fn = [&](std::vector<Element<int>>& data) {
+        run_custom_sort(algorithm, data);
     };
 
     return get_sorting_stats(raw_sort_fn, element_sort_fn, size);
