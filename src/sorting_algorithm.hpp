@@ -10,9 +10,9 @@ struct PassBlueprint {
     PassBlueprint() = default;
     PassBlueprint(PassType _passType, int _gap): passType(_passType), gap(_gap) {}
 
-    bool operator > (const PassBlueprint& b) const
+    bool operator < (const PassBlueprint& b) const
     {
-        return gap > b.gap;
+        return gap < b.gap;
     }
 
     PassType passType;

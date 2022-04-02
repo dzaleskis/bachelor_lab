@@ -74,7 +74,7 @@ public:
     }
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.5, 5));
+        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.2, 4.5));
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
@@ -117,15 +117,19 @@ public:
             const std::function<double(void)> &rnd01)
     {
         Solution s_new;
-        int max_size = std::min(s1.passBlueprints.size(), s2.passBlueprints.size());
+        int min_size = std::min(s1.passBlueprints.size(), s2.passBlueprints.size());
+        int max_size = std::max(s1.passBlueprints.size(), s2.passBlueprints.size());
 
-        for (int i = 0; i < max_size; ++i) {
+        for (int i = 0; i < min_size; ++i) {
             if (rand_chance(rnd01)) {
                 s_new.passBlueprints.emplace_back(s1.passBlueprints.at(i));
             } else {
                 s_new.passBlueprints.emplace_back(s2.passBlueprints.at(i));
             }
         }
+
+        // sort just in case
+        std::sort(s_new.passBlueprints.begin(), s_new.passBlueprints.end());
 
         return std::move(s_new);
     }
