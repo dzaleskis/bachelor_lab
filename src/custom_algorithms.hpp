@@ -11,8 +11,8 @@ enum class CustomAlgorithm {
 template <typename T>
 void one_two_sort(T & data)
 {
-    shake_pass(data, 19);
-    brick_pass(data, 2);
+    bubble_pass(data, 15);
+    insertion_pass(data, 2);
     insertion_pass(data, 1);
 }
 

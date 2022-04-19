@@ -18,7 +18,8 @@ const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
-const double TARGET_CYCLES_64 = 3500;
+// depends on data size (64 - 3500, 128 - 9000, 512 - ?, 1024 - ?)
+const double TARGET_CYCLES = 120000;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
@@ -28,11 +29,11 @@ inline double process_cycles(double cycles, int size) {
 }
 
 inline double avg_target_cycles(int size) {
-    return process_cycles(TARGET_CYCLES_64, size);
+    return process_cycles(TARGET_CYCLES, size);
 }
 
 inline double avg_acceptable_cycles(int size) {
-    return process_cycles(TARGET_CYCLES_64 * 3, size);
+    return process_cycles(TARGET_CYCLES * 3, size);
 }
 
 inline bool rand_chance(const std::function<double(void)> &rnd01) {
@@ -60,9 +61,11 @@ struct GeneticAlgorithmResult: SortingStats {
 
     Solution solution;
     int size;
+    // v1 - prioritize speed, v2 - prioritize compares, v3 - no priority
+    int obj_version = 1;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, solution, size)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, solution, size, obj_version)
 
 typedef EA::Genetic<Solution, MiddleCost> GAType;
 typedef EA::GenerationType<Solution, MiddleCost> GenerationType;

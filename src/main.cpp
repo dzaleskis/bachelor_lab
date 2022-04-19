@@ -89,7 +89,7 @@ void check_custom_stats(CustomAlgorithm algorithm, int size, int runs) {
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {100, 500, 64, 0.08, 0.4 };
+	GaConfig config = {100, 500, 1024, 0.08, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-s", config.size, "Specify size of data to sort");
@@ -99,9 +99,9 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
     try {
-        run_mo_ga(config);
-//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 64, 100);
-//        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 64, 100);
+//        run_mo_ga(config);
+//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 512, 50);
+        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 1024, 50);
 //        check_custom_stats(CustomAlgorithm::ONE_TWO_SORT, 64, 100);
 
     } catch (const std::exception& e) {
