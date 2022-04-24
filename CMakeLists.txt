@@ -17,4 +17,4 @@ add_executable(course_project_lab
         src/pass.hpp
         src/sorting_algorithm.hpp
         src/genetic_algorithm.hpp
-        src/gaps.hpp src/classic_algorithms.hpp src/inversion_utils.hpp src/cycles.hpp src/test_data.hpp src/custom_algorithms.hpp)
+        src/gaps.hpp src/classic_algorithms.hpp src/inversion_utils.hpp src/cycles.hpp src/test_data.hpp)

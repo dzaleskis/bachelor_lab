@@ -5,13 +5,13 @@
 #include <memory>
 
 struct MeasureReport {
+    // operations
     int assignments = 0;
     int comparisons = 0;
-
-    void reset() {
-        assignments = 0;
-        comparisons = 0;
-    }
+    // swap tracing
+    int prev_access_index = -1;
+    int total_accesses = 0;
+    int total_distance = 0;
 };
 
 class Measure {
@@ -32,14 +32,29 @@ class Measure {
             report.comparisons += 1;
         }
 
+        void traceAccess(int index) {
+            if (!isEnabled) {
+                return;
+            }
+
+            report.total_accesses += 1;
+
+            if (report.total_accesses % 2 == 0) {
+                report.total_distance += std::abs(report.prev_access_index - index);
+            }
+
+            report.prev_access_index = index;
+        }
+
         MeasureReport withReport(const std::function<void()>& fn) {
             isEnabled = true;
 
             fn();
 
             isEnabled = false;
+
             auto collectedReport = report;
-            report.reset();
+            report = MeasureReport();
 
             return collectedReport;
         }
@@ -119,4 +134,15 @@ class Element {
 
     private:
         T value;
+};
+
+template <typename T>
+class TracedVec: public std::vector<T> {
+public:
+    TracedVec(const std::vector<T>& vec): std::vector<T>(vec) {}
+
+    T& operator[](int index) {
+        global_measure.traceAccess(index);
+        return this->at(index);
+    }
 };

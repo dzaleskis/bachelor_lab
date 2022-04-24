@@ -19,9 +19,9 @@ const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
 // depends on data size (64 - 3500, 128 - 9000, 1024 - 120000)
-const double TARGET_CYCLES = 120000;
+const double CYCLES_THRESHOLD = 2000;
 // depends on data size (128 - 1100, 1024 - 13500)
-const double TARGET_COMPARISONS = 1100;
+const double COMPARISONS_THRESHOLD = 1100;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
@@ -52,7 +52,7 @@ struct GeneticAlgorithmResult: SortingStats {
     Solution solution;
     int size;
     // v1 - prioritize speed, v2 - prioritize compares, v3 - no priority
-    int obj_version = 2;
+    int obj_version = 1;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneticAlgorithmResult, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, solution, size, obj_version)
@@ -77,19 +77,19 @@ public:
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
-        c = get_genetic_sorting_stats(s, size);
+        c = get_genetic_sorting_stats(s, size, 5);
 
         if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
             return false;
         }
 
-//        if (cycles > TARGET_CYCLES * 2) {
+//        if (cycles > CYCLES_THRESHOLD * 2) {
 //            return false;
 //        }
 
-        if (c.avg_comparisons > TARGET_COMPARISONS * 1.5) {
-            return false;
-        }
+//        if (c.avg_comparisons > TARGET_COMPARISONS * 1.5) {
+//            return false;
+//        }
 
         return true; // genes are accepted
     }
@@ -148,15 +148,30 @@ public:
         auto comparisons = x.middle_costs.avg_comparisons;
         auto assignments = x.middle_costs.avg_assignments;
 
-        bool tooManyInversions = inversions > INVERSIONS_THRESHOLD;
-//        bool tooManyCycles = process_cycles(cycles, size) > avg_target_cycles(size);
-        bool tooManyComparisons = comparisons > TARGET_COMPARISONS;
+        if (inversions > INVERSIONS_THRESHOLD) {
+            return {
+                    inversions,
+                    IGNORED_OBJECTIVE,
+                    IGNORED_OBJECTIVE,
+                    IGNORED_OBJECTIVE
+            };
+        }
+
+
+        if (cycles > CYCLES_THRESHOLD) {
+            return {
+                    inversions,
+                    cycles,
+                    IGNORED_OBJECTIVE,
+                    IGNORED_OBJECTIVE,
+            };
+        }
 
         return {
                 inversions,
-                (tooManyInversions || tooManyComparisons) ? IGNORED_OBJECTIVE : cycles,
-                tooManyInversions ? IGNORED_OBJECTIVE : comparisons,
-                (tooManyInversions || tooManyComparisons) ? IGNORED_OBJECTIVE : assignments,
+                cycles,
+                comparisons,
+                assignments,
         };
     }
 

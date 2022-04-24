@@ -4,7 +4,6 @@
 #include "openGA.hpp"
 #include "CLI11.hpp"
 #include "genetic_algorithm.hpp"
-#include "custom_algorithms.hpp"
 
 using json = nlohmann::json;
 
@@ -59,37 +58,32 @@ void run_mo_ga(const GaConfig & config) {
 }
 
 void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    std::vector<SortingStats> all_stats;
+    SortingStats stats;
 
-    for (int i = 0; i < runs; i++) {
-        auto stats = get_classic_sorting_stats(algorithm, size);
-        all_stats.emplace_back(stats);
-    }
+    stats = get_classic_sorting_stats(algorithm, size, runs);
 
-    for (const auto& stats: all_stats) {
-        json statsJson(stats);
-        std::cout << statsJson.dump(2) << std::endl;
-    }
+    json statsJson(stats);
+    statsJson["algorithm"] = algorithm;
+    std::cout << statsJson.dump(2) << std::endl;
 }
 
-void check_custom_stats(CustomAlgorithm algorithm, int size, int runs) {
-    std::vector<SortingStats> all_stats;
+void compare_algos(int min_size, int max_size) {
+    int runs = 500;
 
-    for (int i = 0; i < runs; i++) {
-        auto stats = get_custom_sorting_stats(algorithm, size);
-        all_stats.emplace_back(stats);
-    }
+    for (int size = min_size; size <= max_size; size++) {
+        std::cout << "size: " << size << std::endl;
 
-    for (const auto& stats: all_stats) {
-        json statsJson(stats);
-        std::cout << statsJson.dump(2) << std::endl;
+        check_classic_stats(ClassicAlgorithm::INSERTION_SORT, size, runs);
+        check_classic_stats(ClassicAlgorithm::SHELL_SORT, size, runs);
+
+        std::cout << std::endl;
     }
 }
 
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {100, 500, 128, 0.08, 0.4 };
+	GaConfig config = {100, 1000, 40, 0.08, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-s", config.size, "Specify size of data to sort");
@@ -99,10 +93,8 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
     try {
-        run_mo_ga(config);
-//        check_classic_stats(ClassicAlgorithm::INSERTION_SORT_IMPROVED, 128, 50);
-//        check_classic_stats(ClassicAlgorithm::SHELLSORT_IMPROVED, 128, 50);
-//        check_custom_stats(CustomAlgorithm::ONE_TWO_SORT, 64, 100);
+//        run_mo_ga(config);
+        compare_algos(20, 80);
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

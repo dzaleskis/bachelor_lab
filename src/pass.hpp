@@ -1,9 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <functional>
-#include <unordered_map>
-#include <memory>
 
 enum class PassType {
     INSERTION,
@@ -45,9 +42,9 @@ template <typename T>
 inline void bubble_pass(T & data, int gap) {
     std::size_t n = data.size();
 
-    for (int i = 0; i < n - gap; ++i) {
-        if (data[i] > data[i + gap]){
-            std::swap(data[i], data[i + gap]);
+    for (int i = gap; i < n; ++i) {
+        if (data[i - gap] > data[i]){
+            std::swap(data[i - gap], data[i]);
         }
     }
 }
