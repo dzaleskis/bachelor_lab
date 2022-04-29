@@ -2,7 +2,6 @@
 #include <functional>
 #include "json.hpp"
 #include "openGA.hpp"
-#include "CLI11.hpp"
 #include "genetic_algorithm.hpp"
 
 using json = nlohmann::json;
@@ -85,20 +84,11 @@ void compare_algos(int min_size, int max_size) {
 }
 
 int main(int argc, char* argv[]) {
-	CLI::App app{"Running GA for sorting algorithm construction"};
-
-	GaConfig config = {100, 1000, 128, 0.08, 0.4 };
-
-    app.add_option("-p", config.population, "Specify GA population");
-    app.add_option("-s", config.size, "Specify size of data to sort");
-    app.add_option("-m", config.mut_rate, "Specify GA mutation rate");
-    app.add_option("-x", config.crossover_frac, "Specify GA crossover fraction");
-
-    CLI11_PARSE(app, argc, argv);
+	GaConfig config = {50, 500, 128, 0.08, 0.4 };
 
     try {
         run_mo_ga(config);
-//        compare_algos(128);
+//        compare_algos(1000);
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

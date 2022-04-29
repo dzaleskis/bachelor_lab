@@ -21,7 +21,7 @@ struct SortingStats {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SortingStats, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, avg_swap_distance)
 
 thread_local static std::random_device rand_dev;
-thread_local static std::mt19937_64 rng(rand_dev());
+thread_local static std::mt19937_64 rng;
 
 typedef std::vector<int> (*DistrF)(int, std::mt19937_64&);
 
@@ -66,6 +66,9 @@ static SortingStats get_sorting_stats(
     double total_cycles = 0;
     double total_distance = 0;
     double total_accesses = 0;
+
+    // seed generator with random value
+    rng.seed(rand_dev());
 
     for (const auto& dist: distributions) {
         for (int i = 0; i < runs; i++) {

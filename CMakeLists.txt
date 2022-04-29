@@ -7,7 +7,6 @@ include_directories(lib)
 include_directories(src)
 
 add_executable(course_project_lab
-        lib/CLI11.hpp
         lib/json.hpp
         lib/openGA.hpp
         src/element.hpp
