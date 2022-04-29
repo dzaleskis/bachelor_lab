@@ -72,16 +72,16 @@ inline void shake_pass(T & data,  int gap) {
     std::size_t n = data.size();
 
     // perform bubble pass forward
-    for (int i = 0; i < n - gap; ++i) {
-        if (data[i] > data[i+gap]) {
-            std::swap(data[i], data[i + gap]);
+    for (int i = gap; i < n; ++i) {
+        if (data[i - gap] > data[i]){
+            std::swap(data[i - gap], data[i]);
         }
     }
 
     // perform bubble pass backward
-    for (int i = n - gap - 1; i >= 0; --i) {
-        if (data[i] > data[i+gap]) {
-            std::swap(data[i], data[i + gap]);
+    for (int i = n - gap; i >= gap; --i) {
+        if (data[i - gap] > data[i]){
+            std::swap(data[i - gap], data[i]);
         }
     }
 }

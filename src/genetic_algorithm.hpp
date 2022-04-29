@@ -19,9 +19,7 @@ const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
 // depends on data size (64 - 3500, 128 - 9000, 1024 - 120000)
-const double CYCLES_THRESHOLD = 2000;
-// depends on data size (128 - 1100, 1024 - 13500)
-const double COMPARISONS_THRESHOLD = 1100;
+const double CYCLES_THRESHOLD = 10000;
 
 typedef SortingStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
@@ -67,7 +65,9 @@ public:
     }
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
-        auto gaps = get_geometric_gaps(size, rand_num(rnd01, 1.2, 4.5));
+        std::vector<int> gaps = rand_chance(rnd01)
+                ? get_geometric_gaps(size, rand_num(rnd01, 1.5, 15))
+                : get_random_gaps(size, [&]() { return rand_num(rnd01, 1.5, 15); });
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
@@ -83,13 +83,9 @@ public:
             return false;
         }
 
-//        if (cycles > CYCLES_THRESHOLD * 2) {
-//            return false;
-//        }
-
-//        if (c.avg_comparisons > TARGET_COMPARISONS * 1.5) {
-//            return false;
-//        }
+        if (c.avg_cycles > CYCLES_THRESHOLD * 2) {
+            return false;
+        }
 
         return true; // genes are accepted
     }
@@ -115,7 +111,6 @@ public:
     {
         Solution s_new;
         int min_size = std::min(s1.passBlueprints.size(), s2.passBlueprints.size());
-        int max_size = std::max(s1.passBlueprints.size(), s2.passBlueprints.size());
 
         for (int i = 0; i < min_size; ++i) {
             if (rand_chance(rnd01)) {

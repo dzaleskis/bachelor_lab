@@ -67,23 +67,27 @@ void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
     std::cout << statsJson.dump(2) << std::endl;
 }
 
+void compare_algos(int size) {
+    int runs = 1000;
+
+    std::cout << "size: " << size << std::endl;
+
+    check_classic_stats(ClassicAlgorithm::INSERTION_SORT, size, runs);
+    check_classic_stats(ClassicAlgorithm::SHELL_SORT, size, runs);
+
+    std::cout << std::endl;
+}
+
 void compare_algos(int min_size, int max_size) {
-    int runs = 500;
-
     for (int size = min_size; size <= max_size; size++) {
-        std::cout << "size: " << size << std::endl;
-
-        check_classic_stats(ClassicAlgorithm::INSERTION_SORT, size, runs);
-        check_classic_stats(ClassicAlgorithm::SHELL_SORT, size, runs);
-
-        std::cout << std::endl;
+        compare_algos(size);
     }
 }
 
 int main(int argc, char* argv[]) {
 	CLI::App app{"Running GA for sorting algorithm construction"};
 
-	GaConfig config = {100, 1000, 40, 0.08, 0.4 };
+	GaConfig config = {100, 1000, 128, 0.08, 0.4 };
 
     app.add_option("-p", config.population, "Specify GA population");
     app.add_option("-s", config.size, "Specify size of data to sort");
@@ -93,8 +97,8 @@ int main(int argc, char* argv[]) {
     CLI11_PARSE(app, argc, argv);
 
     try {
-//        run_mo_ga(config);
-        compare_algos(20, 80);
+        run_mo_ga(config);
+//        compare_algos(128);
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
