@@ -2,6 +2,7 @@
 #include <cmath>
 #include <chrono>
 #include <random>
+#include <algorithm>
 #include "element.hpp"
 #include "sorting_algorithm.hpp"
 #include "classic_algorithms.hpp"
@@ -10,15 +11,24 @@
 #include "cycles.hpp"
 #include "test_data.hpp"
 
-struct SortingStats {
+struct SortTrace {
     double avg_inversions;
     double avg_comparisons;
     double avg_assignments;
-    double avg_cycles;
     double avg_swap_distance;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SortingStats, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, avg_swap_distance)
+struct SortStats: SortTrace {
+    SortStats() = default;
+
+    SortStats(const SortTrace& ops, double cycles): SortTrace(ops) {
+        avg_cycles = cycles;
+    }
+
+    double avg_cycles;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SortStats, avg_inversions, avg_assignments, avg_comparisons, avg_cycles, avg_swap_distance)
 
 thread_local static std::random_device rand_dev;
 thread_local static std::mt19937_64 rng;
@@ -39,53 +49,33 @@ static std::vector<DistrF> all_dists {
 };
 
 static std::vector<DistrF> random_dists {
-        utils::shuffled_int,
-        utils::shuffled_16_values_int,
+    utils::shuffled_int,
+    utils::shuffled_16_values_int,
 };
 
-uint64_t measure_cycles(const std::function<void()> & fn) {
-    auto start = rdtsc();
-
-    fn();
-
-    auto end = rdtsc();
-    auto duration = end - start;
-
-    return duration;
-}
-
-static SortingStats get_sorting_stats(
+// precondition - rng is seeded before
+static SortTrace benchmark_traced(
         const std::vector<DistrF>& distributions,
-        const std::function<void(std::vector<int>&)>& raw_sort_fn,
-        const std::function<void(TracedVec<Element<int>>&)>& element_sort_fn,
+        const std::function<void(TracedVec<Element<int>>&)>& sort_fn,
         int size,
         int runs) {
     double total_inversions = 0;
     double total_comparisons = 0;
     double total_assignments = 0;
-    double total_cycles = 0;
     double total_distance = 0;
     double total_accesses = 0;
-
-    // seed generator with random value
-    rng.seed(rand_dev());
 
     for (const auto& dist: distributions) {
         for (int i = 0; i < runs; i++) {
             std::vector<int> data = dist(size, rng);
-            std::vector<int> raw(data);
+            // it's a dirty hack, but better than dealing with std::transform
             std::vector<Element<int>> tmp(data.begin(), data.end());
             TracedVec<Element<int>> elements(tmp);
 
-            auto cycles = measure_cycles([&]() {
-                raw_sort_fn(raw);
-            });
-
             auto report = global_measure.withReport([&]() {
-                element_sort_fn(elements);
+                sort_fn(elements);
             });
 
-            total_cycles += cycles;
             total_inversions += utils::merge_sort_with_inversions(elements);
             total_comparisons += report.comparisons;
             total_assignments += report.assignments;
@@ -94,29 +84,77 @@ static SortingStats get_sorting_stats(
         }
     }
 
-    auto allRuns = runs * distributions.size();
+    auto all_runs = runs * distributions.size();
 
-    return { total_inversions / allRuns, total_comparisons / allRuns,total_assignments / allRuns, total_cycles / allRuns, total_distance / (total_accesses / 2) };
+    return {total_inversions / all_runs, total_comparisons / all_runs, total_assignments / all_runs, total_distance / (total_accesses / 2) };
 }
 
-SortingStats get_genetic_sorting_stats(const AlgorithmBlueprint& algorithm, int size, int runs) {
-    auto raw_sort_fn = [&](std::vector<int>& data) {
-        run_algorithm(data, algorithm);
-    };
-    auto element_sort_fn = [&](TracedVec<Element<int>>& data) {
-        run_algorithm(data, algorithm);
-    };
 
-    return get_sorting_stats(random_dists, raw_sort_fn, element_sort_fn, size, runs);
+// precondition - rng is seeded before
+double benchmark_cycles(
+        const std::vector<DistrF>& distributions,
+        const std::function<void(std::vector<int>&)>& sort_fn,
+        int size,
+        int runs) {
+    double total_cycles = 0;
+
+    for (const auto& dist: distributions) {
+        for (int i = 0; i < runs; i++) {
+            std::vector<int> data = dist(size, rng);
+
+            auto cycles = measure_cycles([&]() {
+                sort_fn(data);
+            });
+
+            total_cycles += cycles;
+        }
+    }
+
+    auto all_runs = runs * distributions.size();
+
+    return total_cycles / all_runs;
 }
 
-SortingStats get_classic_sorting_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    auto raw_sort_fn = [&](std::vector<int>& data) {
-        run_classic_sort(algorithm, data);
+SortTrace bench_traced_blueprint(const AlgorithmBlueprint& algorithm, int size, int runs) {
+    auto sort_fn = [&](TracedVec<Element<int>>& data) {
+        run_algorithm(data, algorithm);
     };
-    auto element_sort_fn = [&](TracedVec<Element<int>>& data) {
+
+    return benchmark_traced(random_dists, sort_fn, size, runs);
+}
+
+double bench_cycles_blueprint(const AlgorithmBlueprint& algorithm, int size, int runs) {
+    auto sort_fn = [&](std::vector<int>& data) {
+        run_algorithm(data, algorithm);
+    };
+
+    return benchmark_cycles(random_dists, sort_fn, size, runs);
+}
+
+SortTrace bench_traced_classic(ClassicAlgorithm algorithm, int size, int runs) {
+    auto sort_fn = [&](TracedVec<Element<int>>& data) {
         run_classic_sort(algorithm, data);
     };
 
-    return get_sorting_stats(random_dists, raw_sort_fn, element_sort_fn, size, runs);
+    return benchmark_traced(random_dists, sort_fn, size, runs);
+}
+
+double bench_cycles_classic(ClassicAlgorithm algorithm, int size, int runs) {
+    auto sort_fn = [&](std::vector<int>& data) {
+        run_classic_sort(algorithm, data);
+    };
+
+    return benchmark_cycles(random_dists, sort_fn, size, runs);
+}
+
+SortStats blueprint_sort_stats(const AlgorithmBlueprint& algorithm, int size, int runs) {
+    rng.seed(rand_dev());
+
+    return SortStats(bench_traced_blueprint(algorithm, size, runs), bench_cycles_blueprint(algorithm, size, runs));
+}
+
+SortStats classic_sort_stats(ClassicAlgorithm algorithm, int size, int runs) {
+    rng.seed(rand_dev());
+
+    return SortStats(bench_traced_classic(algorithm, size, runs),bench_cycles_classic(algorithm, size, runs));
 }

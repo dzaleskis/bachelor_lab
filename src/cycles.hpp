@@ -20,3 +20,14 @@
         #error no rdtsc implementation
     #endif
 #endif
+
+uint64_t measure_cycles(const std::function<void()> & fn) {
+    auto start = rdtsc();
+
+    fn();
+
+    auto end = rdtsc();
+    auto duration = end - start;
+
+    return duration;
+}

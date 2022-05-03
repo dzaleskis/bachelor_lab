@@ -25,18 +25,14 @@ void init_common_config(GAType& ga_obj, const GaConfig & config) {
 }
 
 void init_mo_config(GAType& ga_obj, MOGeneticAlgorithm& algorithm) {
-    using std::placeholders::_1;
-    using std::placeholders::_2;
-    using std::placeholders::_3;
-
     ga_obj.problem_mode=EA::GA_MODE::NSGA_III;
 
-    ga_obj.init_genes = std::bind(&GeneticAlgorithm::init_genes, &algorithm, _1, _2);
-    ga_obj.eval_solution = std::bind(&GeneticAlgorithm::eval_solution, &algorithm, _1, _2);
-    ga_obj.mutate = std::bind(&GeneticAlgorithm::mutate, &algorithm, _1, _2, _3);
-    ga_obj.crossover = std::bind(&GeneticAlgorithm::crossover, &algorithm, _1, _2, _3);
-    ga_obj.calculate_MO_objectives = std::bind(&MOGeneticAlgorithm::calculate_objectives, &algorithm, _1);
-    ga_obj.MO_report_generation = std::bind(&MOGeneticAlgorithm::report_generation, &algorithm, _1, _2, _3);
+    ga_obj.init_genes=[&](Solution& s, const std::function<double(void)> &rnd01) { return algorithm.init_genes(s, rnd01);};
+    ga_obj.eval_solution=[&](const Solution& s, MiddleCost &c) { return algorithm.eval_solution(s, c);};
+    ga_obj.mutate=[&](const Solution& s_base, const std::function<double(void)> &rnd01, double shrink_scale) { return algorithm.mutate(s_base, rnd01, shrink_scale);};
+    ga_obj.crossover=[&](const Solution& s1, const Solution& s2, const std::function<double(void)> &rnd01) { return algorithm.crossover(s1, s2, rnd01);};
+    ga_obj.calculate_MO_objectives=[&](const GAType::thisChromosomeType &x) { return algorithm.calculate_objectives(x);};
+    ga_obj.MO_report_generation=[&](int gen, const EA::GenerationType<Solution,MiddleCost> &last_gen, const std::vector<unsigned int>& p_front) { return algorithm.report_generation(gen, last_gen, p_front);};
 }
 
 
@@ -57,9 +53,7 @@ void run_mo_ga(const GaConfig & config) {
 }
 
 void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    SortingStats stats;
-
-    stats = get_classic_sorting_stats(algorithm, size, runs);
+    SortStats stats = classic_sort_stats(algorithm, size, runs);
 
     json statsJson(stats);
     statsJson["algorithm"] = algorithm;
@@ -69,16 +63,16 @@ void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
 void compare_algos(int size) {
     int runs = 1000;
 
-    std::cout << "size: " << size << std::endl;
+    std::cout << "size: " << size << '\n';
 
     check_classic_stats(ClassicAlgorithm::INSERTION_SORT, size, runs);
     check_classic_stats(ClassicAlgorithm::SHELL_SORT, size, runs);
-
-    std::cout << std::endl;
 }
 
-void compare_algos(int min_size, int max_size) {
-    for (int size = min_size; size <= max_size; size++) {
+void compare_algos(int min_pow_2, int max_pow_2) {
+    int max_size = 1 << max_pow_2;
+
+    for (int size = 1 << min_pow_2; size <= max_size; size <<= 1) {
         compare_algos(size);
     }
 }
@@ -88,8 +82,7 @@ int main(int argc, char* argv[]) {
 
     try {
         run_mo_ga(config);
-//        compare_algos(1000);
-
+//        compare_algos(4, 8);
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

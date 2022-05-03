@@ -18,10 +18,10 @@ const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
-// depends on data size (64 - 3500, 128 - 9000, 1024 - 120000)
-const double CYCLES_THRESHOLD = 10000;
+// depends on data size (128 - 9000, 1024 - 120000)
+const double CYCLES_THRESHOLD = 9000;
 
-typedef SortingStats MiddleCost;
+typedef SortStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
 
 inline bool rand_chance(const std::function<double(void)> &rnd01) {
@@ -41,8 +41,16 @@ inline PassType rand_pass(const std::function<double(void)> &rnd01) {
     return ALL_PASSES.at(rand_index(rnd01, ALL_PASSES));
 }
 
-struct GeneticAlgorithmResult: SortingStats {
-    GeneticAlgorithmResult(const SortingStats &stats, const Solution & solution, int size) : SortingStats(stats) {
+// Returns floor(log2(n)), assumes n > 0.
+template<class T>
+inline int log2(T n) {
+    int log = 0;
+    while (n >>= 1) ++log;
+    return log;
+}
+
+struct GeneticAlgorithmResult: SortStats {
+    GeneticAlgorithmResult(const SortStats &stats, const Solution & solution, int size) : SortStats(stats) {
         this->solution = solution;
         this->size = size;
     }
@@ -66,8 +74,8 @@ public:
 
     void init_genes(Solution& s, const std::function<double(void)> &rnd01) {
         std::vector<int> gaps = rand_chance(rnd01)
-                ? get_geometric_gaps(size, rand_num(rnd01, 1.5, 15))
-                : get_random_gaps(size, [&]() { return rand_num(rnd01, 1.5, 15); });
+                ? get_geometric_gaps(size, rand_num(rnd01, 1.5, 7))
+                : get_random_gaps(size, [&]() { return rand_num(rnd01, 1.5, 12.5); });
         s.passBlueprints.reserve(gaps.size());
 
         for (int & gap: gaps) {
@@ -77,7 +85,7 @@ public:
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
-        c = get_genetic_sorting_stats(s, size, 5);
+        c = blueprint_sort_stats(s, size, 5);
 
         if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
             return false;
