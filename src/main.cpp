@@ -3,6 +3,8 @@
 #include "json.hpp"
 #include "openGA.hpp"
 #include "genetic_algorithm.hpp"
+#include "classic_algorithms.hpp"
+#include "benchmarks.hpp"
 
 using json = nlohmann::json;
 
@@ -15,7 +17,7 @@ struct GaConfig {
 };
 
 void init_common_config(GAType& ga_obj, const GaConfig & config) {
-    ga_obj.multi_threading=true;
+    ga_obj.multi_threading=false;
     ga_obj.idle_delay_us=1;
     ga_obj.verbose=false;
     ga_obj.population=config.population;
@@ -52,29 +54,19 @@ void run_mo_ga(const GaConfig & config) {
     std::cout << "Genetic algorithm ran to completion" << std::endl;
 }
 
-void check_classic_stats(ClassicAlgorithm algorithm, int size, int runs) {
-    SortStats stats = classic_sort_stats(algorithm, size, runs);
+void check_classic_algo() {
+    auto sort_fn = [&](std::vector<int>& data) {
+        insertion_sort(data);
+    };
+
+    auto traced_sort_fn = [&](TracedVec<Element<int>>& data) {
+        insertion_sort(data);
+    };
+
+    auto stats = sort_stats(random_dists, sort_fn, traced_sort_fn, 128, 10000);
 
     json statsJson(stats);
-    statsJson["algorithm"] = algorithm;
     std::cout << statsJson.dump(2) << std::endl;
-}
-
-void compare_algos(int size) {
-    int runs = 1000;
-
-    std::cout << "size: " << size << '\n';
-
-    check_classic_stats(ClassicAlgorithm::INSERTION_SORT, size, runs);
-    check_classic_stats(ClassicAlgorithm::SHELL_SORT, size, runs);
-}
-
-void compare_algos(int min_pow_2, int max_pow_2) {
-    int max_size = 1 << max_pow_2;
-
-    for (int size = 1 << min_pow_2; size <= max_size; size <<= 1) {
-        compare_algos(size);
-    }
 }
 
 int main(int argc, char* argv[]) {
@@ -82,9 +74,9 @@ int main(int argc, char* argv[]) {
 
     try {
 //        run_mo_ga(config);
-//        compare_algos(4, 8);
-        bench_cycles_classic(ClassicAlgorithm::INSERTION_SORT, 100, 1000);
-
+//        check_classic_algo();
+//        bench_int();
+        bench_for_perf(64);
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

@@ -27,7 +27,6 @@ uint64_t measure_cycles(const std::function<void()> & fn) {
     fn();
 
     auto end = rdtsc();
-    auto duration = end - start;
 
-    return duration;
+    return end - start;
 }

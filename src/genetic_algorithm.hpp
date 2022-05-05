@@ -19,7 +19,7 @@ const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 const double INVERSIONS_THRESHOLD = 0;
 const double ACCEPTABLE_INVERSIONS = 50;
 // depends on data size (128 - 9000, 1024 - 120000)
-const double CYCLES_THRESHOLD = 9000;
+const double CYCLES_THRESHOLD = 10000;
 
 typedef SortStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
