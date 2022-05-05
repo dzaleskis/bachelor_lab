@@ -41,14 +41,6 @@ inline PassType rand_pass(const std::function<double(void)> &rnd01) {
     return ALL_PASSES.at(rand_index(rnd01, ALL_PASSES));
 }
 
-// Returns floor(log2(n)), assumes n > 0.
-template<class T>
-inline int log2(T n) {
-    int log = 0;
-    while (n >>= 1) ++log;
-    return log;
-}
-
 struct GeneticAlgorithmResult: SortStats {
     GeneticAlgorithmResult(const SortStats &stats, const Solution & solution, int size) : SortStats(stats) {
         this->solution = solution;

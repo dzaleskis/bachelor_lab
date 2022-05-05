@@ -78,11 +78,13 @@ void compare_algos(int min_pow_2, int max_pow_2) {
 }
 
 int main(int argc, char* argv[]) {
-	GaConfig config = {50, 500, 128, 0.08, 0.4 };
+	GaConfig config = {50, 500, 128, 0.1, 0.4 };
 
     try {
-        run_mo_ga(config);
+//        run_mo_ga(config);
 //        compare_algos(4, 8);
+        bench_cycles_classic(ClassicAlgorithm::INSERTION_SORT, 100, 1000);
+
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

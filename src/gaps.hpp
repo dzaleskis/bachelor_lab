@@ -7,7 +7,7 @@ std::vector<int> get_geometric_gaps(const int size, const double q) {
     double currentGap = 1;
 
     while (currentGap < size) {
-        gaps.insert(floor(currentGap));
+        gaps.insert(ceil(currentGap));
         currentGap *= q;
     }
 
@@ -19,7 +19,7 @@ std::vector<int> get_random_gaps(const int size, const std::function<double(void
     double currentGap = 1;
 
     while (currentGap < size) {
-        gaps.insert(floor(currentGap));
+        gaps.insert(ceil(currentGap));
         currentGap *= gen();
     }
 
