@@ -43,7 +43,7 @@ inline void bubble_pass(T & data, int gap) {
     std::size_t n = data.size();
 
     for (int i = gap; i < n; ++i) {
-        if (data[i - gap] > data[i]){
+        if (data[i - gap] > data[i]) {
             std::swap(data[i - gap], data[i]);
         }
     }

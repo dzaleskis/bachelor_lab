@@ -56,14 +56,14 @@ void run_mo_ga(const GaConfig & config) {
 
 void check_classic_algo() {
     auto sort_fn = [&](std::vector<int>& data) {
-        insertion_sort(data);
+        test_shell_sort(data);
     };
 
     auto traced_sort_fn = [&](TracedVec<Element<int>>& data) {
-        insertion_sort(data);
+        test_shell_sort(data);
     };
 
-    auto stats = sort_stats(random_dists, sort_fn, traced_sort_fn, 128, 10000);
+    auto stats = sort_stats(sort_fn, traced_sort_fn, 64, 100000);
 
     json statsJson(stats);
     std::cout << statsJson.dump(2) << std::endl;
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 //        run_mo_ga(config);
 //        check_classic_algo();
 //        bench_int();
-        bench_for_perf(64);
+        bench_for_perf();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

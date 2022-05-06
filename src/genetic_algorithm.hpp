@@ -77,7 +77,7 @@ public:
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
-        c = blueprint_sort_stats(s, size, 5);
+        c = blueprint_sort_stats(s, size, 10);
 
         if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
             return false;

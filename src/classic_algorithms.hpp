@@ -6,34 +6,31 @@
 #include "pdqsort2.hpp"
 
 template <typename T>
-void insertion_sort(T & data)
+inline void insertion_sort(T & data)
 {
     const std::size_t size = data.size();
 
-    for (int i = 1; i < size; i++)
-    {
+    for (int i = 1; i < size; i++) {
         if (data[i - 1] > data[i]) {
             auto temp = data[i];
-            int j = i - 1;
+            int j = i;
 
             do {
-                data[j + 1] = data[j];
+                data[j] = data[j - 1];
                 j -= 1;
+            } while (j >= 1 && data[j - 1] > temp);
 
-            } while (j >= 0 && data[j] > temp);
-
-            data[j + 1] = temp;
+            data[j] = temp;
         }
     }
 }
 
 template <typename T, std::size_t N>
-static void shell_sort(T & data, const std::array<int, N> & gaps) {
+static inline void shell_sort(T & data, const std::array<int, N> & gaps) {
     const std::size_t size = data.size();
 
     for (int gap: gaps) {
-        for (int i = gap; i < size; i++)
-        {
+        for (int i = gap; i < size; i++) {
             if (data[i - gap] > data[i]) {
                 auto temp = data[i];
                 int j = i;
@@ -41,7 +38,6 @@ static void shell_sort(T & data, const std::array<int, N> & gaps) {
                 do {
                     data[j] = data[j - gap];
                     j -= gap;
-
                 } while (j >= gap && data[j - gap] > temp);
 
                 data[j] = temp;
@@ -85,3 +81,31 @@ void standard_sort(T & data) {
     std::sort(data.begin(), data.end());
 }
 
+template <typename T>
+inline void test_shell_sort(T & data) {
+    const int gaps[] = {16, 1 };
+    const std::size_t size = data.size();
+
+    for (int gap: gaps) {
+        for (int i = gap; i < size; i++) {
+            if (data[i - gap] > data[i]) {
+                auto temp = data[i];
+                int j = i;
+
+                do {
+                    data[j] = data[j - gap];
+                    j -= gap;
+                } while (j >= gap && data[j - gap] > temp);
+
+                data[j] = temp;
+            }
+        }
+    }
+}
+
+//template <typename T>
+//inline void experimental_shell_sort(T & data) {
+//    bubble_pass(data, 32);
+//
+//    insertion_sort(data);
+//}
