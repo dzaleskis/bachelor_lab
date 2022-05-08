@@ -7,7 +7,7 @@
 #include "pass.hpp"
 #include "gaps.hpp"
 #include "json.hpp"
-#include "stats.hpp"
+#include "fitness.hpp"
 #include "sorting_algorithm.hpp"
 #include "openGA.hpp"
 

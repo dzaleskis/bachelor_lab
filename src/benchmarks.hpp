@@ -7,12 +7,7 @@
 #include "test_data.hpp"
 #include "classic_algorithms.hpp"
 #include "cycles.hpp"
-
-struct Statistic {
-    double median;
-    double iqr;
-    double outliers;
-};
+#include "statistics.hpp"
 
 void bench_int() {
     auto seed = std::time(0);
@@ -71,36 +66,10 @@ void bench_int() {
                     cycles.push_back(end - start);
                 }
 
-                std::sort(cycles.begin(), cycles.end());
-
-                auto sample_size = cycles.size();
-                auto quartile_size = sample_size / 4;
-
-                auto min = cycles.front();
-                auto max = cycles.back();
-                auto median = cycles[sample_size / 2];
-
-                // quarter of the way through the sample
-                auto q1 = cycles[quartile_size];
-                // three quarters of the way through the sample
-                auto q3 = cycles[sample_size - quartile_size];
-                auto iqr = q3 - q1;
-
-                auto lower_outlier_range = q1 - (iqr * 1.5);
-                auto upper_outlier_range = q3 + (iqr * 1.5);
-
-                auto outlier_count = std::accumulate(cycles.begin(), cycles.end(), 0, [&](int acc, int c) {
-                    if (c < lower_outlier_range || c > upper_outlier_range) {
-                        return acc + 1;
-                    }
-
-                    return acc;
-                });
-
-                auto outliers = double(outlier_count) / sample_size;
+                auto cycles_stats = calculate_statistics(cycles);
 
                 std::cerr << size << " " << distribution.first << " " << sort.first
-                    << " " << median << " " << iqr << " " << outliers <<"\n";
+                    << " " << cycles_stats.median << " " << cycles_stats.iqr << " " << cycles_stats.outliers <<"\n";
             }
         }
     }
@@ -109,11 +78,16 @@ void bench_int() {
 void bench_for_perf() {
     auto seed = std::time(0);
     std::mt19937_64 el(seed);
+    int max_iter = 5000000;
+    std::vector<std::vector<int>> all_data;
+    all_data.reserve(max_iter);
 
-    std::chrono::time_point<std::chrono::steady_clock> total_start = std::chrono::steady_clock::now();
+    for (int i = 0; i < max_iter; i++) {
+        all_data.emplace_back(utils::shuffled_int(64, el));
+    }
 
-    while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - total_start).count() < 10000) {
-        std::vector<int> v = utils::shuffled_int(64, el);
+    for (int i = 0; i < max_iter; i++) {
+        auto& v = all_data[i];
 
         // MARKER: replace when needed
         test_shell_sort(v);

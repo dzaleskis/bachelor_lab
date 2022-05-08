@@ -83,7 +83,7 @@ void standard_sort(T & data) {
 
 template <typename T>
 inline void test_shell_sort(T & data) {
-    const int gaps[] = {16, 1 };
+    const int gaps[] = {48, 1 };
     const std::size_t size = data.size();
 
     for (int gap: gaps) {
@@ -103,9 +103,40 @@ inline void test_shell_sort(T & data) {
     }
 }
 
-//template <typename T>
-//inline void experimental_shell_sort(T & data) {
-//    bubble_pass(data, 32);
-//
-//    insertion_sort(data);
-//}
+template <typename T>
+inline void experimental_shell_sort(T & data) {
+    std::size_t n = data.size();
+
+    // perform a bubble pass with gap 32
+    const int gap = 32;
+    for (int i = gap; i < n; ++i) {
+        if (data[i - gap] > data[i]) {
+            std::swap(data[i - gap], data[i]);
+        }
+    }
+
+    // keep track of min index for later
+    int min_index = 0;
+    // the smallest element will be within [0, 32), since we sorted with gap 32 before
+    for (int i = 1; i < gap; ++i) {
+        if (data[min_index] > data[i]) {
+            min_index = i;
+        }
+    }
+    // swap the smallest element into place
+    std::swap(data[0], data[min_index]);
+
+    for (int i = 1; i < n; ++i) {
+        if (data[i - 1] > data[i]) {
+            auto temp = data[i];
+            int j = i;
+
+            do {
+                data[j] = data[j - 1];
+                j -= 1;
+            } while (data[j - 1] > temp);
+
+            data[j] = temp;
+        }
+    }
+}

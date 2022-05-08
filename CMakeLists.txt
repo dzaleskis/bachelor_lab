@@ -11,7 +11,7 @@ add_executable(
         lib/json.hpp
         lib/openGA.hpp
         src/element.hpp
-        src/stats.hpp
+        src/fitness.hpp
         src/iterator_utils.hpp
         src/main.cpp
         src/pass.hpp
@@ -23,4 +23,5 @@ add_executable(
         src/cycles.hpp
         src/test_data.hpp
         src/benchmarks.hpp
+        src/statistics.hpp
         )
