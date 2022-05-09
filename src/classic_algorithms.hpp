@@ -127,6 +127,7 @@ inline void experimental_shell_sort(T & data) {
     // swap the smallest element into place
     std::swap(data[0], data[min_index]);
 
+    // perform insertion pass separately, avoid bounds check
     for (int i = 1; i < n; ++i) {
         if (data[i - 1] > data[i]) {
             auto temp = data[i];
