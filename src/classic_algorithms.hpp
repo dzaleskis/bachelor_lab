@@ -83,7 +83,7 @@ void standard_sort(T & data) {
 
 template <typename T>
 inline void test_shell_sort(T & data) {
-    const int gaps[] = {48, 1 };
+    const int gaps[] = {16, 1 };
     const std::size_t size = data.size();
 
     for (int gap: gaps) {
@@ -105,7 +105,7 @@ inline void test_shell_sort(T & data) {
 
 template <typename T>
 inline void experimental_shell_sort(T & data) {
-    std::size_t n = data.size();
+    int n = data.size();
 
     // perform a bubble pass with gap 32
     const int gap = 32;
@@ -117,8 +117,9 @@ inline void experimental_shell_sort(T & data) {
 
     // keep track of min index for later
     int min_index = 0;
-    // the smallest element will be within [0, 32), since we sorted with gap 32 before
-    for (int i = 1; i < gap; ++i) {
+    int bound = std::min(n, gap);
+    // the smallest element will be within [0, bound), since we sorted with gap 32 before
+    for (int i = 1; i < bound; ++i) {
         if (data[min_index] > data[i]) {
             min_index = i;
         }
@@ -135,6 +136,42 @@ inline void experimental_shell_sort(T & data) {
                 data[j] = data[j - 1];
                 j -= 1;
             } while (data[j - 1] > temp);
+
+            data[j] = temp;
+        }
+    }
+}
+
+// TODO: this will probably be faster than implementations without separate insertion pass
+template <typename T>
+inline void gonnet_shell_sort(T & data) {
+    int n = data.size();
+
+    for (int gap = (5*n) / 11; gap >= 5; gap = (5*gap) / 11) {
+        for (int i = gap; i < n; ++i) {
+            if (data[i - gap] > data[i]) {
+                auto temp = data[i];
+                int j = i;
+
+                do {
+                    data[j] = data[j - gap];
+                    j -= gap;
+                } while (j >= gap && data[j - gap] > temp);
+
+                data[j] = temp;
+            }
+        }
+    }
+
+    for (int i = 1; i < n; ++i) {
+        if (data[i - 1] > data[i]) {
+            auto temp = data[i];
+            int j = i;
+
+            do {
+                data[j] = data[j - 1];
+                j -= 1;
+            } while (j >= 1 && data[j - 1] > temp);
 
             data[j] = temp;
         }

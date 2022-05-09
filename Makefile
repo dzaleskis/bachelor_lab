@@ -5,7 +5,7 @@ obj_dir = obj
 
 INCLUDE_OPTS = -I $(lib_dir)
 
-COMPILER_FLAGS = -O2 -s -DNDEBUG -std=c++11 -pthread
+COMPILER_FLAGS = -O2 -s -DNDEBUG -std=c++14 -pthread
 LINKER_FLAGS = -pthread
 
 COMPILER_OPTS = $(COMPILER_FLAGS) $(INCLUDE_OPTS)
