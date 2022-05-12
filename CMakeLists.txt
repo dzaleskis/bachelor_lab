@@ -12,13 +12,12 @@ add_executable(
         lib/openGA.hpp
         src/element.hpp
         src/fitness.hpp
-        src/iterator_utils.hpp
         src/main.cpp
         src/pass.hpp
         src/sorting_algorithm.hpp
         src/genetic_algorithm.hpp
         src/gaps.hpp
-        src/classic_algorithms.hpp
+        src/algorithms.hpp
         src/inversion_utils.hpp
         src/cycles.hpp
         src/test_data.hpp

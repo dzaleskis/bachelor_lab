@@ -5,7 +5,7 @@
 #include <random>
 #include <chrono>
 #include "test_data.hpp"
-#include "classic_algorithms.hpp"
+#include "algorithms.hpp"
 #include "cycles.hpp"
 #include "statistics.hpp"
 #include "element.hpp"
@@ -30,7 +30,6 @@ void bench_int() {
     };
 
     std::tuple<std::string, SortF, ElSortF> sorts[] = {
-            {"insertion_sort", &insertion_sort, &insertion_sort},
             {"shell_sort_ciura", &ciura_shell_sort, &ciura_shell_sort},
             {"shell_sort_tokuda", &tokuda_shell_sort, &tokuda_shell_sort},
 //            {"standard_sort", &standard_sort},
@@ -105,6 +104,6 @@ void bench_for_perf() {
         auto& v = all_data[i];
 
         // MARKER: replace when needed
-        test_shell_sort(v);
+        insertion_sort(v);
     }
 }

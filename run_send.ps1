@@ -1,4 +1,4 @@
 cd cmake-build-release
-./course_project_lab.exe
+./bachelor_lab.exe
 send_result
 cd ..

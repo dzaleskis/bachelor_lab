@@ -81,26 +81,79 @@ void standard_sort(T & data) {
     std::sort(data.begin(), data.end());
 }
 
+// 128 sorts
+
+// id: 7850
 template <typename T>
-inline void test_shell_sort(T & data) {
-    const int gaps[] = {16, 1 };
-    const std::size_t size = data.size();
+inline void genetic_sort_128_1(T& data) {
+    bubble_pass(data, 52);
+    insertion_pass(data, 6);
+    insertion_pass(data, 1);
+}
 
-    for (int gap: gaps) {
-        for (int i = gap; i < size; i++) {
-            if (data[i - gap] > data[i]) {
-                auto temp = data[i];
-                int j = i;
+// id: 7860
+template <typename T>
+inline void genetic_sort_128_2(T& data) {
+    shake_pass(data, 92);
+    insertion_pass(data, 7);
+    insertion_pass(data, 1);
+}
 
-                do {
-                    data[j] = data[j - gap];
-                    j -= gap;
-                } while (j >= gap && data[j - gap] > temp);
+// id: 8690
+template <typename T>
+inline void genetic_sort_128_3(T& data) {
+    bubble_pass(data, 76);
+    insertion_pass(data, 10);
+    insertion_pass(data, 1);
+}
 
-                data[j] = temp;
-            }
-        }
-    }
+// 1024 sorts
+
+// id: 8745
+template <typename T>
+inline void genetic_sort_1024_1(T& data) {
+    const std::array<int, 5> gaps {162,40,17,4,1};
+    shell_sort(data, gaps);
+}
+
+// id: 8755
+template <typename T>
+inline void genetic_sort_1024_2(T& data) {
+    const std::array<int, 4> gaps {155,19,5,1};
+    shell_sort(data, gaps);
+}
+
+// id: 8760
+template <typename T>
+inline void genetic_sort_1024_3(T& data) {
+    const std::array<int, 4> gaps {97,26,8,1};
+    shell_sort(data, gaps);
+}
+
+// 8192 sorts
+
+// id: 9423
+template <typename T>
+inline void genetic_sort_8192_1(T& data) {
+    const std::array<int, 8> gaps {1794,615,264,104,25,11,4,1};
+    shell_sort(data, gaps);
+}
+
+// id: 9431
+template <typename T>
+inline void genetic_sort_8192_2(T& data) {
+    insertion_pass(data, 1794);
+    brick_pass(data, 1152);
+
+    const std::array<int, 6> gaps {356,104,25,11,4,1};
+    shell_sort(data, gaps);
+}
+
+// id: 9448
+template <typename T>
+inline void genetic_sort_8192_3(T& data) {
+    const std::array<int, 6> gaps {760,187,53,19,6,1};
+    shell_sort(data, gaps);
 }
 
 template <typename T>
@@ -137,42 +190,6 @@ inline void experimental_shell_sort(T & data) {
                 data[j] = data[j - 1];
                 j -= 1;
             } while (data[j - 1] > temp);
-
-            data[j] = temp;
-        }
-    }
-}
-
-// TODO: this will probably be faster than implementations without separate insertion pass
-template <typename T>
-inline void gonnet_shell_sort(T & data) {
-    int n = data.size();
-
-    for (int gap = (5*n) / 11; gap >= 5; gap = (5*gap) / 11) {
-        for (int i = gap; i < n; ++i) {
-            if (data[i - gap] > data[i]) {
-                auto temp = data[i];
-                int j = i;
-
-                do {
-                    data[j] = data[j - gap];
-                    j -= gap;
-                } while (j >= gap && data[j - gap] > temp);
-
-                data[j] = temp;
-            }
-        }
-    }
-
-    for (int i = 1; i < n; ++i) {
-        if (data[i - 1] > data[i]) {
-            auto temp = data[i];
-            int j = i;
-
-            do {
-                data[j] = data[j - 1];
-                j -= 1;
-            } while (j >= 1 && data[j - 1] > temp);
 
             data[j] = temp;
         }

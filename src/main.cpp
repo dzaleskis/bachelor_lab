@@ -3,7 +3,7 @@
 #include "json.hpp"
 #include "openGA.hpp"
 #include "genetic_algorithm.hpp"
-#include "classic_algorithms.hpp"
+#include "algorithms.hpp"
 #include "benchmarks.hpp"
 
 using json = nlohmann::json;
@@ -54,29 +54,29 @@ void run_mo_ga(const GaConfig & config) {
     std::cout << "Genetic algorithm ran to completion" << std::endl;
 }
 
-void check_classic_algo() {
+void check_algo() {
     auto sort_fn = [&](std::vector<int>& data) {
-        experimental_shell_sort(data);
+        ciura_shell_sort(data);
     };
 
     auto traced_sort_fn = [&](std::vector<Element<int>>& data) {
-        experimental_shell_sort(data);
+        ciura_shell_sort(data);
     };
 
-    auto stats = sort_stats(sort_fn, traced_sort_fn, 64, 5000000);
+    auto stats = sort_stats(sort_fn, traced_sort_fn, 8192, 10000);
 
     json statsJson(stats);
     std::cout << statsJson.dump(2) << std::endl;
 }
 
 int main(int argc, char* argv[]) {
-	GaConfig config = {50, 500, 128, 0.1, 0.4 };
+	GaConfig config = {100, 250, 8192, 0.1, 0.4 };
 
     try {
 //        run_mo_ga(config);
-//        check_classic_algo();
+        check_algo();
 //        bench_int();
-        bench_for_perf();
+//        bench_for_perf();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

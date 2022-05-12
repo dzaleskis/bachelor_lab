@@ -16,10 +16,8 @@ using json = nlohmann::json;
 const char* RESULT_PATH = "result.json";
 const double IGNORED_OBJECTIVE = std::numeric_limits<double>::infinity();
 
-const double INVERSIONS_THRESHOLD = 0;
-const double ACCEPTABLE_INVERSIONS = 50;
-// depends on data size (128 - 9000, 1024 - 120000)
-const double CYCLES_THRESHOLD = 10000;
+// depends on data size (128 - 9000, 1024 - 125000, 8192 - 1500000)
+const double CYCLES_THRESHOLD = 1500000;
 
 typedef SortStats MiddleCost;
 typedef AlgorithmBlueprint Solution;
@@ -77,9 +75,9 @@ public:
     }
 
     bool eval_solution(const Solution& s, MiddleCost &c) {
-        c = blueprint_sort_stats(s, size, 10);
+        c = blueprint_sort_stats(s, size, 3);
 
-        if (c.avg_inversions > ACCEPTABLE_INVERSIONS) {
+        if (c.avg_inversions > size / 10) {
             return false;
         }
 
@@ -143,7 +141,7 @@ public:
         auto comparisons = x.middle_costs.avg_comparisons;
         auto assignments = x.middle_costs.avg_assignments;
 
-        if (inversions > INVERSIONS_THRESHOLD) {
+        if (inversions > 0) {
             return {
                     inversions,
                     IGNORED_OBJECTIVE,
