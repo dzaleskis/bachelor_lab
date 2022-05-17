@@ -2,6 +2,8 @@
 .vs/
 .idea/
 obj/
+plots/
+tables/
 cmake-build-debug/
 cmake-build-release/
 cmake-build-debug_visual/

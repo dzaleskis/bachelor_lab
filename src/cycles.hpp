@@ -21,12 +21,12 @@
     #endif
 #endif
 
-int measure_cycles(const std::function<void()> & fn) {
+uint64_t measure_cycles(const std::function<void()> & fn) {
     auto start = rdtsc();
 
     fn();
 
     auto end = rdtsc();
 
-    return int(end - start);
+    return end - start;
 }

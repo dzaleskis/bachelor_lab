@@ -10,6 +10,17 @@
 #include "statistics.hpp"
 #include "element.hpp"
 
+struct BenchmarkResult {
+    int size;
+    std::string algorithm;
+    std::string distribution;
+    Statistics comparisons;
+    Statistics assignments;
+    Statistics cycles;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BenchmarkResult, size, algorithm, distribution, comparisons, assignments, cycles);
+
 void bench_int() {
     auto seed = std::time(0);
     std::mt19937_64 el;
@@ -19,28 +30,51 @@ void bench_int() {
     typedef void (*ElSortF)(std::vector<Element<int>>&);
 
     std::pair<std::string, DistrF> distributions[] = {
-            {"shuffled_int", utils::shuffled_int},
-//            {"shuffled_16_values_int", utils::shuffled_16_values_int},
-//            {"all_equal_int", utils::all_equal_int},
-//            {"ascending_int", utils::ascending_int},
-//            {"descending_int", utils::descending_int},
-//            {"pipe_organ_int", utils::pipe_organ_int},
-//            {"push_front_int", utils::push_front_int},
-//            {"push_middle_int", utils::push_middle_int}
+            {"shuffled", utils::shuffled_int},
+            {"shuffled_mod_sqrt", utils::shuffled_mod_sqrt_int},
+            {"descending", utils::descending_int},
+            {"partially_sorted", utils::partially_sorted_int},
+            {"merge", utils::merge_int},
+            {"push_min", utils::push_min_int},
     };
 
-    std::tuple<std::string, SortF, ElSortF> sorts[] = {
-            {"shell_sort_ciura", &ciura_shell_sort, &ciura_shell_sort},
-            {"shell_sort_tokuda", &tokuda_shell_sort, &tokuda_shell_sort},
-//            {"standard_sort", &standard_sort},
+    std::tuple<std::string, SortF, ElSortF> small_sorts[] = {
+            {"Ciura", &ciura_shell_sort, &ciura_shell_sort},
+            {"Tokuda", &tokuda_shell_sort, &tokuda_shell_sort},
+            {"Sedgewick", &sedgewick_shell_sort, &sedgewick_shell_sort},
+            {"A1", &genetic_sort_a1, &genetic_sort_a1},
+            {"A2", &genetic_sort_a2, &genetic_sort_a2},
+            {"A3", &genetic_sort_a3, &genetic_sort_a3},
     };
 
-    int sizes[] = {64, 256 };
-    const int bench_ms = 5000;
-    const int warmup_ms = 1000;
+    std::tuple<std::string, SortF, ElSortF> mid_sorts[] = {
+            {"Ciura", &ciura_shell_sort, &ciura_shell_sort},
+            {"Tokuda", &tokuda_shell_sort, &tokuda_shell_sort},
+            {"Sedgewick", &sedgewick_shell_sort, &sedgewick_shell_sort},
+            {"B1", &genetic_sort_b1, &genetic_sort_b1},
+            {"B2", &genetic_sort_b2, &genetic_sort_b2},
+            {"B3", &genetic_sort_b3, &genetic_sort_b3},
+    };
+
+    std::tuple<std::string, SortF, ElSortF> large_sorts[] = {
+            {"Ciura", &ciura_shell_sort, &ciura_shell_sort},
+            {"Tokuda", &tokuda_shell_sort, &tokuda_shell_sort},
+            {"Sedgewick", &sedgewick_shell_sort, &sedgewick_shell_sort},
+            {"C1", &genetic_sort_c1, &genetic_sort_c1},
+            {"C2", &genetic_sort_c2, &genetic_sort_c2},
+            {"C3", &genetic_sort_c3, &genetic_sort_c3},
+    };
+
+    const int max_size = 8192;
+    const std::array<int, 4> sizes = { max_size >> 3, max_size >> 2, max_size >> 1, max_size };
+
+    const int bench_ms = 10000;
+    const int warmup_ms = bench_ms / 5;
+
+    std::vector<BenchmarkResult> results;
 
     for (auto& distribution : distributions) {
-        for (auto& sort: sorts) {
+        for (auto& sort: large_sorts) {
             el.seed(seed);
 
             for (auto size : sizes) {
@@ -54,8 +88,8 @@ void bench_int() {
                 }
 
                 std::chrono::time_point<std::chrono::steady_clock> total_start = std::chrono::steady_clock::now();
-                std::vector<int> comparisons;
-                std::vector<int> assignments;
+                std::vector<uint64_t> comparisons;
+                std::vector<uint64_t> assignments;
                 std::vector<uint64_t> cycles;
 
                 // run the benchmark for `bench_ms`
@@ -80,13 +114,25 @@ void bench_int() {
                 auto assign_stats = calculate_statistics(assignments);
                 auto cycles_stats = calculate_statistics(cycles);
 
+                BenchmarkResult result { size, std::get<0>(sort), distribution.first, cmp_stats, assign_stats, cycles_stats };
+
+                results.push_back(result);
+
                 std::cerr << size << " " << distribution.first << " " << std::get<0>(sort)
                     << " cycles: " << cycles_stats.median << " " << cycles_stats.iqr << " " << cycles_stats.outliers
-                    << " comparisons: " << cmp_stats.median << " " << cmp_stats.iqr << " " << cmp_stats.outliers
-                    << " assignments: " << assign_stats.median << " " << assign_stats.iqr << " " << assign_stats.outliers <<"\n";
+                    << " comparisons: " << cmp_stats.median
+                    << " assignments: " << assign_stats.median <<"\n";
             }
         }
     }
+
+    std::ofstream output_file;
+    output_file.open("bench_results_" + std::to_string(max_size));
+
+    json resultJson(results);
+
+    output_file << resultJson.dump(2) << std::endl;
+    output_file.close();
 }
 
 void bench_for_perf() {

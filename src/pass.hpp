@@ -20,7 +20,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(PassType, {
 
 template <typename T>
 inline void insertion_pass(T & data, int gap) {
-    std::size_t n = data.size();
+    int n = data.size();
 
     for (int i = gap; i < n; ++i) {
         if (data[i - gap] > data[i]) {
@@ -40,7 +40,7 @@ inline void insertion_pass(T & data, int gap) {
 
 template <typename T>
 inline void bubble_pass(T & data, int gap) {
-    std::size_t n = data.size();
+    int n = data.size();
 
     for (int i = gap; i < n; ++i) {
         if (data[i - gap] > data[i]) {
@@ -51,7 +51,7 @@ inline void bubble_pass(T & data, int gap) {
 
 template <typename T>
 inline void brick_pass(T & data, int gap) {
-    std::size_t n = data.size();
+    int n = data.size();
     int increment = gap * 2;
 
     for (int i = gap; i < n - gap; i+= increment) {
@@ -69,7 +69,7 @@ inline void brick_pass(T & data, int gap) {
 
 template <typename T>
 inline void shake_pass(T & data,  int gap) {
-    std::size_t n = data.size();
+    int n = data.size();
 
     // perform bubble pass forward
     for (int i = gap; i < n; ++i) {

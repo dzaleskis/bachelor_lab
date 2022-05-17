@@ -74,8 +74,8 @@ int main(int argc, char* argv[]) {
 
     try {
 //        run_mo_ga(config);
-        check_algo();
-//        bench_int();
+//        check_algo();
+        bench_int();
 //        bench_for_perf();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

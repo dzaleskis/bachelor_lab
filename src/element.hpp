@@ -6,8 +6,8 @@
 
 struct MeasureReport {
     // operations
-    int assignments = 0;
-    int comparisons = 0;
+    uint64_t assignments = 0;
+    uint64_t comparisons = 0;
 };
 
 class Measure {

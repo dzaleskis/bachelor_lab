@@ -25,8 +25,8 @@ inline void insertion_sort(T & data)
     }
 }
 
-template <typename T, std::size_t N>
-static inline void shell_sort(T & data, const std::array<int, N> & gaps) {
+template <typename T, typename G>
+static inline void shell_sort(T & data, const G & gaps) {
     const std::size_t size = data.size();
 
     for (int gap: gaps) {
@@ -48,44 +48,27 @@ static inline void shell_sort(T & data, const std::array<int, N> & gaps) {
 
 template <typename T>
 inline void ciura_shell_sort(T& data) {
-    const std::array<int, 8> gaps {701,301,132,57,23,10,4,1};
+    const std::vector<int> gaps {7983,3548,1577,701,301,132,57,23,10,4,1};
     shell_sort(data, gaps);
 }
 
 template <typename T>
 inline void tokuda_shell_sort(T& data) {
-    const std::array<int, 8> gaps {525,233,103,46,20,9,4,1};
+    const std::vector<int> gaps {5985,2660,1182,525,233,103,46,20,9,4,1};
     shell_sort(data, gaps);
 }
 
 template <typename T>
 inline void sedgewick_shell_sort(T& data) {
-    const std::array<int, 8> gaps {929,505,209,109,41,19,5,1};
+    const std::vector<int> gaps {3905,2161,929,505,209,109,41,19,5,1};
     shell_sort(data, gaps);
-}
-
-template <typename T>
-inline void incerpi_shell_sort(T& data) {
-    const std::array<int, 8> gaps {861,336,112,48,21,7,3,1};
-    shell_sort(data, gaps);
-}
-
-template <typename T>
-inline void pratt_shell_sort(T& data) {
-    const std::array<int, 8> gaps {12,9,8,6,4,3,2,1};
-    shell_sort(data, gaps);
-}
-
-template <typename T>
-void standard_sort(T & data) {
-    std::sort(data.begin(), data.end());
 }
 
 // 128 sorts
 
 // id: 7850
 template <typename T>
-inline void genetic_sort_128_1(T& data) {
+inline void genetic_sort_a1(T& data) {
     bubble_pass(data, 52);
     insertion_pass(data, 6);
     insertion_pass(data, 1);
@@ -93,7 +76,7 @@ inline void genetic_sort_128_1(T& data) {
 
 // id: 7860
 template <typename T>
-inline void genetic_sort_128_2(T& data) {
+inline void genetic_sort_a2(T& data) {
     shake_pass(data, 92);
     insertion_pass(data, 7);
     insertion_pass(data, 1);
@@ -101,7 +84,7 @@ inline void genetic_sort_128_2(T& data) {
 
 // id: 8690
 template <typename T>
-inline void genetic_sort_128_3(T& data) {
+inline void genetic_sort_a3(T& data) {
     bubble_pass(data, 76);
     insertion_pass(data, 10);
     insertion_pass(data, 1);
@@ -111,21 +94,21 @@ inline void genetic_sort_128_3(T& data) {
 
 // id: 8745
 template <typename T>
-inline void genetic_sort_1024_1(T& data) {
+inline void genetic_sort_b1(T& data) {
     const std::array<int, 5> gaps {162,40,17,4,1};
     shell_sort(data, gaps);
 }
 
 // id: 8755
 template <typename T>
-inline void genetic_sort_1024_2(T& data) {
+inline void genetic_sort_b2(T& data) {
     const std::array<int, 4> gaps {155,19,5,1};
     shell_sort(data, gaps);
 }
 
 // id: 8760
 template <typename T>
-inline void genetic_sort_1024_3(T& data) {
+inline void genetic_sort_b3(T& data) {
     const std::array<int, 4> gaps {97,26,8,1};
     shell_sort(data, gaps);
 }
@@ -134,14 +117,17 @@ inline void genetic_sort_1024_3(T& data) {
 
 // id: 9423
 template <typename T>
-inline void genetic_sort_8192_1(T& data) {
-    const std::array<int, 8> gaps {1794,615,264,104,25,11,4,1};
+inline void genetic_sort_c1(T& data) {
+    insertion_pass(data, 1794);
+    shake_pass(data, 615);
+
+    const std::array<int, 8> gaps {264,104,25,11,4,1};
     shell_sort(data, gaps);
 }
 
 // id: 9431
 template <typename T>
-inline void genetic_sort_8192_2(T& data) {
+inline void genetic_sort_c2(T& data) {
     insertion_pass(data, 1794);
     brick_pass(data, 1152);
 
@@ -151,11 +137,12 @@ inline void genetic_sort_8192_2(T& data) {
 
 // id: 9448
 template <typename T>
-inline void genetic_sort_8192_3(T& data) {
+inline void genetic_sort_c3(T& data) {
     const std::array<int, 6> gaps {760,187,53,19,6,1};
     shell_sort(data, gaps);
 }
 
+// only useful for up to 64 elements
 template <typename T>
 inline void experimental_shell_sort(T & data) {
     int n = data.size();

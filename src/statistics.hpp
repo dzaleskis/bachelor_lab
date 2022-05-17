@@ -1,14 +1,15 @@
 #pragma once
 
-template <typename T>
 struct Statistics {
-    T median;
-    T iqr;
+    uint64_t median;
+    uint64_t iqr;
     double outliers;
 };
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Statistics, median, iqr, outliers);
+
 template <typename T>
-Statistics<T> calculate_statistics(std::vector<T>& sample) {
+Statistics calculate_statistics(std::vector<T>& sample) {
     std::sort(sample.begin(), sample.end());
 
     auto sample_size = sample.size();
