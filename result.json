@@ -1,0 +1,902 @@
+[
+  {
+    "avg_assignments": 957.3,
+    "avg_comparisons": 964.9,
+    "avg_cycles": 8514.1,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 11,
+          "passType": "brick"
+        },
+        {
+          "gap": 23,
+          "passType": "insertion"
+        },
+        {
+          "gap": 49,
+          "passType": "bubble"
+        },
+        {
+          "gap": 106,
+          "passType": "shake"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 956.7,
+    "avg_comparisons": 1009.8,
+    "avg_cycles": 8693.2,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "brick"
+        },
+        {
+          "gap": 9,
+          "passType": "insertion"
+        },
+        {
+          "gap": 17,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        },
+        {
+          "gap": 65,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 915.0,
+    "avg_comparisons": 1518.0,
+    "avg_cycles": 8627.2,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "shake"
+        },
+        {
+          "gap": 2,
+          "passType": "bubble"
+        },
+        {
+          "gap": 3,
+          "passType": "shake"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 7,
+          "passType": "insertion"
+        },
+        {
+          "gap": 12,
+          "passType": "insertion"
+        },
+        {
+          "gap": 19,
+          "passType": "bubble"
+        },
+        {
+          "gap": 30,
+          "passType": "shake"
+        },
+        {
+          "gap": 48,
+          "passType": "bubble"
+        },
+        {
+          "gap": 78,
+          "passType": "bubble"
+        },
+        {
+          "gap": 125,
+          "passType": "brick"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 896.2,
+    "avg_comparisons": 1545.0,
+    "avg_cycles": 9496.1,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "brick"
+        },
+        {
+          "gap": 2,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "shake"
+        },
+        {
+          "gap": 4,
+          "passType": "shake"
+        },
+        {
+          "gap": 7,
+          "passType": "bubble"
+        },
+        {
+          "gap": 10,
+          "passType": "shake"
+        },
+        {
+          "gap": 15,
+          "passType": "bubble"
+        },
+        {
+          "gap": 24,
+          "passType": "bubble"
+        },
+        {
+          "gap": 37,
+          "passType": "bubble"
+        },
+        {
+          "gap": 58,
+          "passType": "shake"
+        },
+        {
+          "gap": 90,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 950.6,
+    "avg_comparisons": 969.8,
+    "avg_cycles": 9839.5,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 11,
+          "passType": "brick"
+        },
+        {
+          "gap": 17,
+          "passType": "insertion"
+        },
+        {
+          "gap": 49,
+          "passType": "bubble"
+        },
+        {
+          "gap": 106,
+          "passType": "shake"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1274.9,
+    "avg_comparisons": 1127.0,
+    "avg_cycles": 6424.9,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 51,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1462.8,
+    "avg_comparisons": 1368.0,
+    "avg_cycles": 5932.1,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 2,
+          "passType": "insertion"
+        },
+        {
+          "gap": 37,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 933.6,
+    "avg_comparisons": 1001.5,
+    "avg_cycles": 9964.3,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 23,
+          "passType": "insertion"
+        },
+        {
+          "gap": 68,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1114.3,
+    "avg_comparisons": 1013.2,
+    "avg_cycles": 6486.2,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1298.5,
+    "avg_comparisons": 1151.0,
+    "avg_cycles": 6084.2,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 6,
+          "passType": "insertion"
+        },
+        {
+          "gap": 70,
+          "passType": "shake"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1084.8,
+    "avg_comparisons": 1044.8,
+    "avg_cycles": 6912.4,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1234.4,
+    "avg_comparisons": 1137.6,
+    "avg_cycles": 6152.0,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 2,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1272.1,
+    "avg_comparisons": 1117.3,
+    "avg_cycles": 6439.3,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 6,
+          "passType": "insertion"
+        },
+        {
+          "gap": 53,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1264.3,
+    "avg_comparisons": 1173.2,
+    "avg_cycles": 6134.6,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 2,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1506.6,
+    "avg_comparisons": 1348.6,
+    "avg_cycles": 6001.7,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 10,
+          "passType": "insertion"
+        },
+        {
+          "gap": 112,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1110.8,
+    "avg_comparisons": 980.4,
+    "avg_cycles": 6911.7,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1955.6,
+    "avg_comparisons": 1887.4,
+    "avg_cycles": 5520.9,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 2,
+          "passType": "insertion"
+        },
+        {
+          "gap": 101,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1891.7,
+    "avg_comparisons": 1807.4,
+    "avg_cycles": 5764.3,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 2,
+          "passType": "insertion"
+        },
+        {
+          "gap": 82,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 952.9,
+    "avg_comparisons": 963.9,
+    "avg_cycles": 9224.7,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 5,
+          "passType": "insertion"
+        },
+        {
+          "gap": 11,
+          "passType": "brick"
+        },
+        {
+          "gap": 17,
+          "passType": "insertion"
+        },
+        {
+          "gap": 49,
+          "passType": "bubble"
+        },
+        {
+          "gap": 106,
+          "passType": "shake"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 975.9,
+    "avg_comparisons": 905.7,
+    "avg_cycles": 9286.3,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1001.4,
+    "avg_comparisons": 909.4,
+    "avg_cycles": 8479.6,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 80,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1002.4,
+    "avg_comparisons": 916.8,
+    "avg_cycles": 8349.3,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 983.1,
+    "avg_comparisons": 908.5,
+    "avg_cycles": 8805.5,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 990.8,
+    "avg_comparisons": 917.0,
+    "avg_cycles": 8727.2,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1032.4,
+    "avg_comparisons": 962.5,
+    "avg_cycles": 7756.7,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 27,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1109.1,
+    "avg_comparisons": 1007.6,
+    "avg_cycles": 6845.4,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1023.4,
+    "avg_comparisons": 942.7,
+    "avg_cycles": 7973.1,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 3,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 80,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1032.1,
+    "avg_comparisons": 932.7,
+    "avg_cycles": 8298.0,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 80,
+          "passType": "bubble"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1032.0,
+    "avg_comparisons": 935.1,
+    "avg_cycles": 8050.8,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        },
+        {
+          "gap": 33,
+          "passType": "insertion"
+        }
+      ]
+    }
+  },
+  {
+    "avg_assignments": 1069.2,
+    "avg_comparisons": 966.3,
+    "avg_cycles": 7003.7,
+    "avg_inversions": 0.0,
+    "obj_version": 1,
+    "size": 128,
+    "solution": {
+      "passBlueprints": [
+        {
+          "gap": 1,
+          "passType": "insertion"
+        },
+        {
+          "gap": 4,
+          "passType": "insertion"
+        },
+        {
+          "gap": 13,
+          "passType": "insertion"
+        }
+      ]
+    }
+  }
+]
